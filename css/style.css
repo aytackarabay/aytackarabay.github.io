@@ -69,11 +69,7 @@ h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,.h4,.h5,.h6 {
 
 /* language bar
 *************************************************************************/
-#header {
-width:100%;
-height:60px;
-background-color:#fefefe;
-}
+
 
 
 #rightlinks a {
@@ -83,6 +79,7 @@ background-color:#fefefe;
     background-color:#00293C;
     color: #fefefe;
 }
+
 #rightlinks a:hover {
     color: black;
     background-color: white;
