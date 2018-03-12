@@ -797,6 +797,35 @@ pre code {
   clear: both;
 }
 
+
+.row2 {
+  margin-right: 30px;
+  margin-left: 15px;
+}
+
+.row2:before,
+.row2:after {
+  display: table;
+  content: " ";
+}
+
+.row2:after {
+  clear: both;
+}
+
+.row2:before,
+.row2:after {
+  display: table;
+  content: " ";
+}
+
+.row2:after {
+  clear: both;
+}
+
+
+
+
 .col-xs-1,
 .col-xs-2,
 .col-xs-3,
