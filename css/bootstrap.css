@@ -350,6 +350,13 @@ img {
   max-width: 100%;
 }
 
+.img-responsive2 {
+  display: block;
+  height: auto;
+ border-radius: 50%;
+  max-width: 100%;
+}
+
 .img-rounded {
   border-radius: 6px;
 }
