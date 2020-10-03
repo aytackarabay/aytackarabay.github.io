@@ -1,0 +1,318 @@
+---
+API: 2.1
+OpenSesame: 3.3.1
+Platform: nt
+---
+set width 1280
+set uniform_coordinates yes
+set title "New experiment"
+set subject_parity even
+set subject_nr 0
+set start experiment
+set sound_sample_size -16
+set sound_freq 48000
+set sound_channels 2
+set sound_buf_size 1024
+set sampler_backend legacy
+set round_decimals 2
+set mouse_backend psycho
+set keyboard_backend psycho
+set height 1024
+set fullscreen no
+set form_clicks no
+set foreground white
+set font_underline no
+set font_size 18
+set font_italic no
+set font_family mono
+set font_bold no
+set experiment_path "C:\\Users\\aytac\\Downloads"
+set disable_garbage_collection yes
+set description "The main experiment item"
+set coordinates uniform
+set compensation 0
+set color_backend psycho
+set clock_backend psycho
+set canvas_backend psycho
+set background "#808080"
+
+define sketchpad Endexperiment
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="You completed the task, thanks for the participation!!" x=0 y=0 z_index=0
+
+define sketchpad PracticeTrialsStart
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Practice trials will start immediately when you press a button." x=0 y=0 z_index=0
+
+define inline_script TrialType
+	set description "Executes Python code"
+	___run__
+	var.trialtype=1 #Experimental Trials. 
+	var.trialnumber=0 #Trialnumber starts with 0 from the first trial because python starts numbers with 0.
+	#default value of blocks and blockbreaks
+	var.blockno=0
+	var.number_trials_block=16#number of trials within a block
+	var.totalblocks=15 #Put number of blocks here. Note that number of trials and blocks should match with the one in blockloop table.
+	errorlist=numpy.zeros(var.number_trials_block*var.totalblocks) # a list to give feedback.
+	__end__
+	set _prepare ""
+
+define inline_script Variables
+	set description "Executes Python code"
+	set _run ""
+	___prepare__
+	#libraries need for the python.
+	import math
+	import numpy
+	import random 
+	#duration of displays
+	var.displayduration=245 #duration of all memoryitems
+	var.wait1duration=245 #duration of the blank screen between fixation and memory array
+	var.wait2duration=995 #duration of the blank screen between memoryarray and responsescreen.
+	#the value of target item, it is retrieved on the prepare phase of the randomorientationaccuracy
+	var.trialtype=0 #0 means practice trials
+	var.trialnumber=0 #Trialnumber starts with 0 from the first trial because python starts numbers with 0.
+	#default value of blocks and blockbreaks
+	var.blockno=0
+	var.number_trials_block=8#number of trials within a block
+	var.totalblocks=2
+	
+	#default value of wmprecisionad
+	var.averageprecision=0
+	errorlist=numpy.zeros(var.number_trials_block*var.totalblocks)
+	
+	#In order to avoid recreation of canvases multiple times, we create static canvasses here.
+	#fixation dot canvas 
+	fixcanvas=Canvas()
+	fixcanvas.fixdot()
+	#ISI canvas
+	ISIcanvas=Canvas()
+	ISIcanvas.fixdot()
+	#FeedbackCanvas
+	cnvs_positivefeedback=Canvas()
+	cnvs_positivefeedback+=Text(':)', font_size =32)
+	cnvs_negativefeedback=Canvas()
+	cnvs_negativefeedback+=Text(':(', font_size =32)
+	__end__
+
+define inline_script blockfeedback
+	set description "Executes Python code"
+	___run__
+	canvas_block_fb=Canvas()
+	#T1AccuracyPlot
+	canvas_block_fb.line(-(var.width/2-var.width/10), 100, (var.width/2-var.width/10), 100)
+	canvas_block_fb.line(-(var.width/2-var.width/10), 100, -(var.width/2-var.width/10), -200)
+	canvas_block_fb.text('Response 1 Accuracy in % (Higher is better)', color='orange', y=-225)
+	canvas_block_fb.text('100%', color='orange', x=-(var.width/2-var.width/10)-25, y=-200)
+	canvas_block_fb.text('50%', color='orange',  x=-(var.width/2-var.width/10)-25, y=-50)
+	canvas_block_fb.text('0%', color='orange',  x=-(var.width/2-var.width/10)-25, y=100)
+	
+	canvas_block_fb.text('You finished a block, you can rest till you are ready. Press "SPACE" to continue', y=225)
+	for i in range(1, var.totalblocks+1):
+		canvas_block_fb['blocknr_'+str(i)]=Text(str(i), x=-(var.width/2-var.width/10)+((var.width*0.75)/var.totalblocks)*i, y=125, color='black')
+		if i<=var.blockno:
+			canvas_block_fb['error_block'+str(i)] = FixDot(-(var.width/2-var.width/10)+((var.width*0.75)/var.totalblocks)*i, y=100-(((numpy.mean(errorlist[(i-1)*(var.number_trials_block):(i*(var.number_trials_block))]))))*300)
+			if i>1:
+				canvas_block_fb.line(canvas_block_fb['error_block'+str(i-1)].x, canvas_block_fb['error_block'+str(i-1)].y,canvas_block_fb['error_block'+str(i)].x,canvas_block_fb['error_block'+str(i)].y)
+		else:
+			canvas_block_fb['error_block'+str(i)] = FixDot(-(var.width/2-var.width/10)+((var.width*0.75)/var.totalblocks)*i, y=100)
+		
+	my_keyboard = Keyboard()
+	while True:
+		canvas_block_fb.show()
+		key, timestamp = my_keyboard.get_key()
+		if key=='space':
+			break
+	__end__
+	set _prepare ""
+
+define loop blockloop
+	set source table
+	set repeat 15
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 16
+	set continuous yes
+	set break_if_on_first no
+	set break_if never
+	setcycle 0 NumberOfItems 1
+	setcycle 1 NumberOfItems 1
+	setcycle 2 NumberOfItems 1
+	setcycle 3 NumberOfItems 1
+	setcycle 4 NumberOfItems 2
+	setcycle 5 NumberOfItems 2
+	setcycle 6 NumberOfItems 2
+	setcycle 7 NumberOfItems 2
+	setcycle 8 NumberOfItems 3
+	setcycle 9 NumberOfItems 3
+	setcycle 10 NumberOfItems 3
+	setcycle 11 NumberOfItems 3
+	setcycle 12 NumberOfItems 4
+	setcycle 13 NumberOfItems 4
+	setcycle 14 NumberOfItems 4
+	setcycle 15 NumberOfItems 4
+	run trial_sequence
+
+define logger data_log
+	set description "Logs experimental data"
+	set auto_log yes
+
+define sketchpad endpractice
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Practice trials are finished. If you have any questions about the task, don`t hesitate to ask to the researcher. If not, press a button to start experimental trials when you are ready." x=0 y=0 z_index=0
+
+define sequence experiment
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run welcome always
+	run Variables always
+	run PracticeTrialsStart always
+	run practicetrials always
+	run endpractice always
+	run TrialType always
+	run blockloop always
+	run Endexperiment always
+
+define loop practicetrials
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 16
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 NumberOfItems 1
+	setcycle 1 NumberOfItems 1
+	setcycle 2 NumberOfItems 1
+	setcycle 3 NumberOfItems 1
+	setcycle 4 NumberOfItems 2
+	setcycle 5 NumberOfItems 2
+	setcycle 6 NumberOfItems 2
+	setcycle 7 NumberOfItems 2
+	setcycle 8 NumberOfItems 3
+	setcycle 9 NumberOfItems 3
+	setcycle 10 NumberOfItems 3
+	setcycle 11 NumberOfItems 3
+	setcycle 12 NumberOfItems 4
+	setcycle 13 NumberOfItems 4
+	setcycle 14 NumberOfItems 4
+	setcycle 15 NumberOfItems 4
+	run trial_sequence
+
+define inline_script randomfixationduration
+	set description "Executes Python code"
+	___run__
+	fixcanvas.show()
+	self.sleep(var.fixationduration)
+	ISIcanvas.show()
+	self.sleep(var.wait1duration)
+	
+	MemoryCanvas.show()
+	self.sleep(var.displayduration)
+	    
+	ISIcanvas.show()
+	self.sleep(var.wait2duration)
+	
+	my_mouse = mouse(timeout=20)
+	my_mouse.show_cursor(False)
+	my_mouse.set_pos(pos=(Probe_Canvas['probe'].x,Probe_Canvas['probe'].y))
+	
+	t0 = clock.time()
+	my_mouse.flush()
+	
+	#timing for reaction time
+	start_time = clock.time()
+	#Mouse movements
+	my_mouse.set_visible() 
+	while True:
+		pos, time = my_mouse.get_pos()
+		x, y = pos
+		if x!=Probe_Canvas['probe'].x:
+			Probe_Canvas['probe'].orient =-math.degrees(math.atan2(x-Probe_Canvas['probe'].x,  y-Probe_Canvas['probe'].y))
+		button, mouseposition, timestamp = my_mouse.get_click()
+		if button==1:
+			x1,y1=mouseposition
+			T1endtime=timestamp
+			var.T1Rxloc=x1
+			var.T1Ryloc=y1
+			var.T1RT=T1endtime-t0
+			break
+		Probe_Canvas.show()
+		var.resp_angle=Probe_Canvas['probe'].orient 
+		
+	#accuracy measurement
+	if var.resp_angle<0:
+		var.resp_angle_adj=var.resp_angle+180
+	else:
+		var.resp_angle_adj=var.resp_angle
+	
+	var.wm_error=abs(var.resp_angle_adj-var.targetorientation)
+	if var.wm_error>90:
+		 var.wm_error=180-var.wm_error
+	
+	#Give feedback
+	if var.wm_error<20:
+		cnvs_positivefeedback.show()
+		self.sleep(145)
+	else:
+		cnvs_negativefeedback.show()
+		self.sleep(145)
+	
+	#Add values to the list
+	errorlist[var.trialnumber-1]=(90-var.wm_error)/90
+	__end__
+	___prepare__
+	#random time for fixation duration
+	var.fixationduration=random.randint(300, 500)
+	
+	if var.trialnumber%var.number_trials_block==0:
+		var.blockno=var.blockno+1
+	var.trialnumber=var.trialnumber+1
+	
+	#Randomorientation for items
+	Item_orientation = random.sample(range(1,180),var.NumberOfItems)
+	#Save target Angle
+	var.targetorientation=Item_orientation[0]
+	#Put memory items on an invisible circle randomly with equal distance between each other
+	rand_phi=random.sample(range(-180,180),1)
+	Item_positions = xy_circle (n=var.NumberOfItems, rho=100, phi0=rand_phi[0])
+	
+	#Create Memory Array
+	MemoryCanvas=Canvas()
+	for i in range(0,var.NumberOfItems):
+		x,y=Item_positions[i]
+		MemoryCanvas['M'+str(i)]=Gabor(x, y, Item_orientation[i], .05, env=u'circular', size=80)
+		pass
+	
+	#Make the probe angle 20 degrees different than target angle
+	if var.targetorientation<20:
+		var.probeorient = random.randint(var.targetorientation+20, 160+var.targetorientation)
+	elif var.targetorientation >160:
+		var.probeorient = random.randint(var.targetorientation-160,var.targetorientation-20)
+	else:
+		var.probeorient = random.choice(list(range(0, var.targetorientation-20)) + list(range(var.targetorientation+20, 180)))
+	
+	#Create the probe canvas same location with the target item.
+	Probe_Canvas=Canvas()
+	Probe_Canvas['probe']=Gabor(MemoryCanvas['M0'].x, MemoryCanvas['M0'].y, var.probeorient, .05, env=u'circular', size=80)
+	__end__
+
+define sequence trial_sequence
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run randomfixationduration always
+	run data_log always
+	run blockfeedback "[trialnumber]%[number_trials_block]=0"
+
+define sketchpad welcome
+	set start_response_interval no
+	set reset_variables no
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="Welcome to this experiment. Here you need to memorize and reproduce the orientation of the target element. You will see up to four circular orientation gratings, you need to memorize all of them. Then one of the orientation gratings will be shown on the screen, here you need to reproduce the orientation of the grating which was on the same location.  " x=0 y=0 z_index=0
+
