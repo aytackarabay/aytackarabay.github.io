@@ -1,6 +1,6 @@
 ---
 API: 2.1
-OpenSesame: 3.3.1
+OpenSesame: 3.2.8
 Platform: nt
 ---
 set width 1280
@@ -26,7 +26,7 @@ set font_size 18
 set font_italic no
 set font_family mono
 set font_bold no
-set experiment_path "C:\\Users\\aytac\\Downloads"
+set experiment_path "C:\\Users\\p275674\\Documents\\GitHub\\aytackarabay.github.io\\Files\\Tasks"
 set disable_garbage_collection yes
 set description "The main experiment item"
 set coordinates uniform
@@ -41,63 +41,34 @@ define sketchpad Endexperiment
 	set description "Displays stimuli"
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="You completed the task, thanks for the participation!!" x=0 y=0 z_index=0
 
-define sketchpad PracticeTrialsStart
-	set duration keypress
-	set description "Displays stimuli"
-	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Practice trials will start immediately when you press a button." x=0 y=0 z_index=0
+define loop ExperimentalTrials
+	set source table
+	set repeat 15
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 16
+	set continuous yes
+	set break_if_on_first no
+	set break_if never
+	setcycle 0 NumberOfItems 1
+	setcycle 1 NumberOfItems 1
+	setcycle 2 NumberOfItems 1
+	setcycle 3 NumberOfItems 1
+	setcycle 4 NumberOfItems 2
+	setcycle 5 NumberOfItems 2
+	setcycle 6 NumberOfItems 2
+	setcycle 7 NumberOfItems 2
+	setcycle 8 NumberOfItems 3
+	setcycle 9 NumberOfItems 3
+	setcycle 10 NumberOfItems 3
+	setcycle 11 NumberOfItems 3
+	setcycle 12 NumberOfItems 4
+	setcycle 13 NumberOfItems 4
+	setcycle 14 NumberOfItems 4
+	setcycle 15 NumberOfItems 4
+	run trial_sequence
 
-define inline_script TrialType
-	set description "Executes Python code"
-	___run__
-	var.trialtype=1 #Experimental Trials. 
-	var.trialnumber=0 #Trialnumber starts with 0 from the first trial because python starts numbers with 0.
-	#default value of blocks and blockbreaks
-	var.blockno=0
-	var.number_trials_block=16#number of trials within a block
-	var.totalblocks=15 #Put number of blocks here. Note that number of trials and blocks should match with the one in blockloop table.
-	errorlist=numpy.zeros(var.number_trials_block*var.totalblocks) # a list to give feedback.
-	__end__
-	set _prepare ""
-
-define inline_script Variables
-	set description "Executes Python code"
-	set _run ""
-	___prepare__
-	#libraries need for the python.
-	import math
-	import numpy
-	import random 
-	#duration of displays
-	var.displayduration=245 #duration of all memoryitems
-	var.wait1duration=245 #duration of the blank screen between fixation and memory array
-	var.wait2duration=995 #duration of the blank screen between memoryarray and responsescreen.
-	#the value of target item, it is retrieved on the prepare phase of the randomorientationaccuracy
-	var.trialtype=0 #0 means practice trials
-	var.trialnumber=0 #Trialnumber starts with 0 from the first trial because python starts numbers with 0.
-	#default value of blocks and blockbreaks
-	var.blockno=0
-	var.number_trials_block=8#number of trials within a block
-	var.totalblocks=2
-	
-	#default value of wmprecisionad
-	var.averageprecision=0
-	errorlist=numpy.zeros(var.number_trials_block*var.totalblocks)
-	
-	#In order to avoid recreation of canvases multiple times, we create static canvasses here.
-	#fixation dot canvas 
-	fixcanvas=Canvas()
-	fixcanvas.fixdot()
-	#ISI canvas
-	ISIcanvas=Canvas()
-	ISIcanvas.fixdot()
-	#FeedbackCanvas
-	cnvs_positivefeedback=Canvas()
-	cnvs_positivefeedback+=Text(':)', font_size =32)
-	cnvs_negativefeedback=Canvas()
-	cnvs_negativefeedback+=Text(':(', font_size =32)
-	__end__
-
-define inline_script blockfeedback
+define inline_script Feedback_Break
 	set description "Executes Python code"
 	___run__
 	canvas_block_fb=Canvas()
@@ -128,83 +99,30 @@ define inline_script blockfeedback
 	__end__
 	set _prepare ""
 
-define loop blockloop
-	set source table
-	set repeat 15
-	set order random
-	set description "Repeatedly runs another item"
-	set cycles 16
-	set continuous yes
-	set break_if_on_first no
-	set break_if never
-	setcycle 0 NumberOfItems 1
-	setcycle 1 NumberOfItems 1
-	setcycle 2 NumberOfItems 1
-	setcycle 3 NumberOfItems 1
-	setcycle 4 NumberOfItems 2
-	setcycle 5 NumberOfItems 2
-	setcycle 6 NumberOfItems 2
-	setcycle 7 NumberOfItems 2
-	setcycle 8 NumberOfItems 3
-	setcycle 9 NumberOfItems 3
-	setcycle 10 NumberOfItems 3
-	setcycle 11 NumberOfItems 3
-	setcycle 12 NumberOfItems 4
-	setcycle 13 NumberOfItems 4
-	setcycle 14 NumberOfItems 4
-	setcycle 15 NumberOfItems 4
-	run trial_sequence
-
-define logger data_log
-	set description "Logs experimental data"
-	set auto_log yes
-
-define sketchpad endpractice
+define sketchpad PracticeBlockEnd
 	set duration keypress
 	set description "Displays stimuli"
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Practice trials are finished. If you have any questions about the task, don`t hesitate to ask to the researcher. If not, press a button to start experimental trials when you are ready." x=0 y=0 z_index=0
 
-define sequence experiment
-	set flush_keyboard yes
-	set description "Runs a number of items in sequence"
-	run welcome always
-	run Variables always
-	run PracticeTrialsStart always
-	run practicetrials always
-	run endpractice always
-	run TrialType always
-	run blockloop always
-	run Endexperiment always
+define sketchpad PracticeTrialsStart
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Practice trials will start immediately when you press a button." x=0 y=0 z_index=0
 
-define loop practicetrials
-	set source_file ""
-	set source table
-	set repeat 1
-	set order random
-	set description "Repeatedly runs another item"
-	set cycles 16
-	set continuous no
-	set break_if_on_first yes
-	set break_if never
-	setcycle 0 NumberOfItems 1
-	setcycle 1 NumberOfItems 1
-	setcycle 2 NumberOfItems 1
-	setcycle 3 NumberOfItems 1
-	setcycle 4 NumberOfItems 2
-	setcycle 5 NumberOfItems 2
-	setcycle 6 NumberOfItems 2
-	setcycle 7 NumberOfItems 2
-	setcycle 8 NumberOfItems 3
-	setcycle 9 NumberOfItems 3
-	setcycle 10 NumberOfItems 3
-	setcycle 11 NumberOfItems 3
-	setcycle 12 NumberOfItems 4
-	setcycle 13 NumberOfItems 4
-	setcycle 14 NumberOfItems 4
-	setcycle 15 NumberOfItems 4
-	run trial_sequence
+define inline_script ResetVariables
+	set description "Executes Python code"
+	___run__
+	var.trialtype=1 #Experimental Trials. 
+	var.trialnumber=0 #Trialnumber starts with 0 from the first trial because python starts numbers with 0.
+	#default value of blocks and blockbreaks
+	var.blockno=0
+	var.number_trials_block=16#number of trials within a block
+	var.totalblocks=15 #Put number of blocks here. Note that number of trials and blocks should match with the one in blockloop table.
+	errorlist=numpy.zeros(var.number_trials_block*var.totalblocks) # a list to give feedback.
+	__end__
+	set _prepare ""
 
-define inline_script randomfixationduration
+define inline_script Trial_Construction
 	set description "Executes Python code"
 	___run__
 	fixcanvas.show()
@@ -302,12 +220,94 @@ define inline_script randomfixationduration
 	Probe_Canvas['probe']=Gabor(MemoryCanvas['M0'].x, MemoryCanvas['M0'].y, var.probeorient, .05, env=u'circular', size=80)
 	__end__
 
+define inline_script Variables
+	set description "Executes Python code"
+	set _run ""
+	___prepare__
+	#libraries need for the python.
+	import math
+	import numpy
+	import random 
+	#duration of displays
+	var.displayduration=245 #duration of all memoryitems
+	var.wait1duration=245 #duration of the blank screen between fixation and memory array
+	var.wait2duration=995 #duration of the blank screen between memoryarray and responsescreen.
+	#the value of target item, it is retrieved on the prepare phase of the randomorientationaccuracy
+	var.trialtype=0 #0 means practice trials
+	var.trialnumber=0 #Trialnumber starts with 0 from the first trial because python starts numbers with 0.
+	#default value of blocks and blockbreaks
+	var.blockno=0
+	var.number_trials_block=8#number of trials within a block
+	var.totalblocks=2
+	
+	#default value of wmprecisionad
+	var.averageprecision=0
+	errorlist=numpy.zeros(var.number_trials_block*var.totalblocks)
+	
+	#In order to avoid recreation of canvases multiple times, we create static canvasses here.
+	#fixation dot canvas 
+	fixcanvas=Canvas()
+	fixcanvas.fixdot()
+	#ISI canvas
+	ISIcanvas=Canvas()
+	ISIcanvas.fixdot()
+	#FeedbackCanvas
+	cnvs_positivefeedback=Canvas()
+	cnvs_positivefeedback+=Text(':)', font_size =32)
+	cnvs_negativefeedback=Canvas()
+	cnvs_negativefeedback+=Text(':(', font_size =32)
+	__end__
+
+define logger data_log
+	set description "Logs experimental data"
+	set auto_log yes
+
+define sequence experiment
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run welcome always
+	run Variables always
+	run PracticeTrialsStart always
+	run practicetrials always
+	run PracticeBlockEnd always
+	run ResetVariables always
+	run ExperimentalTrials always
+	run Endexperiment always
+
+define loop practicetrials
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 16
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 NumberOfItems 1
+	setcycle 1 NumberOfItems 1
+	setcycle 2 NumberOfItems 1
+	setcycle 3 NumberOfItems 1
+	setcycle 4 NumberOfItems 2
+	setcycle 5 NumberOfItems 2
+	setcycle 6 NumberOfItems 2
+	setcycle 7 NumberOfItems 2
+	setcycle 8 NumberOfItems 3
+	setcycle 9 NumberOfItems 3
+	setcycle 10 NumberOfItems 3
+	setcycle 11 NumberOfItems 3
+	setcycle 12 NumberOfItems 4
+	setcycle 13 NumberOfItems 4
+	setcycle 14 NumberOfItems 4
+	setcycle 15 NumberOfItems 4
+	run trial_sequence
+
 define sequence trial_sequence
 	set flush_keyboard yes
 	set description "Runs a number of items in sequence"
-	run randomfixationduration always
+	run Trial_Construction always
 	run data_log always
-	run blockfeedback "[trialnumber]%[number_trials_block]=0"
+	run Feedback_Break "[trialnumber]%[number_trials_block]=0"
 
 define sketchpad welcome
 	set start_response_interval no
