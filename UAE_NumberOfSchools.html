@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>UAE Schools Plot</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+  <h2>UAE Schools Plot</h2>
+  <label for="city">Select City:</label>
+  <select id="city" onchange="updatePlot()">
+    <option value="All">All</option>
+  </select>
+
+  <div id="plot" style="width:100%;max-width:1000px;height:600px;"></div>
+
+  <script>
+    // Embedded CSV data from final_plot_data.csv
+    const csvText = `Year,Type,City,Total
+2017-2018,Goverment,Abu Dhabi,3
+2017-2018,Goverment,Ajman,36
+2017-2018,Goverment,Dubai,144
+2017-2018,Goverment,Fujairah,57
+2017-2018,Goverment,Ras Alkhaimah,84
+2017-2018,Goverment,Sharjah,116
+2017-2018,Goverment,Umm Alquwain,19
+2017-2018,Non Goverment,Ajman,17
+2017-2018,Non Goverment,Dubai,19
+2017-2018,Non Goverment,Fujairah,1
+2017-2018,Non Goverment,Ras Alkhaimah,25
+2017-2018,Non Goverment,Sharjah,32
+2017-2018,Non Goverment,Umm Alquwain,3
+2018-2019,Goverment,Abu Dhabi,17
+2018-2019,Goverment,Ajman,39
+2018-2019,Goverment,Dubai,143
+2018-2019,Goverment,Fujairah,56
+2018-2019,Goverment,Ras Alkhaimah,80
+2018-2019,Goverment,Sharjah,114
+2018-2019,Goverment,Umm Alquwain,21
+2018-2019,Non Goverment,Ajman,19
+2018-2019,Non Goverment,Dubai,20
+2018-2019,Non Goverment,Fujairah,1
+2018-2019,Non Goverment,Ras Alkhaimah,17
+2018-2019,Non Goverment,Sharjah,10
+2018-2019,Non Goverment,Umm Alquwain,3
+2019-2020,Goverment,Abu Dhabi,246
+2019-2020,Goverment,Ajman,36
+2019-2020,Goverment,Dubai,135
+2019-2020,Goverment,Fujairah,55
+2019-2020,Goverment,Ras Alkhaimah,78
+2019-2020,Goverment,Sharjah,104
+2019-2020,Goverment,Umm Alquwain,17
+2019-2020,Non Goverment,Ajman,20
+2019-2020,Non Goverment,Dubai,61
+2019-2020,Non Goverment,Fujairah,2
+2019-2020,Non Goverment,Ras Alkhaimah,29
+2019-2020,Non Goverment,Umm Alquwain,4
+2020-2021,Goverment,Abu Dhabi,257
+2020-2021,Goverment,Ajman,37
+2020-2021,Goverment,Dubai,134
+2020-2021,Goverment,Fujairah,55
+2020-2021,Goverment,Ras Alkhaimah,77
+2020-2021,Goverment,Sharjah,104
+2020-2021,Goverment,Umm Alquwain,17
+2020-2021,Non Goverment,Abu Dhabi,227
+2020-2021,Non Goverment,Ajman,44
+2020-2021,Non Goverment,Dubai,51
+2020-2021,Non Goverment,Fujairah,16
+2020-2021,Non Goverment,Ras Alkhaimah,31
+2020-2021,Non Goverment,Umm Alquwain,7
+2021-2022,Goverment,Abu Dhabi,243
+2021-2022,Goverment,Ajman,37
+2021-2022,Goverment,Dubai,129
+2021-2022,Goverment,Fujairah,55
+2021-2022,Goverment,Ras Alkhaimah,77
+2021-2022,Goverment,Sharjah,104
+2021-2022,Goverment,Umm Alquwain,17
+2021-2022,Non Goverment,Abu Dhabi,240
+2021-2022,Non Goverment,Ajman,42
+2021-2022,Non Goverment,Dubai,25
+2021-2022,Non Goverment,Fujairah,15
+2021-2022,Non Goverment,Ras Alkhaimah,31
+2021-2022,Non Goverment,Sharjah,116
+2021-2022,Non Goverment,Umm Alquwain,7
+2022-2023,Goverment,Abu Dhabi,234
+2022-2023,Goverment,Ajman,38
+2022-2023,Goverment,Dubai,65
+2022-2023,Goverment,Fujairah,55
+2022-2023,Goverment,Ras Alkhaimah,75
+2022-2023,Goverment,Sharjah,105
+2022-2023,Goverment,Umm Alquwain,18
+2022-2023,Non Goverment,Abu Dhabi,247
+2022-2023,Non Goverment,Ajman,43
+2022-2023,Non Goverment,Dubai,221
+2022-2023,Non Goverment,Fujairah,17
+2022-2023,Non Goverment,Ras Alkhaimah,36
+2022-2023,Non Goverment,Sharjah,130
+2022-2023,Non Goverment,Umm Alquwain,8
+2023-2024,Goverment,Abu Dhabi,229
+2023-2024,Goverment,Ajman,37
+2023-2024,Goverment,Dubai,54
+2023-2024,Goverment,Fujairah,48
+2023-2024,Goverment,Ras Alkhaimah,70
+2023-2024,Goverment,Sharjah,100
+2023-2024,Goverment,Umm Alquwain,17
+2023-2024,Non Goverment,Abu Dhabi,251
+2023-2024,Non Goverment,Ajman,45
+2023-2024,Non Goverment,Dubai,14
+2023-2024,Non Goverment,Fujairah,17
+2023-2024,Non Goverment,Ras Alkhaimah,35
+2023-2024,Non Goverment,Sharjah,33
+2023-2024,Non Goverment,Umm Alquwain,8`;
+
+    const rows = csvText.trim().split("\n").map(row => row.split(","));
+    const headers = rows[0];
+    const content = rows.slice(1);
+    const data = [];
+    const cities = new Set();
+
+    content.forEach(r => {
+      const obj = {};
+      headers.forEach((h, i) => obj[h] = r[i]);
+      cities.add(obj["City"]);
+      data.push(obj);
+    });
+
+    function populateCities() {
+      const cityDropdown = document.getElementById("city");
+      [...cities].sort().forEach(city => {
+        const option = document.createElement("option");
+        option.value = city;
+        option.text = city;
+        cityDropdown.add(option);
+      });
+    }
+
+   function updatePlot() {
+  const selectedCity = document.getElementById("city").value;
+  let filtered = data;
+
+  if (selectedCity !== "All") {
+    filtered = data.filter(row => row["City"] === selectedCity);
+  }
+
+  const grouped = {};
+
+  filtered.forEach(row => {
+    const year = row["Year"];
+    const type = row["Type"];
+    const total = +row["Total"];
+    
+    if (selectedCity === "All") {
+      // Group and sum by year and type
+      if (!grouped[type]) grouped[type] = {};
+      if (!grouped[type][year]) grouped[type][year] = 0;
+      grouped[type][year] += total;
+    } else {
+      // For a single city, plot directly
+      if (!grouped[type]) grouped[type] = { x: [], y: [], name: type };
+      grouped[type].x.push(year);
+      grouped[type].y.push(total);
+    }
+  });
+
+  let traces;
+
+  if (selectedCity === "All") {
+    traces = Object.keys(grouped).map(type => {
+      const yearTotals = grouped[type];
+      const years = Object.keys(yearTotals).sort();
+      return {
+        x: years,
+        y: years.map(y => yearTotals[y]),
+        name: type
+      };
+    });
+  } else {
+    traces = Object.values(grouped);
+  }
+
+  Plotly.newPlot("plot", traces, {
+    title: `Total Schools ${selectedCity === "All" ? "in UAE" : "in " + selectedCity}`,
+    xaxis: { title: "Year" },
+    yaxis: { title: "Number of Schools" }
+  });
+}
+
+    populateCities();
+    updatePlot();
+  </script>
+</body>
+</html>
