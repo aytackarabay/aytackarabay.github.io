@@ -1,0 +1,474 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Research Methods D — Interactive Course Pack</title>
+<style>
+:root{--ok:#16a34a;--bad:#dc2626}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.6;color:#0f172a;background:#fff}
+.layout{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
+.sidebar{position:sticky;top:0;align-self:start;height:100vh;overflow:auto;border-right:1px solid #e5e7eb;background:#f9fafb;padding:16px}
+.sidebar h1{font-size:18px;margin:0 0 8px}
+.sidebar .toc-link{display:block;text-decoration:none;color:#1f2937;padding:6px 8px;border-radius:6px}
+.sidebar .toc-link:hover{background:#e5e7eb}
+.main{padding:24px;max-width:1100px}
+main h2{margin-top:32px;border-bottom:2px solid #e5e7eb;padding-bottom:6px}
+.exercise{border:1px solid #e5e7eb;border-left:6px solid #9ca3af;background:#f8fafc;padding:12px;margin:12px 0;border-radius:8px}
+.exercise.correct{border-left-color:var(--ok);background:#ecfdf5}
+.exercise.incorrect{border-left-color:var(--bad);background:#fef2f2}
+.ex-line{margin:6px 0}
+.blank-input{display:inline-block;min-width:140px;padding:6px 8px;margin:0 4px;border:2px solid #cbd5e1;border-radius:6px;font-size:0.95rem}
+.blank-input.correct{border-color:var(--ok);background:#ecfdf5}
+.blank-input.incorrect{border-color:var(--bad);background:#fef2f2}
+.topbar{position:sticky;top:0;background:#ffffffd9;backdrop-filter:saturate(1.2) blur(8px);border-bottom:1px solid #e5e7eb;padding:8px 16px;z-index:10;display:flex;gap:8px;align-items:center}
+.topbar .btn{padding:6px 10px;border:1px solid #cbd5e1;background:#fff;border-radius:6px;cursor:pointer}
+.topbar .btn.primary{background:#2563eb;color:#fff;border-color:#2563eb}
+.img-note{font-size:.9rem;color:#475569;background:#eef2ff;border:1px dashed #94a3b8;padding:6px 8px;border-radius:6px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <strong>Research Methods D — Interactive Course Pack</strong>
+<!-- 
+ <span style="flex:1"></span>
+  <button id="btn-set" class="btn">Set-Answer Mode</button>
+  <button id="btn-export" class="btn">Export Answer Key</button>
+  <button id="btn-import" class="btn">Import Answer Key</button>
+  <input id="file-import" type="file" accept="application/json" /> -->
+</div>
+<div class="layout">
+  <nav class="sidebar">
+    <h1>Contents</h1>
+    <a href="#h3-1" class="toc-link level-3" style="margin-left:16px">Module Structure and Learning Outcomes</a>
+<a href="#h3-2" class="toc-link level-3" style="margin-left:16px">Assessment on Research Methods D</a>
+<a href="#h3-3" class="toc-link level-3" style="margin-left:16px">Participation</a>
+<a href="#h3-4" class="toc-link level-3" style="margin-left:16px">Using the course pack</a>
+<a href="#h3-5" class="toc-link level-3" style="margin-left:16px">How to access JAMOVI on your computer?</a>
+<a href="#h2-1" class="toc-link level-2" style="margin-left:0px">Week 1: Item Wording/Vetting and Partial Correlation</a>
+<a href="#h3-6" class="toc-link level-3" style="margin-left:16px">Learning Objectives</a>
+<a href="#h4-1" class="toc-link level-4" style="margin-left:32px">Item Wording</a>
+<a href="#h4-2" class="toc-link level-4" style="margin-left:32px">Item Vetting Task</a>
+<a href="#h3-7" class="toc-link level-3" style="margin-left:16px">Jamovi Tasks: Correlation</a>
+<a href="#h4-3" class="toc-link level-4" style="margin-left:32px">Preparing for and carrying out a correlation analysis in Jamovi</a>
+<a href="#h4-4" class="toc-link level-4" style="margin-left:32px">Creating a scatter plot with Jamovi</a>
+<a href="#h4-5" class="toc-link level-4" style="margin-left:32px">Output: Correlation</a>
+<a href="#h4-6" class="toc-link level-4" style="margin-left:32px">Writing up Bivariate Correlations</a>
+<a href="#h4-7" class="toc-link level-4" style="margin-left:32px">Using Jamovi to create a grouped scatterplot</a>
+<a href="#h4-8" class="toc-link level-4" style="margin-left:32px">Using Jamovi to carry out partial correlations</a>
+<a href="#h4-9" class="toc-link level-4" style="margin-left:32px">Calculating the degrees of freedom for partial correlations</a>
+<a href="#h4-10" class="toc-link level-4" style="margin-left:32px">Writing up Partial Correlations</a>
+<a href="#h4-11" class="toc-link level-4" style="margin-left:32px">Using Jamovi to Carry out Multiple Correlations</a>
+<a href="#h4-12" class="toc-link level-4" style="margin-left:32px">Different correlation coefficients: Running speed and heart rate</a>
+
+    <p class="footer-note">Default correct answer is <b>999</b>. Use Set-Answer Mode to override and Export/Import the key.</p>
+  </nav>
+  <main class="main">
+    <!-- Note about images -->
+<h1> Course Pack 4 Part 1 </h1>
+
+<h3 id="h3-1">Module Structure and Learning Outcomes</h3>
+<p>On completion of this module, you should be able to achieve the following learning outcomes:</p>
+<p>- Demonstrate a breadth of knowledge about the concepts and scope of relational approaches in psychological research.</p>
+<p>- Demonstrate a breadth of knowledge in choosing appropriate methods of analysis in different research contexts.</p>
+<p>- Describe and justify the design and validation of their own questionnaire using appropriate written reporting conventions.</p>
+<p>- Carry out and interpret various statistical relational analyses using Jamovi and R Studio.</p>
+<p>- Conduct an appropriately designed research study drawing on relational approaches and describe and justify their own research in the presence of others using standard oral reporting conventions.</p>
+
+<h3 id="h3-2">Assessment on Research Methods D</h3>
+<p>Students who have completed a degree which is accredited by the British Psychological Society (BPS) are expected to be able to have research skills. Research Methods D continues your training and education in quantitative research methods and analyses, with a focus on questionnaire design, validation, application and evaluation. You will also need to draw on content from previous research methods modules.<br><br>
+
+Questionnaires are not only important methodological tool for Psychologists and Neuroscientists, they are also useful in many other settings including business, retail, industry, healthcare, social care, fashion, entertainment, education, sales, politics, sociology, consumer research, transport etc. Questionnaires can also be in a wide variety of formats including print, online via a survey platform, verbal, in-person, telephone, text, in social media apps etc. This module will teach you all of the necessary steps to design, plot, refine, validate, apply and evaluate an online questionnaire using Microsoft Forms, and you will be assessed in the following ways:<br> <br>
+
+•	Your ability to design, pilot, refine and validate a new questionnaire will be assessed in the group poster presentation. For this assessment, you will need to draw on the lectures, workshop instructions, your reading and sections 1-3 of this course pack (item vetting, item analysis and factor analysis). <br><br>
+•	Your ability to apply and further evaluate this new questionnaire will then be assessed in the individual 2000-word research report. For this assessment, you will need to draw on the lectures, workshop instructions, reading around the topic and all sections of this course pack (e.g. selecting an appropriate analysis to test your relational hypotheses).<br><br>
+
+It is also important to note that the Research Methods course packs will also be useful for final year projects.  <br><br><br></p>
+
+<h3 id="h3-3">Participation</h3>
+<p> •	Participation in the workshops is strongly advised. 
+•	Workshops are timetabled and you will be allocated to a project group in the same workshop.<br><br>
+•	You will need to work closely with your project group in weeks 1-7. You can also support each other in weeks 8-11 (if you would like to). However, your individual research report must be your own.  <br><br>
+•	If you cannot participate in a workshop, please inform your project group before the session and complete the associated work in your own time. If you cannot complete the associated work in your own time due to illness, inform your group and contribute more towards another aspect of the project. <br><br>
+•	Project groups will keep a log of contributions towards the group project in weeks 1-7. This can be used to identify non-contribution towards the group project.<br><br>
+•	Non-contribution towards the group project may result in the individual receiving NS (non-submission) for the group poster presentation. However, this will only apply if group members have informed the module leader in enough time to give the student a chance to re-engage with the group project. No action will be taken if groups inform the module leader after Week 5. <br><br>
+•	Groups should inform the module leader if a group member is not contributing towards the group project, despite the group reaching out to them on at least 2 separate occasions, at least 1 week apart. The module leader will then give the student a chance to re-engage with the group project. <br><br>
+•	If something is preventing you from contributing towards the group project, please inform the module leader so that we can explore potential solutions. <br><br> 
+</p>
+
+<h3 id="h3-4">Using the course pack</h3>
+<p>The exercises presented in the course pack are designed to help you learn the research methods skills you will need for the assignments and potentially in future employment. This pack includes information about how to run different analyses on Jamovi and R Studio, how to interpret analyses and how to write up your results.</p>
+
+<h3 id="h3-5">How to access Jamovi on your computer?</h3>
+
+<p>Jamovi is a free software, which the University of Birmingham computers will have access to. However, there are two ways you can access Jamovi on your personal computer, if you choose.<br><br>
+
+A)	Access Jamovi on the UoB computers (note that this might be via Apps Anywhere in the start menu or on the Desk Top if Jamovi has not already been installed on the computer).<br>
+B)	Download Jamovi onto your personal computer<br><br>
+
+1.	Go the Jamovi Website: <a href="https://www.jamovi.org/">https://www.jamovi.org/</a> <br>
+2.	Click Jamovi Desktop (Download and Install Jamovi onto your computer)</p>
+
+<img alt="image" src="Files/Images/Image_h3_5_1.png" align="center"  style="padding:0 30px 30px 0;">
+
+<p>3.	Select which version Jamovi you want to download</p>
+<img alt="image" src="Files/Images/Image_h3_5_2.png" align="center"  style="padding:0 30px 30px 0;">
+
+<p>Which version should I download?<br><br>
+•	Release: Jamovi will suggest a release version which is “solid” (this means most, or all features of the software are tested, with no or few glitches) or a “current” version (a newer version which may still have glitches)<br>
+•	Format: Download the .exe format. If you download the .zip format, you will need to right click on the downloaded file and select “extract all” for you to access the contents of the file. <br><br>
+•	Windows Users: If you are not sure which version of Windows (32-bit or 64-bit) your machine is running, you can find information about how to check this here:<br>
+ <a  href="https://support.microsoft.com/en-gb/help/15056/windows-32-64-bit-faq" >https://support.microsoft.com/en-gb/help/15056/windows-32-64-bit-faq</a><br><br>
+
+4.	Go to your download folder and begin installation.<br><br>
+
+If you have any particular installation issues, or any other queries, please feel free to contact the IT Service Desk for additional support via the contact details you can access using the following link: 
+<a href="https://kb.bham.ac.uk/KB10074" > https://kb.bham.ac.uk/KB10074 </a><br><br>
+
+Information correct on 05/11/2024.</p>
+
+<h2 id="h2-1">Week 1: Item Wording/Vetting and Partial Correlation</h2>
+<h3 id="h3-6">Learning Objectives</h3>
+<p>When you have completed this workshop, you should be able to:<br><br>
+1.	Understand the need for careful wording in questionnaire design, distinguishing between different question features that must be considered. <br>
+2.	Distinguish between well-worded and poorly-worded items.<br>
+3.	Create a scatter plot in Jamovi to observe and describe relationships between variables.<br>
+4.	Create a scatter plot in Jamovi to observe and describe the relationship between two variables when data are grouped by a third variable.<br>
+5.	Conduct bivariate correlation between pairs of variables in Jamovi, interpret the output and write-up the findings.<br>
+6.	Conduct partial correlations between two variables in Jamovi, interpret the output and write-up the findings.<br>
+7.	Examine correlational data using scatter plots to make decisions about how to test the relationship between variables.<br>
+</p>
+
+<h4 id="h4-1">Item Wording</h4>
+<p>Here is a list of things to bear in mind when writing questionnaire items. Read through and make sure you understand each potential limitation and how to avoid them</p>
+
+
+  <table>
+    <thead>
+      <tr>
+        <th>Things to bear in mind</th>
+        <th>Explanation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Use simple language</td>
+        <td>Avoid jargon, complicated language or technical terms, keep it simple so anyone can understand.</td>
+      </tr>
+      <tr>
+        <td>Keep questions short</td>
+        <td>Long questions confuse or bore participants. Keep questions as short as possible.</td>
+      </tr>
+      <tr>
+        <td>Avoid double barrelled questions</td>
+        <td>Asking two things in one question confuses participants and produces meaningless data. If you want to ask two things, split into two questions.</td>
+      </tr>
+      <tr>
+        <td>Avoid leading questions</td>
+        <td>We want to know what our participants think and feel, not our own views reflected back. Don’t imply one answer is ‘right’ or ‘better’.</td>
+      </tr>
+      <tr>
+        <td>Avoid double negatives</td>
+        <td>Double negatives are confusing and lead to meaningless data. Consider wording carefully.</td>
+      </tr>
+      <tr>
+        <td>Is the respondent likely to know the answer?</td>
+        <td>If the question is knowledge-based, participants should be able to answer. Consider what your participants can reasonably be expected to know.</td>
+      </tr>
+      <tr>
+        <td>Are the meanings of words clear?</td>
+        <td>Some words have more than one meaning. For example, a bat can mean a mammal, a cricket bat, or to hit. Ensure your meaning is clear.</td>
+      </tr>
+      <tr>
+        <td>Avoid ‘prestige bias’</td>
+        <td>The perceived prestige of a person, brand, job etc. can influence responses. Avoid implying superiority to obtain genuine responses.</td>
+      </tr>
+      <tr>
+        <td>Avoid ‘conformity bias’ and social desirability</td>
+        <td>We often conform to what we think is common or desirable, which may not reflect actual behaviour. Emphasise the importance of honest responses.</td>
+      </tr>
+      <tr>
+        <td>Avoid ambiguity</td>
+        <td>Questions can often be interpreted in several ways. Make sure your question is clear and unambiguous.</td>
+      </tr>
+      <tr>
+        <td>Is the context clear?</td>
+        <td>Words and questions can have different meanings in different contexts. Be explicit about which context you mean.</td>
+      </tr>
+      <tr>
+        <td>Avoid questions that create opinions</td>
+        <td>Questionnaires should explore what participants think or feel, not influence or change their opinions.</td>
+      </tr>
+      <tr>
+        <td>Avoid causing offence</td>
+        <td>Offending participants can result in withdrawal and complaints. Avoid discriminatory language and respect protected characteristics.</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+<h4 id="h4-2">Item Vetting Task</h4>
+<p>Look at the list of questions/items below that were designed to explore life as a student. A participant would respond with their level of agreement to the items below using a 7-point Likert scale ranging from ‘strongly agree’ to ‘strongly disagree’. Read through the items and see if you think any should be removed or re-written. Make a list of alterations (15 min)</p>
+<p>1.	I carefully considered other options before choosing to come to university.<br>
+2.	By working diligently, students earn the minimal funding they receive.<br>
+3.	It is not the case that students are not as well off as they used to be.<br>
+4.	Like successful graduates, I believe students should pay for their own education.<br>
+5.	Radical politicians should be allowed to cut student incomes to poverty levels.<br>
+6.	University will provide me with either a wider view of life or a new path in life’s big journey.<br>
+7.	One hundred pounds is a good amount.<br>
+8.	University life is providing me with new opportunities.<br>
+9.	My degree is the most important area of my life.<br>
+10.	Indolent student politicians are responsible for decimating maintenance grants.<br>
+11.	I balance my studying and socialising well.<br>
+12.	I make an important contribution to the University community.<br>
+13.	After getting my degree I will have a better chance in the British or international job market.<br>
+14.	It is an honest person that believes all education should be free<br>
+15.	Free education is an important cornerstone to our society.<br>
+16.	I believe that students should receive more financial support.<br>
+17.	Questionnaires about student opinions are a waste of time.<br>
+18.	When I started at University I believed I would ultimately improve my quality of life by undertaking further education.<br>
+</p>
+
+<p>If you are not sure about any of these you can ask staff in your workshop, but ultimately you will need to make the decision because you need to be able to defend the methodological and statistical choices you make.
+</p>
+
+
+
+<h3 id="h3-7">Jamovi Tasks: Correlation</h3>
+<h4 id="h4-3"> Preparing for and carrying out a correlation analysis in Jamovi</h4>
+<p>
+Download and open the data file academicsuccess from Canvas. <br>
+How to import data: Note, this is the only time you will be shown this process in this document. <br>
+Open up Jamovi, this is what it will look like. Right now, there are no data loaded. 
+</p>
+
+<img alt="image" src="/Files/Images/Image_h3_7_1.png" align="center"  style="padding:0 30px 30px 0;">
+
+<p>To load an Excel data set, click on the three horizontal lines in the top left</p>
+<img alt="image" src="Files/Images/Image_h3_7_2.png" align="center"  style="padding:0 30px 30px 0;">
+
+<p>Click on open -> This PC -> Browse</p>
+<img alt="image" src="Files/Images/Image_h3_7_3.png" align="center"  style="padding:0 30px 30px 0;">
+
+<p>Once you located it, select it -> press open.<br>
+
+Your dataset will open, and you will be able to see the following:
+</p>
+<img alt="image" src="Files/Images/Image_h3_7_4.png" align="center"  style="padding:0 30px 30px 0;">
+
+<p>Right now, you are in data view. The data is fictional, and created to show that students who are more engaged in their studies are more likely to be academically successful than students who are less engaged. <br><br>
+
+The data has four columns:<br><br>
+
+•	engagement - how engaged students are in their studies<br>
+•	acadsuccess – rating of academic success.<br>
+•	externalLoC – self reported external local of control or sometimes referred here as Externality.<br>
+•	employed – Which participants were in employment after graduation.<br>
+
+You are going to test this hypothesis with a correlational analysis which you should be familiar with from earlier modules
+
+</p>
+
+
+<h4 id="h4-4">Creating a scatter plot with Jamovi</h4>
+
+<p>Before correlating two variables, it is always a good idea to produce a scatter plot of the relationship between two variables. Scatter plots help you to decide which method for calculating a correlation coefficient to use. Scatter plots also tell you if you should perform a correlation analysis at all. <br>
+
+Each point on a scatter plot represents an individual in the sample. The point’s position on the X and Y axes corresponds to that individual’s scores on the two variables.
+
+1.	Select analysis -> exploration -> scatterplot<br>
+</p>
+<img alt="image" src="Files/Images/Image_h3_7_5.png" align="center"  style="padding:0 30px 30px 0;">
+
+<p>2.	You will see your variables, in this screen (see below). Move the “engagement” and “acadsuccess” variables to the X & Y axis. Either by dragging the variable names to the X/Y axis box, or selecting the variable and click on the arrows next to the box. 
+</p>
+<img alt="image" src="Files/Images/Image_h3_7_6.png" align="center"  style="padding:0 30px 30px 0;">
+
+<p>3.	Once you have populated both X and Y axis labels, the Scatterplot will automatically appear. 
+</p>
+<img alt="image" src="Files/Images/Image_h3_7_7.png" align="center"  style="padding:0 30px 30px 0;">
+
+<div class="exercise">
+  <div class="ex-line">
+    <strong>Answer Section</strong><br/>
+    Based on the scatter plot answer these key questions about the data.
+  </div>
+
+  <div class="ex-line">
+    1. Is the relationship approximately linear?
+    <select class="dropdown-input" data-qid="q1" aria-label="Answer 1">
+      <option value="">Select</option>
+      <option value="Yes">Yes</option>
+      <option value="No">No</option>
+    </select>
+  </div>
+
+  <div class="ex-line">
+    2. Is the relationship likely to be strong?
+    <select class="dropdown-input" data-qid="q2" aria-label="Answer 2">
+      <option value="">Select</option>
+      <option value="Yes">Yes</option>
+      <option value="No">No</option>
+    </select>
+  </div>
+
+  <div class="ex-line">
+    3. Is the relationship likely to be positive or negative?
+    <select class="dropdown-input" data-qid="q3" aria-label="Answer 3">
+      <option value="">Select</option>
+      <option value="Positive">Positive</option>
+      <option value="Negative">Negative</option>
+    </select>
+  </div>
+
+  <div class="ex-line">
+    4. Are there any obvious outliers?
+    <select class="dropdown-input" data-qid="q4" aria-label="Answer 4">
+      <option value="">Select</option>
+      <option value="Yes">Yes</option>
+      <option value="No">No</option>
+    </select>
+  </div>
+
+  <button onclick="checkAnswers()">Check Answers</button>
+</div>
+
+
+
+
+<!--
+<div class="exercise">
+<div class="ex-line"><strong>Answer Section</strong><br/>Based on the scatter plot answer these key questions about the data.</div>
+<div class="ex-line">1. Is the relationship approximately linear? <input class="blank-input" data-qid="q1" aria-label="Answer 1" /></div>
+<div class="ex-line">2. Is the relationship likely to be strong? <input class="blank-input" data-qid="q1" aria-label="Answer 1" /></div>
+<div class="ex-line">3. Is the relationship likely to be positive or negative? <input class="blank-input" data-qid="q1" aria-label="Answer 1" /></div>
+<div class="ex-line">4. Are there any obvious outliers? <input class="blank-input" data-qid="q1" aria-label="Answer 1" /></div>
+</div>
+-->
+
+
+</div>
+  </main>
+</div>
+
+
+<script>
+  function checkAnswers() {
+    const correctAnswers = ["Yes", "No", "Positive", "No"];
+    const dropdowns = document.querySelectorAll(".dropdown-input");
+
+    dropdowns.forEach((dropdown, index) => {
+      const selected = dropdown.value;
+      if (selected === correctAnswers[index]) {
+        dropdown.style.backgroundColor = "lightgreen";
+      } else {
+        dropdown.style.backgroundColor = "lightcoral";
+      }
+    });
+  }
+</script>
+
+
+
+
+
+<!--<script>
+
+
+// Default answer for ALL inputs unless overridden:
+const DEFAULT_ANSWER = '999';
+
+// Instructor tool state
+let answerKey = {}; // can be extended later via Set-Answer Mode
+
+const norm = v => (v||'').toString().trim().toLowerCase().replace(/\s+/g,' ');
+
+// Assign IDs
+const inputs = [...document.querySelectorAll('input.blank-input')];
+inputs.forEach((inp,i)=>{ if(!inp.dataset.qid){inp.dataset.qid = 'q'+(i+1);} });
+
+function evaluateBox(box){
+  const bl = [...box.querySelectorAll('input.blank-input')];
+  if(bl.length===0){box.classList.remove('correct','incorrect');return}
+  let any = false, allCorrect = true;
+  bl.forEach(inp=>{
+    const id = inp.dataset.qid;
+    const key = (answerKey[id]!==undefined && answerKey[id]!==null && String(answerKey[id]).length) ? answerKey[id] : DEFAULT_ANSWER;
+    const val = inp.value;
+    inp.classList.remove('correct','incorrect');
+    if(val){
+      any = true;
+      if(norm(val)===norm(key)){
+        inp.classList.add('correct');
+      } else {
+        inp.classList.add('incorrect');
+        allCorrect = false;
+      }
+    } else {
+      allCorrect = false;
+    }
+  });
+  box.classList.remove('correct','incorrect');
+  if(any){ box.classList.add(allCorrect ? 'correct' : 'incorrect'); }
+}
+
+function wireInputs(){
+  const boxes = [...document.querySelectorAll('.exercise')];
+  boxes.forEach(box=>{
+    box.querySelectorAll('input.blank-input').forEach(inp=>{
+      inp.addEventListener('input', ()=>evaluateBox(box));
+      inp.addEventListener('blur', ()=>evaluateBox(box));
+    });
+    evaluateBox(box);
+  });
+}
+wireInputs();
+
+// ---- Instructor utilities ----
+let setMode=false;
+const btnSet = document.getElementById('btn-set');
+const btnExport = document.getElementById('btn-export');
+const btnImport = document.getElementById('btn-import');
+const fileImport = document.getElementById('file-import');
+
+btnSet.addEventListener('click', ()=>{
+  setMode = !setMode;
+  btnSet.classList.toggle('primary', setMode);
+  btnSet.textContent = setMode ? 'Exit Set-Answer Mode' : 'Set-Answer Mode';
+  document.querySelector('.footer-note').textContent = setMode ? 'Set-Answer Mode ON: type the correct answer into a field and press Ctrl+Enter to save. Default remains 999 if not set.' : 'Default correct answer is 999. Use Set-Answer Mode to override and Export/Import the key.';
+});
+
+document.addEventListener('keydown', (e)=>{
+  if(setMode && e.key==='Enter' && e.ctrlKey){
+    const el = document.activeElement;
+    if(el && el.classList.contains('blank-input')){
+      answerKey[el.dataset.qid] = el.value;
+      evaluateBox(el.closest('.exercise'));
+    }
+  }
+});
+
+btnExport.addEventListener('click', ()=>{
+  const data = JSON.stringify(answerKey, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'rmd_answer_key.json'; a.click();
+  URL.revokeObjectURL(url);
+});
+
+btnImport.addEventListener('click', ()=> fileImport.click());
+fileImport.addEventListener('change', (e)=>{
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try{ answerKey = JSON.parse(r.result); wireInputs(); alert('Answer key loaded.'); }
+    catch(err){ alert('Invalid JSON file.'); }
+  };
+  r.readAsText(f);
+});
+</script>
+</body>
+</html>
