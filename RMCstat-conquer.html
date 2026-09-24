@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stat Conquer — Research Methods C</title>
+<style>
+  :root{
+    --bg:#0b1220; --panel:#16213a; --panel2:#1f2d4d; --line:#2d3f66;
+    --ink:#e6edf7; --muted:#93a4c4; --gold:#fbbf24;
+    --locked:#2a3category; --open:#0e7490; --held:#15803d;
+    --w1:#0ea5e9; --w2:#8b5cf6; --w3:#ec4899; --w4:#f59e0b;
+    --ok:#22c55e; --bad:#ef4444;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+       background:radial-gradient(1200px 600px at 30% -10%,#1b2a4a 0%,var(--bg) 60%);
+       color:var(--ink);line-height:1.55}
+  .wrap{max-width:1180px;margin:0 auto;padding:16px}
+  header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;
+         border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:14px}
+  h1{font-size:1.4rem;margin:0}
+  .tally{font-size:.92rem;color:var(--muted)}
+  .tally b{color:var(--gold);font-size:1.1rem}
+  .rank{display:inline-block;background:var(--panel2);border:1px solid var(--line);
+        border-radius:999px;padding:2px 12px;font-size:.8rem;color:var(--gold)}
+  .notice{background:#422006;border:1px solid #a16207;color:#fde68a;
+          padding:8px 12px;border-radius:8px;font-size:.85rem;margin-bottom:12px}
+  .grid{display:grid;grid-template-columns:1fr 310px;gap:18px}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}}
+  svg.map{width:100%;height:auto;display:block}
+  .hex{cursor:pointer}
+  .hex[data-state="locked"]{cursor:not-allowed}
+  .hex:focus-visible polygon.body{stroke:#fff;stroke-width:5}
+  .hex polygon.body{stroke:#0b1220;stroke-width:3;transition:opacity .15s}
+  .hex:hover:not([data-state="locked"]) polygon.body{opacity:.85}
+  .hex text{pointer-events:none;text-anchor:middle;fill:#fff}
+  .hex .nm{font-size:14px;font-weight:700}
+  .hex .sb{font-size:10.5px;fill:#cbd5e1;font-weight:400}
+  .hex .wk{font-size:9.5px;fill:#cbd5e1;letter-spacing:.08em;font-weight:700}
+  .hex .st{font-size:16px;fill:var(--gold);letter-spacing:2px}
+  aside{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;height:max-content}
+  aside h2{font-size:.95rem;margin:0 0 10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .key{display:flex;align-items:center;gap:8px;font-size:.84rem;margin:5px 0;color:var(--muted)}
+  .sw{width:14px;height:14px;border-radius:4px;flex:none}
+  .bar{height:7px;background:#0b1220;border-radius:99px;overflow:hidden;margin:4px 0 10px}
+  .bar i{display:block;height:100%;border-radius:99px}
+  .wkrow{font-size:.82rem;display:flex;justify-content:space-between;color:var(--muted)}
+  button{font:inherit;cursor:pointer;border-radius:9px;border:1px solid var(--line);
+         background:var(--panel2);color:var(--ink);padding:9px 14px;transition:.12s}
+  button:hover:not(:disabled){background:#2b3b61}
+  button.primary{background:#0e7490;border-color:#0e7490;color:#fff}
+  button.primary:hover:not(:disabled){background:#0891b2}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  .stack{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+  dialog{border:1px solid var(--line);border-radius:16px;background:var(--panel);
+         color:var(--ink);max-width:720px;width:calc(100% - 28px);padding:0}
+  dialog::backdrop{background:rgba(3,7,18,.8)}
+  .dhead{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;
+         justify-content:space-between;align-items:center;gap:12px}
+  .dhead h3{margin:0;font-size:1.02rem}
+  .prog{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+  .dbody{padding:18px 20px;max-height:66vh;overflow:auto}
+  .task{font-size:1rem;margin:0 0 14px}
+  .hintline{font-size:.78rem;color:var(--muted);margin:-8px 0 12px}
+  .fb{margin-top:14px;padding:12px 14px;border-radius:9px;background:var(--panel2);
+      border-left:4px solid var(--open);font-size:.9rem;display:none}
+  .fb.show{display:block}
+  .fb.good{border-left-color:var(--ok)} .fb.poor{border-left-color:var(--bad)}
+  .dfoot{padding:13px 20px;border-top:1px solid var(--line);display:flex;
+         justify-content:space-between;gap:8px;align-items:center}
+  .opts{display:flex;flex-direction:column;gap:8px}
+  .opt{text-align:left;width:100%;padding:11px 14px}
+  .opt[aria-pressed="true"]{background:#0e7490;border-color:#38bdf8}
+  .opt.correct{background:#14532d;border-color:var(--ok)}
+  .opt.wrong{background:#7f1d1d;border-color:var(--bad)}
+  /* sort */
+  .pool{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  .chip{padding:8px 12px;font-size:.87rem;text-align:left;max-width:100%}
+  .chip[aria-pressed="true"]{background:#0e7490;border-color:#38bdf8}
+  .bins{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+  .bin{background:#0d1526;border:1px dashed var(--line);border-radius:11px;padding:10px;min-height:96px}
+  .bin h4{margin:0 0 8px;font-size:.82rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  .bin .chip{display:block;width:100%;margin-bottom:6px;font-size:.8rem}
+  .chip.ok{border-color:var(--ok);background:#14532d}
+  .chip.no{border-color:var(--bad);background:#7f1d1d}
+  /* grid */
+  table.dt{width:100%;border-collapse:collapse;font-size:.85rem;font-family:ui-monospace,monospace}
+  table.dt th{background:var(--panel2);padding:7px 6px;font-size:.75rem;text-align:left;border:1px solid var(--line)}
+  table.dt td{padding:0;border:1px solid var(--line)}
+  table.dt td button{width:100%;border:0;border-radius:0;background:transparent;padding:7px 6px;text-align:left;font-family:inherit;font-size:.85rem}
+  table.dt td button[aria-pressed="true"]{background:#0e7490}
+  table.dt td button.hit{background:#14532d;box-shadow:inset 0 0 0 2px var(--ok)}
+  table.dt td button.miss{background:#7f1d1d;box-shadow:inset 0 0 0 2px var(--bad)}
+  table.dt td button.missed{box-shadow:inset 0 0 0 2px var(--gold)}
+  /* slider */
+  .viz{background:#0d1526;border:1px solid var(--line);border-radius:11px;padding:10px;margin-bottom:12px}
+  input[type=range]{width:100%;accent-color:#38bdf8}
+  .readout{display:flex;justify-content:space-between;font-size:.82rem;color:var(--muted);margin-top:6px}
+  .readout b{color:var(--ink);font-family:ui-monospace,monospace;font-size:1rem}
+  /* pairs */
+  .pairs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .pairs h4{margin:0 0 6px;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  .pairs button{width:100%;margin-bottom:6px;font-size:.84rem;text-align:left;padding:9px 11px}
+  .pairs button[aria-pressed="true"]{background:#0e7490;border-color:#38bdf8}
+  .tag{float:right;font-size:.72rem;background:#0b1220;border-radius:99px;padding:1px 7px;margin-left:6px}
+  /* flow */
+  .step{background:#0d1526;border:1px solid var(--line);border-left:3px solid var(--open);
+        border-radius:10px;padding:11px 13px;margin-bottom:10px}
+  .step p{margin:0 0 8px;font-size:.9rem}
+  .step .n{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+  .step .opts{gap:6px}
+  .step .opt{padding:8px 11px;font-size:.85rem}
+  /* order */
+  .ord li{display:flex;align-items:center;gap:8px;background:#0d1526;border:1px solid var(--line);
+          border-radius:9px;padding:8px 10px;margin-bottom:6px;font-size:.86rem}
+  .ord{list-style:none;padding:0;margin:0}
+  .ord .txt{flex:1}
+  .ord button{padding:3px 9px;font-size:.8rem}
+  .ord li.ok{border-color:var(--ok)} .ord li.no{border-color:var(--bad)}
+  /* blanks */
+  .tpl{background:#0d1526;border:1px solid var(--line);border-radius:11px;padding:14px;font-size:.93rem;line-height:2.1}
+  .tpl select,.tpl input{background:#0b1220;color:var(--ink);border:1px solid #38bdf8;
+        border-radius:6px;padding:3px 6px;font:inherit;font-size:.88rem;min-width:62px}
+  .tpl select.ok,.tpl input.ok{border-color:var(--ok);background:#14532d}
+  .tpl select.no,.tpl input.no{border-color:var(--bad);background:#7f1d1d}
+  /* plot */
+  .ind{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+  .ind div{background:#0d1526;border:1px solid var(--line);border-radius:9px;padding:8px;text-align:center;font-size:.76rem;color:var(--muted)}
+  .ind b{display:block;font-size:.95rem;margin-top:2px}
+  .ind b.y{color:var(--ok)} .ind b.n{color:var(--muted)}
+  .pt{cursor:grab;touch-action:none}
+  .big{font-size:2.3rem;letter-spacing:7px;color:var(--gold);text-align:center;margin:10px 0}
+  textarea{width:100%;min-height:90px;background:#0b1220;color:var(--ink);
+           border:1px solid var(--line);border-radius:9px;padding:10px;font-family:ui-monospace,monospace;font-size:.78rem}
+  .legendbar{display:flex;gap:14px;flex-wrap:wrap;font-size:.78rem;color:var(--muted);margin-bottom:8px}
+  .legendbar span i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Stat Conquer <span style="color:var(--muted);font-weight:400;font-size:.95rem">· Research Methods C</span></h1>
+      <div class="tally">
+        <b><span id="starCount">0</span>/39</b> stars ·
+        <span id="terrCount">0</span>/13 territories held ·
+        <span class="rank" id="rank">Novice Analyst</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px"><button id="btnSave">Backup code</button></div>
+  </header>
+
+  <div id="notice" class="notice" style="display:none"></div>
+
+  <div class="grid">
+    <main>
+      <div class="legendbar">
+        <span><i style="background:var(--w1)"></i>Week 1 · Data handling</span>
+        <span><i style="background:var(--w2)"></i>Week 2 · Inferential tests</span>
+        <span><i style="background:var(--w3)"></i>Week 3 · More ANOVAs</span>
+        <span><i style="background:var(--w4)"></i>Week 4 · Factorial ANOVA</span>
+      </div>
+      <svg class="map" id="map" viewBox="0 0 880 620" role="group" aria-label="Campaign map"></svg>
+    </main>
+
+    <aside>
+      <h2>Campaign</h2>
+      <div id="wkProg"></div>
+      <div class="key" style="margin-top:14px"><span class="sw" style="background:var(--held)"></span> Held — conquered</div>
+      <div class="key"><span class="sw" style="background:var(--open)"></span> Open — ready to attack</div>
+      <div class="key"><span class="sw" style="background:#2a3a5c"></span> Locked — take a neighbour first</div>
+      <p style="font-size:.84rem;color:var(--muted);margin-top:12px">
+        Each territory holds three challenges. Clear all three to take it.
+        Stars depend on how many you solve <em>first time</em>, so a held
+        territory can always be re-taken for a better score.</p>
+      <div class="stack">
+        <button id="btnRestore">Restore from code</button>
+        <button id="btnReset">Reset campaign</button>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<dialog id="dlg">
+  <div class="dhead">
+    <h3 id="dTitle">Territory</h3>
+    <span class="prog" id="dProg">1 / 3</span>
+  </div>
+  <div class="dbody">
+    <p class="task" id="dTask"></p>
+    <p class="hintline" id="dHint"></p>
+    <div id="dBody"></div>
+    <div class="fb" id="dFb"></div>
+  </div>
+  <div class="dfoot">
+    <button id="dQuit">Retreat</button>
+    <div style="display:flex;gap:8px">
+      <button id="dCheck" class="primary">Check</button>
+      <button id="dNext" class="primary" style="display:none">Next</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="res">
+  <div class="dhead"><h3 id="rTitle">Territory taken</h3></div>
+  <div class="dbody">
+    <div class="big" id="rStars">★★★</div>
+    <p id="rMsg" style="text-align:center;margin:0"></p>
+  </div>
+  <div class="dfoot" style="justify-content:flex-end"><button class="primary" id="rClose">Back to map</button></div>
+</dialog>
+
+<dialog id="code">
+  <div class="dhead"><h3 id="cTitle">Backup code</h3></div>
+  <div class="dbody">
+    <p id="cMsg" style="font-size:.88rem;color:var(--muted);margin-top:0"></p>
+    <textarea id="cText" spellcheck="false"></textarea>
+  </div>
+  <div class="dfoot" style="justify-content:flex-end">
+    <button id="cClose">Close</button>
+    <button id="cAction" class="primary">Copy</button>
+  </div>
+</dialog>
+
+<script>
+"use strict";
+
+/* ============================================================
+   CONTENT — built from RMC Weeks 1-4 tutorial pages
+   ============================================================ */
+const WEEKS = [
+  {n:1, name:"Data handling",      col:"#0ea5e9"},
+  {n:2, name:"Inferential tests",  col:"#8b5cf6"},
+  {n:3, name:"More ANOVAs",        col:"#ec4899"},
+  {n:4, name:"Factorial ANOVA",    col:"#f59e0b"}
+];
+
+const TERR = [
+/* ---------------- WEEK 1 ---------------- */
+{
+  id:"t1", w:1, name:"Spreadsheet Shores", sub:"Designs & data layout", x:118, y:120, nb:[],
+  ch:[
+    { t:"sort",
+      q:"Every study below needs a different layout in the jamovi Data tab. Sort each one into its design.",
+      hint:"Select a study, then click the design it belongs to. Click a placed study to send it back.",
+      bins:["Between-participants","Within-participants","Mixed"],
+      items:[
+        {x:"Each participant watches one video type only, then rates how calm they feel.", b:0},
+        {x:"Blood sugar is measured before and after every participant drinks their drink.", b:1},
+        {x:"Psychology and Neuroscience students each rate their stats expertise once.", b:0},
+        {x:"The same patients complete a speech, a conceptual and a syntax task.", b:1},
+        {x:"Confidence is measured before and after training, in students who started high vs low in confidence.", b:2}
+      ],
+      e:"One row is always one person. A <b>within</b> factor therefore needs one column per condition, because the same participant supplies several scores. A <b>between</b> factor needs a single grouping column that labels which condition each person was in — scores from two different people can never share a row. A <b>mixed</b> design needs both: a grouping column and one column per repeated condition."
+    },
+    { t:"mcq",
+      q:"In the jamovi Data tab, what does one row represent?",
+      o:["One variable","One participant (case)","One condition of the study","One analysis"], a:1,
+      e:"Rows are cases, columns are variables. This flips in the Variables tab, where one row describes one variable — a switch that catches people out constantly."
+    },
+    { t:"mcq",
+      q:"You have coded a grouping variable as 1 and 2. Why does it matter that you also label those values in the Variables tab?",
+      o:["jamovi cannot run the analysis without labels",
+         "Labels make the numbers into a scale variable",
+         "Without labels, the output tells you group 1 differs from group 2 but not which group is which",
+         "Labels change the p-value"], a:2,
+      e:"The test runs perfectly happily on bare numbers — the problem is interpretation. Every table and plot will say '1' and '2', and you will be guessing which is the experimental group. Labels and a description in the Variables tab are how future-you avoids that."
+    }
+  ]
+},
+{
+  id:"t2", w:1, name:"Outlier Outcrop", sub:"Screening raw data", x:118, y:300, nb:["t1"],
+  ch:[
+    { t:"grid",
+      q:"This is the raw data as it arrives. Flag every cell you would not trust.",
+      hint:"Click a cell to flag it. Click again to unflag. There are four problems.",
+      cols:["Row","Age","Expertise","A-level"],
+      rows:[
+        ["1","19","54","yes"],["2","20","61","yes"],["3","-2","47","no"],
+        ["4","18","999","yes"],["5","21","","no"],["6","149","58","yes"],
+        ["7","19","63","no"],["8","22","50","yes"]
+      ],
+      bad:["2:1","3:2","4:2","5:1"],
+      e:"An age of <b>-2</b> and an age of <b>149</b> are impossible — typos or jokes at data collection. The <b>999</b> is almost certainly a missing-data code that jamovi will happily average in as a real score unless you declare it. The <b>blank</b> cell is genuine missing data and simply reduces N for that variable. Three different problems, three different fixes: none of them are visible from a means table."
+    },
+    { t:"mcq",
+      q:"After removing two impossible ages, the mean stays at 19.3 but the SD falls from 3.81 to 2.70. What does that tell you?",
+      o:["The sample is now too small to trust",
+         "Extreme values distorted the spread estimate far more than the centre",
+         "The data are now normally distributed",
+         "Removing outliers always shrinks the standard deviation by about 25%"], a:1,
+      e:"Two values out of thousands barely shifted the mean, but they cut the estimate of variability by roughly a quarter. Because the SD feeds into standard errors, t-values and effect sizes, a nearly invisible data-entry error can quietly change your entire inferential result."
+    },
+    { t:"slider", viz:"skew",
+      q:"Response time data almost never look symmetrical. Drag until the histogram shows the strong positive skew typical of RT data.",
+      hint:"Positive skew means the long tail stretches to the right — to the slow responses.",
+      min:-1, max:1, step:.05, init:0, accept:[.5,1], fmt:v=>"Skewness ≈ "+v.toFixed(2),
+      e:"Positive skew = long right tail, and a skewness statistic clearly above zero. It happens with RT because there is a hard floor on how fast anyone can respond but no ceiling on how slow. For Level 2 the working rule is to treat RT as approximately normal as long as the tail does not extend beyond 3 SD above the mean."
+    }
+  ]
+},
+{
+  id:"t3", w:1, name:"Compute Creek", sub:"Transform & recode", x:118, y:480, nb:["t2"],
+  ch:[
+    { t:"order",
+      q:"Put the jamovi steps for computing a total score into the right order.",
+      hint:"Use the arrows to move each step.",
+      items:[
+        "Click the empty column to the right of your data",
+        "Go to the Data tab and choose Compute",
+        "Give the new variable a meaningful name, e.g. Attitude_to_Jamovi_total",
+        "Open fx and double-click the first contributing variable",
+        "Type + and add each remaining variable to the formula",
+        "In the Variables tab, add a description and check the measure type is Scale"
+      ],
+      e:"The last step is the one everybody skips. A column called 'D' with no description is useless three weeks later, and if jamovi has guessed the measure type wrongly your new total may not even be offered to the analysis you need."
+    },
+    { t:"blanks",
+      q:"You are recoding which_row (values 1–9) into near / mid / far using Data ▸ Transform. Complete the conditions.",
+      hint:"Conditions execute in order, from the top down.",
+      tpl:"if $source < {0} use 'near'\nif $source < {1} use 'mid'\nelse use 'far'",
+      b:[{k:"num",a:4},{k:"num",a:7}],
+      e:"The first condition catches 1, 2 and 3. The second says < 7, which would also be true of 1–3 — but those rows have already been recoded, so in practice it only picks up 4, 5 and 6. The else clause mops up 7, 8 and 9. Order is doing real work here, which is why writing < 7 feels wrong until you realise the earlier condition has already fired."
+    },
+    { t:"mcq",
+      q:"A questionnaire has 5 items. Why might you compute a mean score rather than a total?",
+      o:["The mean is always more accurate than a total",
+         "A mean stays on the original response scale, so it can be compared to the item wording and to scales of different lengths",
+         "jamovi cannot compute totals for more than 4 variables",
+         "Totals cannot be used in a t-test"], a:1,
+      e:"A total of 24 means nothing on its own; a mean of 4.8 sits directly on the 1–7 response scale and is immediately interpretable. Means also survive comparison across scales with different numbers of items, and handle missing responses more gracefully than a sum that silently drops to zero."
+    }
+  ]
+},
+/* ---------------- WEEK 2 ---------------- */
+{
+  id:"t4", w:2, name:"Hypothesis Harbour", sub:"Choosing your test", x:310, y:90, nb:["t1","t2"],
+  ch:[
+    { t:"flow",
+      q:"Hypothesis: “Older students look forward to the module more than younger ones.” Exploration shows both groups are normally distributed with no outliers.",
+      steps:[
+        {q:"Are the same people measured twice, or are these separate groups?",
+         o:["Separate groups (between-participants)","Same people twice (within-participants)"], a:0},
+        {q:"Do the data meet parametric assumptions?",
+         o:["Yes — proceed parametric","No — go non-parametric"], a:0},
+        {q:"Which test?",
+         o:["Independent samples t-test","Paired samples t-test","Mann-Whitney U","Wilcoxon signed ranks"], a:0},
+        {q:"One-sided or two-sided?",
+         o:["Two-sided","One-sided — a direction is predicted"], a:1}
+      ],
+      e:"Older and younger students are different people, so the design is between-participants and the parametric route gives an independent t-test. The word <b>more</b> commits you to a direction, so the hypothesis is one-sided and you set that in the Hypothesis panel before you look at the output — not after."
+    },
+    { t:"flow",
+      q:"Hypothesis: “Performance scores are higher after practice than before practice.” The difference scores are clearly skewed.",
+      steps:[
+        {q:"Design?",
+         o:["Between-participants","Within-participants (repeated measures)"], a:1},
+        {q:"Parametric assumptions?",
+         o:["Met — parametric","Not met — non-parametric"], a:1},
+        {q:"Which test?",
+         o:["Paired samples t-test","Wilcoxon signed ranks","Mann-Whitney U","Friedman"], a:1},
+        {q:"Which descriptives do you report?",
+         o:["Means and standard deviations","Medians with minimum and maximum"], a:1}
+      ],
+      e:"Same people before and after = related samples; skewed data push you to the non-parametric equivalent, the Wilcoxon. Because Wilcoxon works on the <b>ranks</b> of the difference scores rather than their absolute size, reporting means alongside it is incoherent. Report medians and the min–max range, plus the rank biserial correlation as the effect size."
+    },
+    { t:"mcq",
+      q:"jamovi shows p = 0.000. What do you write in your report?",
+      o:["p = 0.000","p < .001","p = 0","p is not significant"], a:1,
+      e:"A p-value can never truly be zero — that would mean there is no chance whatsoever of these data arising through sampling error, and sampling error is always possible. jamovi has simply rounded. Report exact probabilities to 3 decimal places wherever you can, and <b>p < .001</b> when the value is smaller than that."
+    }
+  ]
+},
+{
+  id:"t5", w:2, name:"Levene's Ledge", sub:"Assumption gates", x:310, y:270, nb:["t4"],
+  ch:[
+    { t:"mcq",
+      q:"In the Assumptions table of an independent t-test, what is Levene's test actually testing?",
+      o:["Whether the two means differ","Whether the two groups have equal variances",
+         "Whether the data are normally distributed","Whether the sample is large enough"], a:1,
+      e:"Levene's tests homogeneity of variance — whether the spread is comparable in the two groups. It says nothing about the means, which is what the t-test itself is for, and nothing about normality, which is what Shapiro-Wilk and your histograms are for."
+    },
+    { t:"slider", viz:"rule",
+      q:"Drag Levene's p to a value that would force you to abandon Student's and rerun with Welch's.",
+      hint:"The conventional cut-off is .05.",
+      min:0, max:.3, step:.001, init:.15, accept:[0,.0499],
+      rule:{thresh:.05, lo:"Unequal variances — use Welch's", hi:"Equal variances assumed — use Student's"},
+      fmt:v=>"Levene's p = "+v.toFixed(3),
+      e:"If Levene's p is <b>greater than .05</b> you may assume equal variances and read Student's t. If it is <b>less than .05</b> the assumption has failed: tick Welch's in the Tests menu and report those values instead. Note the inversion that trips people up — a significant Levene's test is bad news for your assumption, not good news for your hypothesis."
+    },
+    { t:"mcq",
+      q:"Levene's test returns p = .312. What do you do?",
+      o:["Switch to Welch's","Switch to Mann-Whitney","Read the Student's t-test row","Remove outliers and rerun"], a:2,
+      e:"p = .312 is comfortably above .05, so there is no evidence that the variances differ and Student's t stands. Nothing needs rescuing here — a non-significant Levene's is exactly the result you want to see."
+    }
+  ]
+},
+{
+  id:"t6", w:2, name:"Effect Size Escarpment", sub:"Cohen's d", x:310, y:450, nb:["t5"],
+  ch:[
+    { t:"slider", viz:"effect",
+      q:"Drag the groups apart until they show what is conventionally called a medium effect.",
+      hint:"Watch how much the two distributions still overlap.",
+      min:0, max:2, step:.01, init:0, accept:[.42,.58], fmt:v=>"d = "+v.toFixed(2),
+      e:"The convention is d = 0.2 small, <b>0.5 medium</b>, 0.8 large. Notice how much overlap survives at a medium effect — plenty of people in the 'lower' group still score above the average of the 'higher' group. That is what a medium effect actually looks like, and it is a useful corrective to the way significance gets talked about."
+    },
+    { t:"slider", viz:"effect",
+      q:"Now set d to a value where the gap between the group means exceeds one whole standard deviation.",
+      min:0, max:2, step:.01, init:.3, accept:[1.0,2.0], fmt:v=>"d = "+v.toFixed(2),
+      e:"d is measured in standard deviation units, so d > 1 means the means are more than one SD apart. This is why d travels across studies and raw mean differences do not: 40 ms is enormous in one paradigm and trivial in another, but d = 1.2 means the same thing everywhere."
+    },
+    { t:"mcq",
+      q:"A study with 2,000 participants reports t(1998) = 2.41, p = .016, d = 0.11. How should this be read?",
+      o:["A reliable and important difference","A large effect, because p is significant",
+         "A difference unlikely to be pure sampling error, but so small it may not matter in practice",
+         "An error — d should be larger when p is significant"], a:2,
+      e:"With a large enough sample almost any non-zero difference becomes significant. The p-value tells you the difference is probably real; d = 0.11 tells you it is tiny. This is exactly why effect sizes are reported alongside significant tests — and why, when a test is not significant, there is no need to report d at all."
+    }
+  ]
+},
+{
+  id:"t7", w:2, name:"Rank Ridge", sub:"Non-parametric alternatives", x:310, y:570, nb:["t5","t6"],
+  ch:[
+    { t:"pairs",
+      q:"Match each parametric test to its non-parametric equivalent.",
+      hint:"Click a test on the left, then its partner on the right.",
+      left:["Pearson's correlation","Independent samples t-test","Paired samples t-test",
+            "Between-participants one-way ANOVA","Repeated measures one-way ANOVA"],
+      right:["Wilcoxon","Kruskal-Wallis","Spearman's correlation","Friedman","Mann-Whitney"],
+      map:{0:2,1:4,2:0,3:1,4:3},
+      e:"The logic maps cleanly: two independent groups → Mann-Whitney; two related conditions → Wilcoxon; three or more independent groups → Kruskal-Wallis; three or more related conditions → Friedman. Every one of them replaces the raw values with ranks, which is why they survive skew and cope with ordinal data."
+    },
+    { t:"mcq",
+      q:"Why are group means not reported for a Mann-Whitney test, even though jamovi prints them?",
+      o:["They are calculated incorrectly for non-parametric data",
+         "The test works on ranks, so the median is the summary consistent with what was tested",
+         "jamovi only prints them for reference",
+         "Means cannot be computed for ordinal data"], a:1,
+      e:"The U statistic never sees the raw values — it compares ranking positions. Quoting a mean would describe something the test did not analyse, and for the skewed or ordinal data that sent you to Mann-Whitney in the first place the mean is misleading anyway. Report medians, min–max, and the rank biserial correlation."
+    },
+    { t:"mcq",
+      q:"Your independent groups data are ordinal and badly skewed, with small and unequal group sizes across four groups. Which test?",
+      o:["One-way between-participants ANOVA","Kruskal-Wallis","Friedman","Repeated measures ANOVA"], a:1,
+      e:"Four independent groups rules out Friedman, which needs related conditions. Ordinal, skewed, small and unequal groups rules out the parametric ANOVA. Kruskal-Wallis is the right call, and it reports χ² with an ε² effect size — follow it up with DSCF pairwise comparisons, which protect the family-wise error rate."
+    }
+  ]
+},
+/* ---------------- WEEK 3 ---------------- */
+{
+  id:"t8", w:3, name:"Repeated Ridge", sub:"Within-participants ANOVA", x:500, y:150, nb:["t6","t7"],
+  ch:[
+    { t:"mcq",
+      q:"Thirty participants each complete surface, deep and no-prime conditions. How should the data look in jamovi?",
+      o:["90 rows, with a grouping column for priming condition",
+         "30 rows, with three columns — one per priming condition",
+         "3 rows, one per condition","30 rows and one column of response times"], a:1,
+      e:"One row is still one person, so 30 participants means 30 rows. Because each person supplies three scores, the repeated factor spreads sideways into three columns. Option 1 is the layout you would need for the <b>between</b>-participants version of the same experiment — which is exactly why the two designs cannot share a data file."
+    },
+    { t:"order",
+      q:"Order the steps for running a one-way repeated measures ANOVA in jamovi.",
+      items:[
+        "Explore the repeated measures in Descriptives with histograms and box plots",
+        "Analyses ▸ ANOVA ▸ Repeated Measures ANOVA",
+        "Name RM Factor 1 and rename its levels to your conditions",
+        "Drag each condition column into its Repeated Measures Cell",
+        "Tick partial η² under Effect Size",
+        "Check sphericity under Assumption Checks",
+        "Add the factor to Post Hoc Tests with a Bonferroni correction"
+      ],
+      e:"Screening comes first, always — you cannot know whether ANOVA is defensible until you have looked. And post hoc tests come last for a reason: they are only interpretable if the omnibus F is significant. Running them first invites you to go fishing."
+    },
+    { t:"blanks",
+      q:"Six patients each complete three tasks. Complete the degrees of freedom for the within-subjects effect.",
+      hint:"Within df = k − 1. Residual df = (n − 1)(k − 1).",
+      tpl:"F({0}, {1}) = 6.93, p = .013",
+      b:[{k:"num",a:2},{k:"num",a:10}],
+      e:"With k = 3 conditions the effect df is k − 1 = 2. The residual df is (n − 1)(k − 1) = 5 × 2 = 10. Both numbers go in the report, and a reader who knows the formulae can reconstruct your design from them — which is precisely why they are required."
+    }
+  ]
+},
+{
+  id:"t9", w:3, name:"Sphericity Summit", sub:"Corrections", x:500, y:330, nb:["t8"],
+  ch:[
+    { t:"mcq",
+      q:"Mauchly's test of sphericity returns p = .284. What follows?",
+      o:["Sphericity is violated — apply a correction",
+         "Sphericity is satisfied — no correction needed",
+         "Switch to Friedman's test","Rerun with Welch's correction"], a:1,
+      e:"Mauchly's null hypothesis is that the variances of the differences between conditions are equal. A non-significant result means there is no evidence against it, so you read the uncorrected F. As with Levene's, a significant result here is the bad outcome."
+    },
+    { t:"slider", viz:"rule",
+      q:"Sphericity has been violated. Drag the Greenhouse-Geisser value to a point where Greenhouse-Geisser is the correction you should select.",
+      min:.3, max:1, step:.01, init:.9, accept:[.3,.749],
+      rule:{thresh:.75, lo:"Use the Greenhouse-Geisser correction", hi:"Use the Huynh-Feldt correction"},
+      fmt:v=>"Greenhouse-Geisser ε = "+v.toFixed(2),
+      e:"Once sphericity fails, the size of ε decides which correction to use: <b>below .75 → Greenhouse-Geisser</b>, which is the more conservative adjustment; <b>above .75 → Huynh-Feldt</b>. Whichever you pick, untick 'None' so you report one F rather than three."
+    },
+    { t:"mcq",
+      q:"Why does sphericity never come up when you run a paired samples t-test?",
+      o:["Paired t-tests do not assume anything about variance",
+         "Sphericity concerns variances of differences between pairs of conditions, and with only two conditions there is just one such difference",
+         "jamovi tests it silently in the background",
+         "It only applies to between-participants designs"], a:1,
+      e:"Sphericity requires the differences between every <b>pair</b> of conditions to have roughly equal variances. With two conditions there is only one pair, so there is nothing to compare and the assumption is trivially met. It becomes a live concern from three conditions onward — which is why it appears with repeated measures ANOVA and not before."
+    }
+  ]
+},
+{
+  id:"t10", w:3, name:"Kruskal Keep", sub:"Non-parametric ANOVA", x:500, y:510, nb:["t8","t9"],
+  ch:[
+    { t:"flow",
+      q:"Students rate how much they look forward to a module on a 5-point scale. You want to compare Monday, Tuesday, Thursday and Friday workshop groups. Group sizes are small and unequal, and the ratings are skewed.",
+      steps:[
+        {q:"How many groups, and are they related?",
+         o:["Four independent groups","Four related conditions","Two independent groups"], a:0},
+        {q:"Is the parametric route defensible?",
+         o:["Yes — ANOVA is robust enough","No — ordinal, skewed, small and unequal groups"], a:1},
+        {q:"Which test?",
+         o:["One-way between-participants ANOVA","Kruskal-Wallis","Friedman","Repeated measures ANOVA"], a:1},
+        {q:"The test is significant. How do you locate the differences?",
+         o:["Bonferroni-corrected t-tests","DSCF pairwise comparisons","Tukey post hoc","No follow-up is needed"], a:1}
+      ],
+      e:"Four separate groups of students, ordinal ratings, small and unequal samples — Kruskal-Wallis. jamovi's DSCF pairwise comparisons are the practical follow-up: they are two-sided and protect the family-wise error rate, so you avoid having to build separate data files to run Mann-Whitney tests by hand."
+    },
+    { t:"blanks",
+      q:"You are running four pairwise comparisons by hand and want to protect against family-wise error with a Bonferroni correction.",
+      hint:"Divide your criterion by the number of comparisons. Give the answer to 4 decimal places.",
+      tpl:".05 ÷ {0} comparisons = {1}",
+      b:[{k:"num",a:4},{k:"num",a:.0125,tol:.0002}],
+      e:"Four comparisons gives an adjusted criterion of .0125, so a comparison at p = .03 — significant on its own — is <b>not</b> significant once corrected. State in the report both that you applied the correction and what the new criterion was, otherwise a reader cannot check your decisions."
+    },
+    { t:"mcq",
+      q:"A Friedman test returns χ²(2) = 2.86, p = .239. What comes next?",
+      o:["Run Durbin-Conover comparisons to find the difference",
+         "Run Wilcoxon post hocs with a Bonferroni correction",
+         "Nothing — a non-significant omnibus test does not get followed up",
+         "Rerun as a repeated measures ANOVA"], a:2,
+      e:"There is no overall effect to decompose. Hunting through pairwise comparisons after a non-significant omnibus test is fishing, and it inflates your error rate for exactly the reason Bonferroni exists. Report the null result and the medians, and stop."
+    }
+  ]
+},
+/* ---------------- WEEK 4 ---------------- */
+{
+  id:"t11", w:4, name:"Factorial Fields", sub:"2×2 designs", x:690, y:150, nb:["t9","t10"],
+  ch:[
+    { t:"sort",
+      q:"Three ways to build a 2×2. Sort each study by how its participants were allocated.",
+      bins:["2×2 independent","2×2 repeated measures","2×2 mixed"],
+      items:[
+        {x:"A different group takes part in each of the four communication mode × expertise conditions.", b:0},
+        {x:"Every participant responds under low/high likelihood and limited/unlimited time.", b:1},
+        {x:"All participants see both questions and statements, but half see questions first.", b:2},
+        {x:"Four separate groups, one per combination of the two factors.", b:0},
+        {x:"One group, measured before and after, under two different task types.", b:1}
+      ],
+      e:"The question is only ever: does this participant appear in one cell or in several? All four cells → repeated measures. One cell each → independent. Some factors repeated and some not → mixed. In jamovi the first two use different dialogs entirely, and a mixed design needs the Repeated Measures dialog <i>plus</i> a Between-Subjects Factor."
+    },
+    { t:"mcq",
+      q:"A study is described as a 3×4 design. What does that tell you?",
+      o:["Twelve participants","Two factors, one with 3 levels and one with 4",
+         "Three factors with four levels each","Three DVs and four IVs"], a:1,
+      e:"Two numbers means two factors; the numbers are how many levels each has, giving 3 × 4 = 12 cells. A 2×2×2 would be three factors with two levels each. The notation carries the whole shape of the design, which is why it belongs in your method section."
+    },
+    { t:"mcq",
+      q:"A factorial ANOVA finds a significant main effect of a factor with four levels. What must you do?",
+      o:["Nothing — the F is enough",
+         "Run a post hoc comparison to find which levels differ",
+         "Rerun as four separate t-tests",
+         "Report the interaction instead"], a:1,
+      e:"A significant F with four levels tells you the means are not all equal, and nothing more. Post hoc comparisons locate the differences, with a correction such as Bonferroni to control family-wise error. A two-level factor is the exception: there is only one possible difference, so the marginal means already tell you the direction."
+    }
+  ]
+},
+{
+  id:"t12", w:4, name:"Interaction Isle", sub:"Reading the plot", x:690, y:330, nb:["t11"],
+  ch:[
+    { t:"plot",
+      q:"Drag the four cell means to build a pattern with two main effects but no interaction.",
+      hint:"Watch the three readouts below the plot. Drag the circles up and down.",
+      xlab:["Novice","Expert"], llab:["External","Internal"],
+      target:{x:true, line:true, inter:false},
+      e:"Two main effects with no interaction means <b>parallel lines that are not flat and not on top of each other</b>. Parallel is the whole signature of 'no interaction': the effect of expertise is the same size whichever communication mode you are in, so the factors act independently and simply add up."
+    },
+    { t:"plot",
+      q:"Now build a crossover interaction with no main effect of either factor.",
+      hint:"Think about what the marginal means have to do for a main effect to vanish.",
+      xlab:["Novice","Expert"], llab:["External","Internal"],
+      target:{x:false, line:false, inter:true},
+      e:"Make the lines cross symmetrically — one rising, one falling by the same amount. Averaged over the other factor, every marginal mean lands in the same place, so both main effects disappear while the interaction is at its strongest. This is the case that proves why reporting main effects without inspecting the interaction can be actively misleading: 'no effect of expertise' would be a flatly wrong summary of these data."
+    },
+    { t:"mcq",
+      q:"An interaction plot shows two clearly separated lines, both sloping upward in parallel. What is the most likely result?",
+      o:["A significant interaction","Two main effects and no interaction",
+         "One main effect only","No effects at all"], a:1,
+      e:"Separation between the lines is a main effect of the line factor; the shared slope is a main effect of the x-axis factor; parallel means no interaction. Learning to read the shape before reading the table makes the ANOVA output far easier to interpret — and catches the occasional analysis that has been set up wrongly."
+    }
+  ]
+},
+{
+  id:"t13", w:4, name:"Write-Up Wharf", sub:"Reporting in APA style", x:690, y:510, nb:["t12"],
+  ch:[
+    { t:"blanks",
+      q:"Complete the results sentence for the 2×2 independent ANOVA on intention to bet.",
+      hint:"Communication mode: F = 68.50, ηp² = .419, 95 residual df. Effect explains 42% of variance.",
+      tpl:"There was a significant main effect of communication mode on intention to bet, F(1, {0}) = 68.50, p {1} .001, ηp² = {2}.",
+      b:[{k:"num",a:95},{k:"sel",o:["<",">","="],a:0},{k:"num",a:.419,tol:.002}],
+      e:"The two df values, the F, the exact p and the effect size are the minimum set — a reader needs all of them to evaluate or re-analyse your claim. The first df is the effect df, the second comes from the Residuals row, and ηp² = .419 means the effect accounts for about 42% of the variance."
+    },
+    { t:"mcq",
+      q:"The interaction in that analysis was F(1, 95) = 3.60, p = .061, ηp² = .037. How should it be handled?",
+      o:["Report it as significant, since it is close to .05",
+         "Leave it out of the report entirely",
+         "Report it as non-significant, and note that it approached significance if it is theoretically relevant",
+         "Rerun the analysis with more participants until it becomes significant"], a:2,
+      e:"p = .061 is not significant, and calling it significant is simply wrong. But a near-miss on a predicted interaction is worth a sentence in the discussion, because it bears on the hypothesis. Note also the convention your module follows: effect sizes are not always reported for non-significant effects."
+    },
+    { t:"mcq",
+      q:"When should an interaction plot go into your results section?",
+      o:["Always — every factorial ANOVA needs one",
+         "Only when the interaction is significant, and usually as a bar chart",
+         "Only when the interaction is non-significant",
+         "Never — tables of means are always preferred"], a:1,
+      e:"A plot of a non-significant interaction invites the reader to see a pattern the statistics do not support. When the interaction is significant, include one — as a bar chart rather than jamovi's line plot — label it as a Figure with the caption above, and refer to it in the text rather than leaving it to speak for itself."
+    }
+  ]
+}
+];
+
+const TOTAL_STARS = TERR.length * 3;
+const RANKS = [[0,"Novice Analyst"],[9,"Research Assistant"],[18,"Data Ranger"],
+               [27,"Stats Strategist"],[36,"Methods Marshal"]];
+
+/* ============================================================
+   STATE + STORAGE
+   ============================================================ */
+const KEY = "statconquer_rmc_v1";
+let memoryOnly = false;
+let save = { stars:{} };
+
+function load(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(raw){ const p = JSON.parse(raw); if(p && typeof p==="object" && p.stars) save = p; }
+    localStorage.setItem(KEY+"_probe","1"); localStorage.removeItem(KEY+"_probe");
+  }catch(err){
+    memoryOnly = true;
+    note("Your browser is blocking saved progress in this embedded page, so this session will not be remembered. Everything still works — take a backup code before you close the tab, or open the page in its own tab.");
+  }
+}
+function persist(){
+  if(memoryOnly) return;
+  try{ localStorage.setItem(KEY, JSON.stringify(save)); }
+  catch(err){ memoryOnly = true; note("Progress could not be saved. Use the backup code to keep your campaign."); }
+}
+function note(msg){ const n=document.getElementById("notice"); n.textContent=msg; n.style.display="block"; }
+
+const starsOf = id => save.stars[id] || 0;
+const held    = id => starsOf(id) > 0;
+const isOpen  = t => t.nb.length===0 || t.nb.some(held);
+
+/* ============================================================
+   MAP
+   ============================================================ */
+const R = 62;
+function hexPoints(cx,cy){
+  let p=[]; for(let i=0;i<6;i++){ const a=Math.PI/180*(60*i);
+    p.push((cx+R*Math.cos(a)).toFixed(1)+","+(cy+R*Math.sin(a)).toFixed(1)); }
+  return p.join(" ");
+}
+function wrap(txt,max){
+  const w=txt.split(" "); const out=[]; let cur="";
+  w.forEach(x=>{ if((cur+" "+x).trim().length>max){ out.push(cur.trim()); cur=x; } else cur+=" "+x; });
+  if(cur.trim()) out.push(cur.trim()); return out;
+}
+
+function drawMap(){
+  const svg = document.getElementById("map");
+  const byId = Object.fromEntries(TERR.map(t=>[t.id,t]));
+  let links="";
+  TERR.forEach(t=> t.nb.forEach(n=>{
+    const a=byId[n]; const on = held(n)||held(t.id);
+    links += `<line x1="${a.x}" y1="${a.y}" x2="${t.x}" y2="${t.y}" stroke="${on?"#3f5680":"#243456"}" stroke-width="${on?4:2.5}" stroke-dasharray="${on?"":"7 7"}"/>`;
+  }));
+
+  let hexes="";
+  TERR.forEach(t=>{
+    const s = starsOf(t.id);
+    const open = isOpen(t);
+    const state = s>0 ? "held" : (open ? "open" : "locked");
+    const wc = WEEKS[t.w-1].col;
+    const fill = state==="held" ? "#15803d" : state==="open" ? "#0e7490" : "#22314f";
+    const nameLines = wrap(t.name, 15);
+    const label = state==="locked" ? `${t.name}. Locked. Take a neighbouring territory first.`
+      : state==="held" ? `${t.name}, ${t.sub}. Held with ${s} of 3 stars. Replay to improve.`
+      : `${t.name}, ${t.sub}. Open. Three challenges.`;
+
+    hexes += `<g class="hex" data-id="${t.id}" data-state="${state}" tabindex="${state==="locked"?-1:0}"
+                 role="button" aria-label="${label}">
+      <polygon class="body" points="${hexPoints(t.x,t.y)}" fill="${fill}"/>
+      <polygon points="${hexPoints(t.x,t.y)}" fill="none" stroke="${wc}" stroke-width="3" opacity="${state==="locked"?.35:1}"/>
+      <text class="wk" x="${t.x}" y="${t.y-30}">WEEK ${t.w}</text>
+      ${nameLines.map((l,i)=>`<text class="nm" x="${t.x}" y="${t.y-8+i*16}">${l}</text>`).join("")}
+      <text class="sb" x="${t.x}" y="${t.y+(nameLines.length>1?26:16)}">${state==="locked"?"🔒 locked":t.sub}</text>
+      <text class="st" x="${t.x}" y="${t.y+44}">${s>0?"★".repeat(s)+"☆".repeat(3-s):""}</text>
+    </g>`;
+  });
+  svg.innerHTML = links + hexes;
+
+  svg.querySelectorAll(".hex").forEach(g=>{
+    const t = TERR.find(x=>x.id===g.dataset.id);
+    const go = ()=>{ if(g.dataset.state!=="locked") startTerritory(t); };
+    g.addEventListener("click", go);
+    g.addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); go(); }});
+  });
+  updateHUD();
+}
+
+function updateHUD(){
+  const tot = TERR.reduce((a,t)=>a+starsOf(t.id),0);
+  const heldN = TERR.filter(t=>held(t.id)).length;
+  document.getElementById("starCount").textContent = tot;
+  document.getElementById("terrCount").textContent = heldN;
+  let r = RANKS[0][1]; RANKS.forEach(([n,nm])=>{ if(tot>=n) r=nm; });
+  document.getElementById("rank").textContent = r;
+
+  document.getElementById("wkProg").innerHTML = WEEKS.map(w=>{
+    const ts = TERR.filter(t=>t.w===w.n);
+    const got = ts.reduce((a,t)=>a+starsOf(t.id),0), max = ts.length*3;
+    return `<div class="wkrow"><span>Week ${w.n} · ${w.name}</span><span>${got}/${max}</span></div>
+            <div class="bar"><i style="width:${(got/max*100).toFixed(0)}%;background:${w.col}"></i></div>`;
+  }).join("");
+}
+
+/* ============================================================
+   CHALLENGE ENGINE
+   ============================================================ */
+const dlg=document.getElementById("dlg"), dTitle=document.getElementById("dTitle"),
+      dProg=document.getElementById("dProg"), dTask=document.getElementById("dTask"),
+      dHint=document.getElementById("dHint"), dBody=document.getElementById("dBody"),
+      dFb=document.getElementById("dFb"), dCheck=document.getElementById("dCheck"),
+      dNext=document.getElementById("dNext");
+
+let run = null; // {terr, i, firstTry, attempted}
+
+function startTerritory(t){
+  run = { terr:t, i:0, first:0, attempted:false };
+  dlg.showModal(); renderChallenge();
+}
+function renderChallenge(){
+  const t=run.terr, ch=t.ch[run.i];
+  dTitle.textContent = t.name;
+  dProg.textContent = `Challenge ${run.i+1} / ${t.ch.length}`;
+  dTask.innerHTML = ch.q;
+  dHint.textContent = ch.hint || "";
+  dHint.style.display = ch.hint ? "block":"none";
+  dFb.className="fb"; dFb.innerHTML="";
+  dCheck.style.display=""; dCheck.disabled=true; dNext.style.display="none";
+  run.attempted=false;
+  dBody.innerHTML="";
+  TYPES[ch.t].render(ch, dBody, ()=>{ dCheck.disabled=false; });
+}
+
+dCheck.addEventListener("click", ()=>{
+  const ch = run.terr.ch[run.i];
+  const ok = TYPES[ch.t].check(ch, dBody);
+  if(ok && !run.attempted) run.first++;
+  run.attempted = true;
+  dFb.className = "fb show " + (ok?"good":"poor");
+  dFb.innerHTML = `<b>${ok?"Correct.":"Not yet."}</b> ${ch.e}`;
+  if(ok){
+    dCheck.style.display="none";
+    dNext.style.display="";
+    dNext.textContent = run.i < run.terr.ch.length-1 ? "Next challenge" : "Claim territory";
+    dNext.focus();
+  }else{
+    dFb.innerHTML = `<b>Not yet — have another go.</b> Read the explanation once you have it right.`;
+    dFb.innerHTML = `<b>Not quite.</b> Adjust your answer and check again.`;
+  }
+});
+
+dNext.addEventListener("click", ()=>{
+  if(run.i < run.terr.ch.length-1){ run.i++; renderChallenge(); }
+  else finish();
+});
+document.getElementById("dQuit").addEventListener("click", ()=>dlg.close());
+
+function finish(){
+  dlg.close();
+  const n=run.first, t=run.terr;
+  const stars = n===t.ch.length ? 3 : n>=2 ? 2 : 1;
+  const prev = starsOf(t.id);
+  if(stars>prev){ save.stars[t.id]=stars; persist(); }
+  drawMap();
+  document.getElementById("rTitle").textContent = prev>0 ? `${t.name} re-taken` : `${t.name} conquered`;
+  document.getElementById("rStars").textContent = "★".repeat(stars)+"☆".repeat(3-stars);
+  document.getElementById("rMsg").innerHTML =
+    `${n} of ${t.ch.length} solved first time.` +
+    (stars>prev ? ` New best — previous score ${prev||0}.` : prev>0 ? ` Your best of ${prev} stands.` : "") +
+    (stars<3 ? `<br><span style="color:var(--muted);font-size:.88rem">Come back later for a clean sweep.</span>` : "");
+  document.getElementById("res").showModal();
+}
+document.getElementById("rClose").addEventListener("click", ()=>document.getElementById("res").close());
+
+/* ============================================================
+   CHALLENGE TYPES
+   ============================================================ */
+const TYPES = {};
+
+/* --- MCQ --- */
+TYPES.mcq = {
+  render(ch, host, ready){
+    const box=document.createElement("div"); box.className="opts";
+    ch.o.forEach((o,i)=>{
+      const b=document.createElement("button");
+      b.className="opt"; b.textContent=o; b.setAttribute("aria-pressed","false"); b.dataset.i=i;
+      b.onclick=()=>{ box.querySelectorAll(".opt").forEach(x=>{x.setAttribute("aria-pressed","false");x.className="opt";});
+                      b.setAttribute("aria-pressed","true"); ready(); };
+      box.appendChild(b);
+    });
+    host.appendChild(box);
+  },
+  check(ch, host){
+    const sel=host.querySelector('.opt[aria-pressed="true"]');
+    const i=+sel.dataset.i, ok = i===ch.a;
+    sel.className = "opt "+(ok?"correct":"wrong");
+    if(ok) host.querySelectorAll(".opt").forEach(b=>b.disabled=true);
+    return ok;
+  }
+};
+
+/* --- SORT --- */
+TYPES.sort = {
+  render(ch, host, ready){
+    const st = {sel:null, place:{}};
+    host._st = st;
+    const pool=document.createElement("div"); pool.className="pool";
+    const bins=document.createElement("div"); bins.className="bins";
+    host.appendChild(pool); host.appendChild(bins);
+
+    const draw=()=>{
+      pool.innerHTML=""; bins.innerHTML="";
+      ch.items.forEach((it,i)=>{
+        if(st.place[i]!==undefined) return;
+        const b=document.createElement("button");
+        b.className="chip"; b.textContent=it.x;
+        b.setAttribute("aria-pressed", st.sel===i ? "true":"false");
+        b.onclick=()=>{ st.sel = st.sel===i?null:i; draw(); };
+        pool.appendChild(b);
+      });
+      ch.bins.forEach((bn,bi)=>{
+        const d=document.createElement("div"); d.className="bin";
+        const h=document.createElement("h4"); h.textContent=bn; d.appendChild(h);
+        ch.items.forEach((it,i)=>{
+          if(st.place[i]!==bi) return;
+          const b=document.createElement("button");
+          b.className="chip"+(st.mark?(it.b===bi?" ok":" no"):"");
+          b.textContent=it.x;
+          b.onclick=()=>{ if(st.mark) return; delete st.place[i]; draw(); };
+          d.appendChild(b);
+        });
+        d.onclick=e=>{ if(e.target!==d && e.target!==h) return;
+          if(st.sel!==null && !st.mark){ st.place[st.sel]=bi; st.sel=null; draw(); } };
+        bins.appendChild(d);
+      });
+      if(Object.keys(st.place).length===ch.items.length) ready();
+    };
+    draw(); host._draw=draw;
+  },
+  check(ch, host){
+    const st=host._st;
+    const ok = ch.items.every((it,i)=>st.place[i]===it.b);
+    st.mark = true; host._draw();
+    if(!ok) setTimeout(()=>{ st.mark=false;
+      ch.items.forEach((it,i)=>{ if(st.place[i]!==it.b) delete st.place[i]; });
+      host._draw(); }, 1400);
+    return ok;
+  }
+};
+
+/* --- GRID (outlier hunt) --- */
+TYPES.grid = {
+  render(ch, host, ready){
+    const st={flag:new Set()}; host._st=st;
+    const tb=document.createElement("table"); tb.className="dt";
+    tb.innerHTML = "<tr>"+ch.cols.map(c=>`<th>${c}</th>`).join("")+"</tr>";
+    ch.rows.forEach((r,ri)=>{
+      const tr=document.createElement("tr");
+      r.forEach((v,ci)=>{
+        const td=document.createElement("td");
+        if(ci===0){ td.innerHTML=`<button disabled style="opacity:.6">${v}</button>`; }
+        else{
+          const b=document.createElement("button");
+          b.textContent = v===""? "—" : v;
+          b.setAttribute("aria-pressed","false");
+          b.setAttribute("aria-label",`${ch.cols[ci]} row ${r[0]}, value ${v===""?"empty":v}`);
+          b.onclick=()=>{ const k=ri+":"+ci;
+            if(st.flag.has(k)){ st.flag.delete(k); b.setAttribute("aria-pressed","false"); }
+            else { st.flag.add(k); b.setAttribute("aria-pressed","true"); }
+            ready(); };
+          td.appendChild(b);
+        }
+        tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+    host.appendChild(tb);
+  },
+  check(ch, host){
+    const st=host._st, bad=new Set(ch.bad);
+    let ok = st.flag.size===bad.size;
+    host.querySelectorAll("td button").forEach(b=>{
+      const td=b.parentNode, tr=td.parentNode;
+      const ri=[...tr.parentNode.children].indexOf(tr)-1, ci=[...tr.children].indexOf(td);
+      const k=ri+":"+ci; if(ci===0) return;
+      if(st.flag.has(k)) { if(bad.has(k)) b.classList.add("hit"); else { b.classList.add("miss"); ok=false; } }
+      else if(bad.has(k)) { b.classList.add("missed"); ok=false; }
+    });
+    if(!ok) setTimeout(()=>host.querySelectorAll("td button").forEach(b=>
+      b.classList.remove("hit","miss","missed")), 1600);
+    return ok;
+  }
+};
+
+/* --- SLIDER --- */
+TYPES.slider = {
+  render(ch, host, ready){
+    const viz=document.createElement("div"); viz.className="viz";
+    const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+    svg.setAttribute("viewBox","0 0 400 130"); svg.style.width="100%"; svg.style.height="auto";
+    viz.appendChild(svg);
+    const ro=document.createElement("div"); ro.className="readout";
+    ro.innerHTML=`<span id="roL"></span><b id="roV"></b>`;
+    viz.appendChild(ro);
+    const inp=document.createElement("input");
+    inp.type="range"; inp.min=ch.min; inp.max=ch.max; inp.step=ch.step; inp.value=ch.init;
+    inp.setAttribute("aria-label", ch.q);
+    host.appendChild(viz); host.appendChild(inp);
+    host._inp=inp;
+    const upd=()=>{
+      const v=+inp.value;
+      ro.querySelector("#roV").textContent = ch.fmt(v);
+      ro.querySelector("#roL").textContent = VIZ[ch.viz](svg, v, ch) || "";
+      ready();
+    };
+    inp.addEventListener("input", upd); upd();
+  },
+  check(ch, host){
+    const v=+host._inp.value;
+    return v>=ch.accept[0] && v<=ch.accept[1];
+  }
+};
+
+const VIZ = {
+  effect(svg,d){
+    const W=400,H=130, x0=-3.6, x1=5.6;
+    const px=x=>(x-x0)/(x1-x0)*W, py=y=>H-10-y*260;
+    const nrm=(x,m)=>Math.exp(-0.5*(x-m)*(x-m))/Math.sqrt(2*Math.PI);
+    const path=m=>{ let p=""; for(let x=x0;x<=x1;x+=0.06) p+=(p?"L":"M")+px(x).toFixed(1)+" "+py(nrm(x,m)).toFixed(1); return p; };
+    svg.innerHTML=`
+      <path d="${path(0)}" fill="#0ea5e955" stroke="#38bdf8" stroke-width="2"/>
+      <path d="${path(d)}" fill="#f59e0b44" stroke="#fbbf24" stroke-width="2"/>
+      <line x1="${px(0)}" y1="14" x2="${px(0)}" y2="${H-10}" stroke="#38bdf8" stroke-dasharray="4 4" opacity=".7"/>
+      <line x1="${px(d)}" y1="14" x2="${px(d)}" y2="${H-10}" stroke="#fbbf24" stroke-dasharray="4 4" opacity=".7"/>
+      <text x="6" y="14" fill="#93a4c4" font-size="11">Group A</text>
+      <text x="340" y="14" fill="#93a4c4" font-size="11">Group B</text>`;
+    const ov = d<.3?"almost complete overlap":d<.65?"substantial overlap":d<1?"clearly separated":"little overlap";
+    return "Distributions: "+ov;
+  },
+  skew(svg,s){
+    const W=400,H=130,N=16;
+    const a = s>=0 ? 2 : 2+7*Math.abs(s), b = s>=0 ? 2+7*s : 2;
+    const f=t=>Math.pow(Math.max(t,1e-4),a-1)*Math.pow(Math.max(1-t,1e-4),b-1);
+    const hs=[]; for(let i=0;i<N;i++) hs.push(f((i+0.5)/N));
+    const mx=Math.max(...hs);
+    let bars="";
+    hs.forEach((h,i)=>{ const bw=W/N-4, x=i*(W/N)+2, hh=(h/mx)*(H-28);
+      bars+=`<rect x="${x.toFixed(1)}" y="${(H-14-hh).toFixed(1)}" width="${bw.toFixed(1)}" height="${hh.toFixed(1)}" fill="#38bdf8" opacity=".8" rx="2"/>`; });
+    svg.innerHTML = bars + `<line x1="0" y1="${H-14}" x2="${W}" y2="${H-14}" stroke="#2d3f66" stroke-width="2"/>
+      <text x="4" y="${H-2}" fill="#93a4c4" font-size="10">fast</text>
+      <text x="360" y="${H-2}" fill="#93a4c4" font-size="10">slow</text>`;
+    return s>.25?"Long tail to the right":s<-.25?"Long tail to the left":"Roughly symmetrical";
+  },
+  rule(svg,v,ch){
+    const W=400,H=130, r=ch.rule, lo=ch.min, hi=ch.max;
+    const px=x=>(x-lo)/(hi-lo)*(W-40)+20;
+    const t=px(r.thresh), cur=px(v), below = v<r.thresh;
+    svg.innerHTML=`
+      <rect x="20" y="52" width="${(t-20).toFixed(1)}" height="26" fill="#7f1d1d" opacity=".55" rx="5"/>
+      <rect x="${t.toFixed(1)}" y="52" width="${(W-20-t).toFixed(1)}" height="26" fill="#14532d" opacity=".55" rx="5"/>
+      <line x1="${t}" y1="40" x2="${t}" y2="90" stroke="#fbbf24" stroke-width="2"/>
+      <text x="${t}" y="34" fill="#fbbf24" font-size="11" text-anchor="middle">${r.thresh}</text>
+      <circle cx="${cur.toFixed(1)}" cy="65" r="10" fill="#38bdf8" stroke="#fff" stroke-width="2"/>
+      <text x="20" y="108" fill="#93a4c4" font-size="11">${lo}</text>
+      <text x="${W-20}" y="108" fill="#93a4c4" font-size="11" text-anchor="end">${hi}</text>
+      <text x="${W/2}" y="20" fill="${below?'#fca5a5':'#86efac'}" font-size="12" text-anchor="middle">${below?r.lo:r.hi}</text>`;
+    return "";
+  }
+};
+
+/* --- PAIRS --- */
+TYPES.pairs = {
+  render(ch, host, ready){
+    const st={sel:null, link:{}}; host._st=st;
+    const box=document.createElement("div"); box.className="pairs";
+    const L=document.createElement("div"), Rr=document.createElement("div");
+    L.innerHTML="<h4>Parametric</h4>"; Rr.innerHTML="<h4>Non-parametric</h4>";
+    box.appendChild(L); box.appendChild(Rr); host.appendChild(box);
+    const draw=()=>{
+      L.innerHTML="<h4>Parametric</h4>"; Rr.innerHTML="<h4>Non-parametric</h4>";
+      const rev={}; Object.entries(st.link).forEach(([l,r])=>rev[r]=l);
+      ch.left.forEach((x,i)=>{
+        const b=document.createElement("button"); b.innerHTML=x+(st.link[i]!==undefined?`<span class="tag">${+st.link[i]+1}</span>`:"");
+        b.setAttribute("aria-pressed", st.sel===i?"true":"false");
+        if(st.mark && st.link[i]!==undefined) b.className = ch.map[i]===st.link[i]?"":"";
+        b.onclick=()=>{ if(st.mark) return;
+          if(st.link[i]!==undefined){ delete st.link[i]; draw(); return; }
+          st.sel = st.sel===i?null:i; draw(); };
+        L.appendChild(b);
+      });
+      ch.right.forEach((x,j)=>{
+        const b=document.createElement("button");
+        const li = rev[j];
+        b.innerHTML=x+(li!==undefined?`<span class="tag">${+j+1}</span>`:"");
+        b.style.opacity = li!==undefined ? ".6":"1";
+        b.onclick=()=>{ if(st.mark) return;
+          if(li!==undefined){ delete st.link[li]; draw(); return; }
+          if(st.sel!==null){ st.link[st.sel]=j; st.sel=null; draw(); } };
+        Rr.appendChild(b);
+      });
+      if(Object.keys(st.link).length===ch.left.length) ready();
+    };
+    draw(); host._draw=draw;
+  },
+  check(ch, host){
+    const st=host._st;
+    const ok = ch.left.every((_,i)=>st.link[i]===ch.map[i]);
+    if(!ok){ ch.left.forEach((_,i)=>{ if(st.link[i]!==ch.map[i]) delete st.link[i]; }); host._draw(); }
+    return ok;
+  }
+};
+
+/* --- FLOW (decision path) --- */
+TYPES.flow = {
+  render(ch, host, ready){
+    const st={pick:{}}; host._st=st;
+    ch.steps.forEach((s,si)=>{
+      const d=document.createElement("div"); d.className="step";
+      d.innerHTML=`<div class="n">Step ${si+1}</div><p>${s.q}</p>`;
+      const box=document.createElement("div"); box.className="opts";
+      s.o.forEach((o,oi)=>{
+        const b=document.createElement("button"); b.className="opt"; b.textContent=o;
+        b.setAttribute("aria-pressed","false");
+        b.onclick=()=>{ box.querySelectorAll(".opt").forEach(x=>{x.setAttribute("aria-pressed","false");x.className="opt";});
+          b.setAttribute("aria-pressed","true"); st.pick[si]=oi;
+          if(Object.keys(st.pick).length===ch.steps.length) ready(); };
+        box.appendChild(b);
+      });
+      d.appendChild(box); host.appendChild(d);
+    });
+  },
+  check(ch, host){
+    const st=host._st; let ok=true;
+    host.querySelectorAll(".step").forEach((d,si)=>{
+      const s=ch.steps[si], sel=d.querySelector('.opt[aria-pressed="true"]');
+      const good = st.pick[si]===s.a;
+      sel.className = "opt "+(good?"correct":"wrong");
+      d.style.borderLeftColor = good ? "var(--ok)":"var(--bad)";
+      if(!good) ok=false;
+    });
+    if(!ok) setTimeout(()=>host.querySelectorAll(".opt").forEach(b=>{
+      if(b.getAttribute("aria-pressed")!=="true") b.className="opt"; else b.className="opt";
+      b.parentNode.parentNode.style.borderLeftColor="var(--open)"; }), 1500);
+    return ok;
+  }
+};
+
+/* --- ORDER --- */
+TYPES.order = {
+  render(ch, host, ready){
+    const arr=ch.items.map((x,i)=>i);
+    for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+    if(arr.every((v,i)=>v===i)) arr.reverse();
+    const st={order:arr}; host._st=st;
+    const ul=document.createElement("ul"); ul.className="ord"; host.appendChild(ul);
+    const draw=()=>{
+      ul.innerHTML="";
+      st.order.forEach((idx,pos)=>{
+        const li=document.createElement("li");
+        if(st.mark) li.className = idx===pos ? "ok":"no";
+        li.innerHTML=`<span class="txt">${ch.items[idx]}</span>`;
+        const up=document.createElement("button"); up.textContent="▲"; up.setAttribute("aria-label","Move up");
+        const dn=document.createElement("button"); dn.textContent="▼"; dn.setAttribute("aria-label","Move down");
+        up.disabled=pos===0; dn.disabled=pos===st.order.length-1;
+        up.onclick=()=>{ [st.order[pos-1],st.order[pos]]=[st.order[pos],st.order[pos-1]]; st.mark=false; draw(); };
+        dn.onclick=()=>{ [st.order[pos+1],st.order[pos]]=[st.order[pos],st.order[pos+1]]; st.mark=false; draw(); };
+        li.appendChild(up); li.appendChild(dn); ul.appendChild(li);
+      });
+    };
+    draw(); host._draw=draw; ready();
+  },
+  check(ch, host){
+    const st=host._st; st.mark=true; host._draw();
+    return st.order.every((v,i)=>v===i);
+  }
+};
+
+/* --- BLANKS --- */
+TYPES.blanks = {
+  render(ch, host, ready){
+    const box=document.createElement("div"); box.className="tpl";
+    const parts=ch.tpl.split(/(\{\d+\})/g);
+    parts.forEach(p=>{
+      const m=p.match(/^\{(\d+)\}$/);
+      if(m){
+        const spec=ch.b[+m[1]];
+        let el;
+        if(spec.k==="sel"){
+          el=document.createElement("select");
+          el.innerHTML='<option value="">—</option>'+spec.o.map((o,i)=>`<option value="${i}">${o}</option>`).join("");
+        }else{
+          el=document.createElement("input"); el.type="text"; el.inputMode="decimal"; el.size=6; el.placeholder="?";
+        }
+        el.dataset.i=m[1]; el.setAttribute("aria-label","Blank "+(+m[1]+1));
+        el.addEventListener("input",chk); el.addEventListener("change",chk);
+        box.appendChild(el);
+      } else {
+        p.split("\n").forEach((line,i)=>{
+          if(i) box.appendChild(document.createElement("br"));
+          box.appendChild(document.createTextNode(line));
+        });
+      }
+    });
+    host.appendChild(box);
+    function chk(){ const all=[...box.querySelectorAll("select,input")].every(e=>e.value.trim()!==""); if(all) ready(); }
+  },
+  check(ch, host){
+    let ok=true;
+    host.querySelectorAll("select,input").forEach(el=>{
+      const spec=ch.b[+el.dataset.i]; let good;
+      if(spec.k==="sel") good = +el.value===spec.a;
+      else { const v=parseFloat(el.value.replace(",",".")); const tol=spec.tol||1e-9;
+             good = isFinite(v) && Math.abs(v-spec.a)<=tol; }
+      el.className = good?"ok":"no"; if(!good) ok=false;
+    });
+    if(!ok) setTimeout(()=>host.querySelectorAll("select,input").forEach(e=>{ if(e.className==="no"){e.className="";e.value=e.tagName==="SELECT"?"":"";} }),1500);
+    return ok;
+  }
+};
+
+/* --- PLOT (interaction builder) --- */
+TYPES.plot = {
+  render(ch, host, ready){
+    const st={v:[55,55,45,45]}; host._st=st;   // [A@x1, A@x2, B@x1, B@x2]
+    const viz=document.createElement("div"); viz.className="viz";
+    const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+    svg.setAttribute("viewBox","0 0 400 230"); svg.style.width="100%"; svg.style.height="auto";
+    svg.style.touchAction="none";
+    viz.appendChild(svg); host.appendChild(viz);
+    const ind=document.createElement("div"); ind.className="ind";
+    ind.innerHTML=`<div>Main effect: ${ch.xlab[0]}/${ch.xlab[1]}<b id="i1">—</b></div>
+                   <div>Main effect: ${ch.llab[0]}/${ch.llab[1]}<b id="i2">—</b></div>
+                   <div>Interaction<b id="i3">—</b></div>`;
+    host.appendChild(ind);
+
+    const tgt=document.createElement("p");
+    tgt.style.cssText="font-size:.82rem;color:var(--muted);margin:10px 0 0";
+    tgt.innerHTML=`<b>Target:</b> ${ch.target.x?"main effect present":"no main effect"} on ${ch.xlab[0]}/${ch.xlab[1]} · ${ch.target.line?"main effect present":"no main effect"} on ${ch.llab[0]}/${ch.llab[1]} · ${ch.target.inter?"interaction present":"no interaction"}`;
+    host.appendChild(tgt);
+
+    const PX=[130,300], PAD=26, TOP=24, BOT=180;
+    const yv=v=>BOT-(v/100)*(BOT-TOP);
+    const vy=y=>Math.max(0,Math.min(100,(BOT-y)/(BOT-TOP)*100));
+
+    function eff(){
+      const [a1,a2,b1,b2]=st.v, T=10;
+      return {
+        x: Math.abs((a1+b1)/2-(a2+b2)/2)>T,
+        line: Math.abs((a1+a2)/2-(b1+b2)/2)>T,
+        inter: Math.abs((a1-a2)-(b1-b2))>T*2
+      };
+    }
+    function draw(){
+      const [a1,a2,b1,b2]=st.v;
+      svg.innerHTML=`
+        <line x1="${PAD+60}" y1="${TOP-8}" x2="${PAD+60}" y2="${BOT+8}" stroke="#2d3f66" stroke-width="2"/>
+        <line x1="${PAD+60}" y1="${BOT+8}" x2="380" y2="${BOT+8}" stroke="#2d3f66" stroke-width="2"/>
+        <text x="${PX[0]}" y="${BOT+26}" fill="#93a4c4" font-size="12" text-anchor="middle">${ch.xlab[0]}</text>
+        <text x="${PX[1]}" y="${BOT+26}" fill="#93a4c4" font-size="12" text-anchor="middle">${ch.xlab[1]}</text>
+        <text x="16" y="${TOP+40}" fill="#93a4c4" font-size="11" transform="rotate(-90 16 ${TOP+40})">Mean DV</text>
+        <line x1="${PX[0]}" y1="${yv(a1)}" x2="${PX[1]}" y2="${yv(a2)}" stroke="#38bdf8" stroke-width="3"/>
+        <line x1="${PX[0]}" y1="${yv(b1)}" x2="${PX[1]}" y2="${yv(b2)}" stroke="#fbbf24" stroke-width="3"/>
+        <circle class="pt" data-i="0" cx="${PX[0]}" cy="${yv(a1)}" r="11" fill="#38bdf8" stroke="#fff" stroke-width="2"/>
+        <circle class="pt" data-i="1" cx="${PX[1]}" cy="${yv(a2)}" r="11" fill="#38bdf8" stroke="#fff" stroke-width="2"/>
+        <circle class="pt" data-i="2" cx="${PX[0]}" cy="${yv(b1)}" r="11" fill="#fbbf24" stroke="#fff" stroke-width="2"/>
+        <circle class="pt" data-i="3" cx="${PX[1]}" cy="${yv(b2)}" r="11" fill="#fbbf24" stroke="#fff" stroke-width="2"/>
+        <text x="330" y="${TOP+4}" fill="#38bdf8" font-size="11">${ch.llab[0]}</text>
+        <text x="330" y="${TOP+20}" fill="#fbbf24" font-size="11">${ch.llab[1]}</text>`;
+      const e=eff();
+      const set=(id,on)=>{ const b=ind.querySelector(id); b.textContent = on?"YES":"no"; b.className = on?"y":"n"; };
+      set("#i1",e.x); set("#i2",e.line); set("#i3",e.inter);
+      svg.querySelectorAll(".pt").forEach(c=>{
+        c.addEventListener("pointerdown",ev=>{
+          ev.preventDefault(); c.setPointerCapture(ev.pointerId);
+          const i=+c.dataset.i;
+          const move=m=>{
+            const r=svg.getBoundingClientRect();
+            const y=(m.clientY-r.top)/r.height*230;
+            st.v[i]=Math.round(vy(y)); draw();
+          };
+          const up=()=>{ c.removeEventListener("pointermove",move); c.removeEventListener("pointerup",up); };
+          c.addEventListener("pointermove",move); c.addEventListener("pointerup",up);
+        });
+        c.setAttribute("tabindex","0");
+        c.addEventListener("keydown",ev=>{
+          const i=+c.dataset.i;
+          if(ev.key==="ArrowUp"){ st.v[i]=Math.min(100,st.v[i]+5); draw(); ev.preventDefault(); }
+          if(ev.key==="ArrowDown"){ st.v[i]=Math.max(0,st.v[i]-5); draw(); ev.preventDefault(); }
+        });
+      });
+    }
+    draw(); host._eff=eff; ready();
+  },
+  check(ch, host){
+    const e=host._eff();
+    return e.x===ch.target.x && e.line===ch.target.line && e.inter===ch.target.inter;
+  }
+};
+
+/* ============================================================
+   BACKUP CODE
+   ============================================================ */
+const codeDlg=document.getElementById("code");
+document.getElementById("btnSave").onclick=()=>{
+  document.getElementById("cTitle").textContent="Backup code";
+  document.getElementById("cMsg").textContent=
+    "Copy this and keep it somewhere safe — a note, or a comment on the Canvas page. If your browser clears its storage you can paste it back in with Restore from code.";
+  document.getElementById("cText").value=btoa(unescape(encodeURIComponent(JSON.stringify(save))));
+  document.getElementById("cText").readOnly=true;
+  const act=document.getElementById("cAction"); act.textContent="Copy";
+  act.onclick=()=>{ const t=document.getElementById("cText"); t.select();
+    try{ document.execCommand("copy"); act.textContent="Copied"; }catch(e){ act.textContent="Select and copy"; } };
+  codeDlg.showModal();
+};
+document.getElementById("btnRestore").onclick=()=>{
+  document.getElementById("cTitle").textContent="Restore from code";
+  document.getElementById("cMsg").textContent="Paste a backup code below. This replaces your current campaign.";
+  const t=document.getElementById("cText"); t.value=""; t.readOnly=false;
+  const act=document.getElementById("cAction"); act.textContent="Restore";
+  act.onclick=()=>{
+    try{
+      const p=JSON.parse(decodeURIComponent(escape(atob(t.value.trim()))));
+      if(!p || typeof p!=="object" || !p.stars) throw 0;
+      save=p; persist(); drawMap(); codeDlg.close();
+    }catch(e){ document.getElementById("cMsg").textContent="That code could not be read. Check you copied all of it."; }
+  };
+  codeDlg.showModal();
+};
+document.getElementById("cClose").onclick=()=>codeDlg.close();
+document.getElementById("btnReset").onclick=()=>{
+  if(!confirm("Reset the whole campaign? Every territory and star will be lost.")) return;
+  save={stars:{}}; persist(); drawMap();
+};
+
+/* ============================================================ */
+load(); drawMap();
+</script>
+</body>
+</html>
