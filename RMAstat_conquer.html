@@ -1,0 +1,1988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stat Conquer — Research Methods A</title>
+<style>
+/* ============================================================
+   STAT CONQUER — RESEARCH METHODS A
+   Sections: TOKENS / LAYOUT / MAP / DIALOG / CHALLENGE UI
+   ============================================================ */
+:root{
+  --bg:#0b1220; --panel:#16213a; --panel2:#1f2d4d; --line:#2d3f66;
+  --ink:#e6edf7; --muted:#93a4c4; --gold:#fbbf24;
+  --locked:#2a3550; --open:#0e7490; --held:#15803d;
+  --w1:#0ea5e9; --w2:#8b5cf6; --w3:#ec4899; --w4:#f59e0b;
+  --ok:#22c55e; --bad:#ef4444;
+  --tap:46px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  background:radial-gradient(1200px 600px at 30% -10%,#1b2a4a 0%,var(--bg) 60%);
+  background-attachment:fixed;color:var(--ink);line-height:1.55;-webkit-text-size-adjust:100%}
+#app{min-height:100%}
+body.focus{overflow:hidden}
+body.focus #app{position:fixed;inset:0;height:100dvh;overflow:auto;z-index:60;
+  background:radial-gradient(1200px 600px at 30% -10%,#1b2a4a 0%,var(--bg) 60%);
+  padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+.wrap{max-width:1220px;margin:0 auto;padding:14px 14px 48px}
+header{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:12px}
+.hgroup{min-width:0}
+h1{font-size:1.28rem;margin:0;letter-spacing:.01em}
+h1 span{color:var(--muted);font-weight:400}
+.sub{font-size:.78rem;color:var(--muted);margin-top:2px}
+.tally{font-size:.9rem;color:var(--muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tally b{color:var(--gold);font-size:1.05rem}
+.rank{display:inline-block;background:var(--panel2);border:1px solid var(--line);
+  border-radius:999px;padding:2px 12px;font-size:.78rem;color:var(--gold)}
+.hbtns{display:flex;gap:8px;flex-wrap:wrap}
+.notice{background:#422006;border:1px solid #a16207;color:#fde68a;
+  padding:8px 12px;border-radius:8px;font-size:.84rem;margin-bottom:12px;display:none}
+.notice.show{display:block}
+.fe-flag{display:none;align-items:center;gap:8px;background:#1e1b4b;border:1px solid #6366f1;
+  color:#c7d2fe;padding:7px 12px;border-radius:8px;font-size:.8rem;margin-bottom:12px;
+  letter-spacing:.06em;text-transform:uppercase;font-weight:700}
+.fe-flag.show{display:flex}
+.fe-flag button{margin-left:auto;padding:5px 10px;font-size:.74rem;letter-spacing:.04em;min-height:34px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 306px;gap:16px}
+@media(max-width:940px){.grid{grid-template-columns:minmax(0,1fr)}}
+.mapcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px;min-width:0}
+.maptools{display:flex;gap:6px;align-items:center;padding:4px 4px 8px;flex-wrap:wrap}
+.maptools .spacer{flex:1}
+.maptools button{padding:7px 11px;font-size:.8rem;min-height:38px}
+.mapview{position:relative;overflow:hidden;border-radius:10px;background:#0a1020;
+  touch-action:none;-webkit-user-select:none;user-select:none}
+svg.map{width:100%;height:auto;display:block;cursor:grab}
+svg.map.dragging{cursor:grabbing}
+.hint{font-size:.74rem;color:var(--muted);padding:6px 4px 2px;margin:0}
+/* ---- MAP NODES ---- */
+.hex{cursor:pointer}
+.hex[data-state="locked"]{cursor:not-allowed}
+.hex[data-state="locked"].free{cursor:pointer}
+.hex:focus{outline:none}
+.hex:focus-visible polygon.body{stroke:#fff;stroke-width:5}
+.hex polygon.body{stroke:#0b1220;stroke-width:3;transition:fill .35s ease,opacity .15s}
+.hex:hover:not([data-state="locked"]) polygon.body{opacity:.86}
+.hex[data-state="locked"].free polygon.body{stroke-dasharray:7 5;stroke:#818cf8;stroke-width:2.5}
+.hex text{pointer-events:none;text-anchor:middle;fill:#fff}
+.hex .nm{font-size:16px;font-weight:700}
+.hex .sb{font-size:11.5px;fill:#cbd5e1;font-weight:400}
+.hex .wk{font-size:10px;fill:#cbd5e1;letter-spacing:.08em;font-weight:700}
+.hex .st{font-size:18px;fill:var(--gold);letter-spacing:2px}
+.hex .lk{font-size:15px;fill:#8ea3c9}
+.edge{stroke:#243456;stroke-width:5;fill:none;stroke-linecap:round;transition:stroke .4s ease}
+.edge.live{stroke:#3f5a8f}
+.edge.held{stroke:#2f7a52}
+@keyframes takeFlash{0%{filter:brightness(1)}35%{filter:brightness(2.1)}100%{filter:brightness(1)}}
+@keyframes pulseRing{0%{opacity:.9;transform:scale(.88)}70%{opacity:.18;transform:scale(1.13)}100%{opacity:0;transform:scale(1.18)}}
+@keyframes drawEdge{from{stroke-dashoffset:var(--len)}to{stroke-dashoffset:0}}
+.hex.justTaken polygon.body{animation:takeFlash .9s ease}
+.ring{fill:none;stroke:var(--gold);stroke-width:4;opacity:0;transform-box:fill-box;transform-origin:center}
+.hex.justOpen .ring{animation:pulseRing 1.5s ease-out 2}
+.edge.drawing{stroke-dasharray:var(--len);animation:drawEdge .75s ease forwards}
+#brainLayer{opacity:0;transition:opacity 1.6s ease;pointer-events:none}
+svg.map.brain #brainLayer{opacity:1}
+#brainLayer path{fill:none;stroke:#7dd3fc;stroke-width:3;opacity:.32}
+#brainLayer path.glow{stroke:#a78bfa;stroke-width:9;opacity:.12}
+svg.map.brain .edge.held{stroke:#7dd3fc;stroke-width:6}
+svg.map.brain .hex[data-state="held"] polygon.body{stroke:#bae6fd;stroke-width:4}
+/* ---- SIDEBAR ---- */
+aside{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;height:max-content;min-width:0}
+aside h2{font-size:.85rem;margin:0 0 9px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+aside h2:not(:first-child){margin-top:18px}
+.key{display:flex;align-items:center;gap:8px;font-size:.82rem;margin:5px 0;color:var(--muted)}
+.sw{width:14px;height:14px;border-radius:4px;flex:none;border:1px solid #0b1220}
+.bar{height:7px;background:#0b1220;border-radius:99px;overflow:hidden;margin:4px 0 10px}
+.bar i{display:block;height:100%;border-radius:99px;transition:width .6s ease}
+.wkrow{font-size:.8rem;display:flex;justify-content:space-between;gap:8px;color:var(--muted)}
+.wkrow .bdg{color:var(--gold);font-weight:700;font-size:.68rem;letter-spacing:.05em}
+/* ---- BUTTONS ---- */
+button{font:inherit;cursor:pointer;border-radius:9px;border:1px solid var(--line);
+  background:var(--panel2);color:var(--ink);padding:10px 14px;
+  transition:background .12s,border-color .12s;min-height:var(--tap)}
+button:hover:not(:disabled){background:#2b3b61}
+button:focus-visible{outline:2px solid #93c5fd;outline-offset:2px}
+button.primary{background:#0e7490;border-color:#0e7490;color:#fff}
+button.primary:hover:not(:disabled){background:#0891b2}
+button.gold{background:#78350f;border-color:#b45309;color:#fde68a}
+button.gold:hover:not(:disabled){background:#92400e}
+button:disabled{opacity:.45;cursor:not-allowed}
+button.on{background:#4338ca;border-color:#818cf8;color:#e0e7ff}
+.stack{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+/* ---- LIST VIEW ---- */
+#listview{display:none;padding:4px;margin:0;list-style:none}
+#listview.show{display:block}
+#listview li{margin:0 0 8px}
+.lrow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px}
+.lrow .ldot{width:12px;height:12px;border-radius:50%;flex:none;border:1px solid #0b1220}
+.lrow .lnm{flex:1;min-width:0}
+.lrow .lnm small{display:block;color:var(--muted);font-size:.72rem;font-weight:400}
+.lrow .lst{color:var(--gold);letter-spacing:2px;font-size:.95rem;flex:none}
+/* ---- DIALOGS ---- */
+dialog{border:1px solid var(--line);border-radius:16px;background:var(--panel);
+  color:var(--ink);max-width:800px;width:calc(100% - 24px);padding:0;overflow:hidden}
+dialog::backdrop{background:rgba(3,7,18,.86)}
+.dwrap{display:flex;flex-direction:column;max-height:88vh}
+.dhead{padding:13px 18px;border-bottom:1px solid var(--line);display:flex;
+  justify-content:space-between;align-items:center;gap:12px;flex:none}
+.dhead h3{margin:0;font-size:1rem}
+.prog{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;white-space:nowrap}
+.dbody{padding:16px 18px;overflow:auto;flex:1;-webkit-overflow-scrolling:touch}
+.dfoot{padding:11px 18px;border-top:1px solid var(--line);display:flex;
+  justify-content:space-between;gap:10px;align-items:center;flex:none;flex-wrap:wrap}
+.task{font-size:1.02rem;margin:0 0 6px;font-weight:600}
+.instr{font-size:.84rem;color:var(--muted);margin:0 0 14px}
+@media(max-width:620px){
+  dialog{max-width:none;width:100%;height:100dvh;max-height:100dvh;border-radius:0;border:0}
+  .dwrap{max-height:100dvh;height:100dvh}
+  .dhead{padding-top:calc(13px + env(safe-area-inset-top))}
+  .dfoot{padding-bottom:calc(11px + env(safe-area-inset-bottom));position:sticky;bottom:0;background:var(--panel)}
+  .dfoot button{flex:1;min-width:120px}
+}
+@media(max-height:460px) and (orientation:landscape){
+  .dhead{padding:7px 14px}.dhead h3{font-size:.9rem}.dbody{padding:10px 14px}.dfoot{padding:7px 14px}
+}
+/* ---- CHALLENGE UI ---- */
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{text-align:left;padding:12px 14px;line-height:1.45}
+.opt.sel{border-color:#818cf8;background:#312e81}
+.opt.dead{opacity:.4;text-decoration:line-through}
+.opt.right{border-color:var(--ok);background:#064e3b}
+.fb{margin-top:15px;padding:12px 14px;border-radius:10px;font-size:.9rem;display:none}
+.fb.show{display:block}
+.fb.good{background:#052e1b;border:1px solid var(--ok)}
+.fb.bad{background:#3f1416;border:1px solid var(--bad)}
+.fb .quip{font-weight:700;display:block;margin-bottom:5px}
+.fb .why{color:#d5e0f2;font-size:.86rem}
+.sweep{background:#422006;border:1px solid var(--gold);color:#fde68a;border-radius:10px;
+  padding:10px 14px;margin-bottom:12px;font-weight:700;letter-spacing:.05em;text-align:center}
+/* sort */
+.pool{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;min-height:52px;
+  padding:10px;border:1px dashed var(--line);border-radius:10px}
+.card{padding:9px 12px;font-size:.86rem;border-radius:8px;background:var(--panel2);
+  border:1px solid var(--line);cursor:pointer;min-height:40px;text-align:left}
+.card.sel{border-color:#818cf8;background:#312e81}
+.card.right{border-color:var(--ok)}
+.card.wrong{border-color:var(--bad)}
+.bins{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.bin{border:1px solid var(--line);border-radius:10px;padding:10px;background:#101a30}
+.bin h4{margin:0 0 8px;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.bin .drop{display:flex;flex-direction:column;gap:6px;min-height:46px}
+.bin.armed{border-color:#818cf8}
+/* match */
+.matchwrap{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:560px){.matchwrap{grid-template-columns:1fr}}
+.mcol{display:flex;flex-direction:column;gap:8px}
+.mitem{text-align:left;padding:10px 12px;font-size:.85rem;line-height:1.4}
+.mitem.sel{border-color:#818cf8;background:#312e81}
+.mitem.done{border-color:var(--ok);background:#064e3b;opacity:.75;cursor:default}
+.mitem .tag{display:inline-block;background:#0b1220;border-radius:5px;padding:0 6px;
+  font-size:.7rem;color:var(--gold);margin-right:6px}
+/* order */
+.orow{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.orow .txt{flex:1;padding:10px 12px;background:var(--panel2);border:1px solid var(--line);
+  border-radius:8px;font-size:.86rem}
+.orow .num{width:26px;text-align:center;color:var(--gold);font-weight:700;flex:none}
+.orow button{padding:6px 10px;min-height:38px;min-width:38px}
+/* hotspot / figures */
+.figbox{background:#0a1020;border:1px solid var(--line);border-radius:10px;padding:8px;
+  overflow:auto;-webkit-overflow-scrolling:touch}
+.figbox svg{display:block;max-width:100%;height:auto;min-width:300px}
+.hs{cursor:pointer}
+.hs rect,.hs circle,.hs polygon,.hs ellipse{fill:rgba(129,140,248,.001);stroke:rgba(129,140,248,.5);
+  stroke-width:2;stroke-dasharray:5 4;transition:fill .15s,stroke .15s}
+.hs:hover rect,.hs:hover circle,.hs:hover polygon,.hs:hover ellipse{fill:rgba(129,140,248,.2)}
+.hs:focus{outline:none}
+.hs:focus-visible rect,.hs:focus-visible circle,.hs:focus-visible polygon,.hs:focus-visible ellipse{stroke:#fff;stroke-width:3}
+.hs[aria-pressed="true"] rect,.hs[aria-pressed="true"] circle,
+.hs[aria-pressed="true"] polygon,.hs[aria-pressed="true"] ellipse{fill:rgba(99,102,241,.4);stroke:#a5b4fc;stroke-dasharray:none}
+.hs.right rect,.hs.right circle,.hs.right polygon,.hs.right ellipse{fill:rgba(34,197,94,.35);stroke:var(--ok);stroke-dasharray:none}
+.hs.wrong rect,.hs.wrong circle,.hs.wrong polygon,.hs.wrong ellipse{fill:rgba(239,68,68,.3);stroke:var(--bad);stroke-dasharray:none}
+/* grid */
+.gwrap{overflow:auto;border:1px solid var(--line);border-radius:10px;-webkit-overflow-scrolling:touch}
+table.gt{border-collapse:collapse;width:100%;min-width:420px;font-size:.84rem}
+table.gt th,table.gt td{border:1px solid var(--line);padding:8px 10px;text-align:right;white-space:nowrap}
+table.gt th{background:#101a30;color:var(--muted);font-weight:600;text-align:left}
+table.gt td.lab{text-align:left;background:#101a30;color:var(--muted)}
+table.gt td.cell{cursor:pointer}
+table.gt td.cell:hover{background:#243456}
+table.gt td.cell.sel{background:#312e81;outline:2px solid #818cf8;outline-offset:-2px}
+table.gt td.cell.right{background:#064e3b;outline:2px solid var(--ok);outline-offset:-2px}
+table.gt td.cell.wrong{background:#3f1416;outline:2px solid var(--bad);outline-offset:-2px}
+/* slider */
+.sld{width:100%;margin:14px 0 6px;height:40px}
+input[type=range]{width:100%;accent-color:#818cf8;height:40px}
+.readout{text-align:center;font-size:1rem;font-weight:700;color:var(--gold);margin-bottom:8px}
+.readout small{display:block;color:var(--muted);font-weight:400;font-size:.78rem}
+/* segments */
+.segwrap{background:#101a30;border:1px solid var(--line);border-radius:10px;padding:12px}
+.seg{display:inline;cursor:pointer;border-radius:5px;padding:2px 3px;border:1px dashed transparent}
+.seg:hover{background:#243456}
+.seg:focus-visible{outline:2px solid #93c5fd}
+.seg.sel{background:#312e81;border-color:#818cf8}
+.seg.right{background:#064e3b;border-color:var(--ok)}
+.seg.wrong{background:#3f1416;border-color:var(--bad)}
+/* pick */
+.picks{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.pick{padding:8px;background:#0a1020;border:1px solid var(--line);border-radius:10px;cursor:pointer}
+.pick.sel{border-color:#818cf8;background:#1b1f4d}
+.pick.right{border-color:var(--ok)}
+.pick.wrong{border-color:var(--bad);opacity:.5}
+.pick svg{display:block;width:100%;height:auto}
+.pick .cap{font-size:.76rem;color:var(--muted);text-align:center;margin-top:5px}
+/* misc */
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom));
+  background:#0b1220;border:1px solid var(--gold);color:var(--gold);padding:10px 18px;border-radius:999px;
+  font-size:.84rem;font-weight:700;letter-spacing:.04em;z-index:99;opacity:0;transition:opacity .3s}
+.toast.show{opacity:1}
+.codebox{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.3rem;letter-spacing:.14em;
+  text-align:center;background:#0a1020;border:1px dashed var(--gold);color:var(--gold);
+  border-radius:10px;padding:14px;margin:10px 0;word-break:break-all}
+input[type=text]{width:100%;padding:12px;border-radius:9px;border:1px solid var(--line);
+  background:#0a1020;color:var(--ink);font:inherit;font-family:ui-monospace,Menlo,monospace;
+  letter-spacing:.1em;text-align:center;text-transform:uppercase;min-height:var(--tap)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin:14px 0}
+.stat{background:#101a30;border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center}
+.stat b{display:block;font-size:1.5rem;color:var(--gold)}
+.stat small{color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.badge{background:#78350f;border:1px solid #b45309;color:#fde68a;border-radius:999px;
+  padding:4px 12px;font-size:.74rem;font-weight:700;letter-spacing:.05em}
+.bonus{background:#1e1b4b;border:1px solid #6366f1;color:#c7d2fe;padding:10px 14px;
+  border-radius:9px;font-weight:700;text-align:center;margin-top:10px}
+.exp{font-size:.86rem;color:#cbd5e1}
+.exp b{color:var(--ink)}
+.modnote{font-size:.78rem;color:#a5b4fc;border-left:3px solid #6366f1;padding-left:10px;margin-top:8px}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none !important;transition:none !important}
+}
+</style>
+</head>
+<body>
+<div id="app"><div class="wrap">
+
+<header>
+  <div class="hgroup">
+    <h1>Stat Conquer <span>— Research Methods A</span></h1>
+    <div class="sub">First-year campaign · Weeks 3–10 · 12 territories · 36 stars</div>
+  </div>
+  <div class="tally">
+    <span><b id="tStars">0</b>/36 stars</span>
+    <span><b id="tTerr">0</b>/12 held</span>
+    <span class="rank" id="tRank">Novice Researcher</span>
+  </div>
+  <div class="hbtns">
+    <button id="bFull" type="button">⛶ Full Screen</button>
+    <button id="bFree" type="button">Free Explore</button>
+    <button id="bCode" type="button">Progress Code</button>
+    <button id="bBrain" type="button" class="gold" style="display:none">Stat Brain</button>
+    <button id="bBoss" type="button" style="display:none">Reviewer #2</button>
+  </div>
+</header>
+
+<div class="notice" id="noStore">Progress saving is blocked in this browser or frame, so this session will not be
+remembered. You can still play everything. Use <b>Progress Code</b> to carry your progress, or open the game in a new tab.</div>
+
+<div class="fe-flag" id="feFlag">
+  <span>Free Explore — all territories available · locked routes are practice-only</span>
+  <button id="bCampaign" type="button">Back to Campaign</button>
+</div>
+
+<div class="grid">
+  <div class="mapcard">
+    <div class="maptools">
+      <button id="bZoomOut" type="button" aria-label="Zoom out">−</button>
+      <button id="bZoomIn" type="button" aria-label="Zoom in">+</button>
+      <button id="bFit" type="button">Fit</button>
+      <button id="bNext" type="button">Next objective</button>
+      <span class="spacer"></span>
+      <button id="bList" type="button" aria-pressed="false">List view</button>
+    </div>
+    <div class="mapview" id="mapview">
+      <svg class="map" id="map" viewBox="0 0 1120 660" role="group"
+           aria-label="Research Methods A campaign map">
+        <g id="brainLayer" aria-hidden="true"></g>
+        <g id="edges"></g>
+        <g id="nodes"></g>
+      </svg>
+    </div>
+    <ul id="listview" aria-label="Territory list"></ul>
+    <p class="hint" id="mapHint">Click or tap a territory to open it. Drag to pan, pinch or scroll to zoom.</p>
+  </div>
+
+  <aside>
+    <h2>Overall</h2>
+    <div class="bar"><i id="pAll" style="width:0;background:var(--gold)"></i></div>
+    <div class="wkrow"><span>Campaign progress</span><span id="pAllTxt">0%</span></div>
+
+    <h2>Topic blocks</h2>
+    <div id="weekList"></div>
+
+    <h2>Key</h2>
+    <div class="key"><span class="sw" style="background:var(--locked)"></span>Locked 🔒</div>
+    <div class="key"><span class="sw" style="background:var(--open)"></span>Open — ready to take</div>
+    <div class="key"><span class="sw" style="background:var(--held)"></span>Conquered ★</div>
+
+    <h2>Session</h2>
+    <div class="stack">
+      <button id="bReset" type="button">Reset all progress</button>
+    </div>
+  </aside>
+</div>
+
+</div></div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- ============ DIALOGS ============ -->
+<dialog id="dIntro"><div class="dwrap">
+  <div class="dhead"><h3 id="iName">Territory</h3><span class="prog" id="iMode">Campaign</span></div>
+  <div class="dbody">
+    <p class="task" id="iSub"></p>
+    <p class="instr" id="iBlurb"></p>
+    <div id="iLocked"></div>
+  </div>
+  <div class="dfoot">
+    <button id="iClose" type="button">Back to map</button>
+    <button id="iGo" type="button" class="primary">Begin ▸</button>
+  </div>
+</div></dialog>
+
+<dialog id="dCh"><div class="dwrap">
+  <div class="dhead"><h3 id="cTitle">Challenge</h3><span class="prog" id="cProg">1 / 3</span></div>
+  <div class="dbody">
+    <p class="task" id="cQ"></p>
+    <p class="instr" id="cI"></p>
+    <div id="cHost"></div>
+    <div class="fb" id="cFb"><span class="quip" id="cQuip"></span><span class="why" id="cWhy"></span></div>
+  </div>
+  <div class="dfoot">
+    <button id="cQuit" type="button">Leave</button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button id="cCheck" type="button" class="primary">Check answer</button>
+      <button id="cNext" type="button" class="primary" style="display:none">Next ▸</button>
+    </div>
+  </div>
+</div></dialog>
+
+<dialog id="dRes"><div class="dwrap">
+  <div class="dhead"><h3 id="rTitle">Territory conquered</h3></div>
+  <div class="dbody"><div id="rBody"></div></div>
+  <div class="dfoot"><span></span><button id="rClose" type="button" class="primary">Return to map</button></div>
+</div></dialog>
+
+<dialog id="dCodeD"><div class="dwrap">
+  <div class="dhead"><h3>Progress code</h3></div>
+  <div class="dbody">
+    <p class="instr">Your progress is saved in this browser automatically. A progress code is a short backup you can
+      paste into a note, so you can restore your stars on another device or after clearing your browser data.</p>
+    <h4 style="margin:14px 0 4px;font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Save Progress Code</h4>
+    <div class="codebox" id="codeOut">—</div>
+    <button id="bCopy" type="button" style="width:100%">Copy code</button>
+    <h4 style="margin:20px 0 6px;font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Load Progress Code</h4>
+    <input type="text" id="codeIn" placeholder="RHO-K7M2-X9R" autocomplete="off" spellcheck="false" aria-label="Enter a progress code">
+    <div id="codeMsg" style="font-size:.84rem;margin-top:8px;min-height:20px"></div>
+    <button id="bLoad" type="button" style="width:100%;margin-top:4px">Load this code</button>
+  </div>
+  <div class="dfoot"><span></span><button id="codeClose" type="button" class="primary">Close</button></div>
+</div></dialog>
+
+<dialog id="dBrain"><div class="dwrap">
+  <div class="dhead"><h3>STAT BRAIN: ONLINE</h3></div>
+  <div class="dbody" id="brainBody"></div>
+  <div class="dfoot"><span></span><button id="brainClose" type="button" class="primary">Close</button></div>
+</div></dialog>
+
+<script>
+"use strict";
+/* ============================================================
+   1. CONTENT
+   ============================================================ */
+const WEEKS=[
+ {id:1,name:"Academic foundations",wk:"Weeks 3–4",col:"var(--w1)",badge:"SOURCE SCHOLAR"},
+ {id:2,name:"Data & presentation",wk:"Weeks 5 & 7",col:"var(--w2)",badge:"DATA PRESENTER"},
+ {id:3,name:"jamovi foundations",wk:"Week 8",col:"var(--w3)",badge:"JAMOVI NAVIGATOR"},
+ {id:4,name:"Inference",wk:"Weeks 9–10",col:"var(--w4)",badge:"INFERENCE ANALYST"}
+];
+const RANKS=[[0,"Novice Researcher"],[8,"Lab Apprentice"],[16,"Data Handler"],[25,"Methods Analyst"],[33,"Research Lead"]];
+
+/* --- small SVG helpers used inside challenges --- */
+function boxplotSVG(){return `
+<svg viewBox="0 0 420 240" role="group" aria-label="Boxplot of participant age with one isolated point above the upper whisker">
+ <rect width="420" height="240" fill="#0a1020"/>
+ <line x1="60" y1="20" x2="60" y2="210" stroke="#3f5a8f" stroke-width="2"/>
+ <line x1="60" y1="210" x2="400" y2="210" stroke="#3f5a8f" stroke-width="2"/>
+ <text x="26" y="205" fill="#93a4c4" font-size="12">18</text>
+ <text x="26" y="130" fill="#93a4c4" font-size="12">35</text>
+ <text x="26" y="52" fill="#93a4c4" font-size="12">62</text>
+ <text x="215" y="232" fill="#93a4c4" font-size="12" text-anchor="middle">AGE</text>
+ <rect x="180" y="150" width="70" height="42" fill="#1f2d4d" stroke="#7dd3fc" stroke-width="2"/>
+ <line x1="180" y1="172" x2="250" y2="172" stroke="#fbbf24" stroke-width="3"/>
+ <line x1="215" y1="150" x2="215" y2="128" stroke="#7dd3fc" stroke-width="2"/>
+ <line x1="195" y1="128" x2="235" y2="128" stroke="#7dd3fc" stroke-width="2"/>
+ <line x1="215" y1="192" x2="215" y2="200" stroke="#7dd3fc" stroke-width="2"/>
+ <line x1="195" y1="200" x2="235" y2="200" stroke="#7dd3fc" stroke-width="2"/>
+ <circle cx="215" cy="56" r="5" fill="#e6edf7"/>
+ <g class="hs" data-k="out" role="button" tabindex="0" aria-label="Isolated point far above the upper whisker">
+   <circle cx="215" cy="56" r="20"/></g>
+ <g class="hs" data-k="med" role="button" tabindex="0" aria-label="Median line inside the box">
+   <rect x="182" y="162" width="66" height="20"/></g>
+ <g class="hs" data-k="whisk" role="button" tabindex="0" aria-label="Upper whisker cap">
+   <rect x="190" y="118" width="50" height="20"/></g>
+</svg>`;}
+
+function twoTailSVG(){return `
+<svg viewBox="0 0 460 210" role="group" aria-label="Bell-shaped sampling distribution with a left tail region, a central region and a right tail region">
+ <rect width="460" height="210" fill="#0a1020"/>
+ <path d="M40 170 C110 170 120 40 230 40 C340 40 350 170 420 170" fill="none" stroke="#7dd3fc" stroke-width="3"/>
+ <line x1="40" y1="170" x2="420" y2="170" stroke="#3f5a8f" stroke-width="2"/>
+ <line x1="98" y1="170" x2="98" y2="120" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 4"/>
+ <line x1="362" y1="170" x2="362" y2="120" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 4"/>
+ <text x="230" y="196" fill="#93a4c4" font-size="12" text-anchor="middle">values of the test statistic</text>
+ <g class="hs" data-k="left" role="button" tabindex="0" aria-label="Far left tail region">
+   <rect x="44" y="118" width="54" height="52"/></g>
+ <g class="hs" data-k="mid" role="button" tabindex="0" aria-label="Central region of the distribution">
+   <rect x="150" y="60" width="160" height="110"/></g>
+ <g class="hs" data-k="right" role="button" tabindex="0" aria-label="Far right tail region">
+   <rect x="362" y="118" width="54" height="52"/></g>
+</svg>`;}
+
+function ribbonSVG(){return `
+<svg viewBox="0 0 640 110" role="group" aria-label="Microsoft Excel ribbon tabs: File, Home, Insert, Page Layout, Formulas, Data, Review, View">
+ <rect width="640" height="110" fill="#0a1020"/>
+ <rect x="0" y="0" width="640" height="34" fill="#16213a"/>
+ ${["File","Home","Insert","Page Layout","Formulas","Data","Review","View"].map((t,i)=>{
+   const x=8+i*78;return `<text x="${x+36}" y="22" fill="#cbd5e1" font-size="13" text-anchor="middle">${t}</text>`;}).join("")}
+ <rect x="8" y="44" width="180" height="54" fill="#16213a" stroke="#2d3f66"/>
+ <text x="98" y="76" fill="#93a4c4" font-size="12" text-anchor="middle">Sort &amp; Filter group</text>
+ ${["File","Home","Insert","Page Layout","Formulas","Data","Review","View"].map((t,i)=>{
+   const x=8+i*78;return `<g class="hs" data-k="${t}" role="button" tabindex="0" aria-label="${t} tab"><rect x="${x}" y="2" width="72" height="30"/></g>`;}).join("")}
+</svg>`;}
+
+function jamoviSetupSVG(){return `
+<svg viewBox="0 0 520 240" role="group" aria-label="jamovi data variable setup panel showing name, description, Measure type, Data type and Missing values fields">
+ <rect width="520" height="240" fill="#0a1020"/>
+ <rect x="10" y="10" width="500" height="26" fill="#2563a8"/>
+ <text x="24" y="28" fill="#fff" font-size="13">Data</text>
+ <text x="78" y="28" fill="#cfe3ff" font-size="13">Analyses</text>
+ <text x="150" y="28" fill="#cfe3ff" font-size="13">Edit</text>
+ <text x="30" y="62" fill="#93a4c4" font-size="11">DATA VARIABLE</text>
+ <rect x="30" y="68" width="300" height="24" fill="#16213a" stroke="#f59e0b"/>
+ <text x="40" y="85" fill="#e6edf7" font-size="13">GENDER</text>
+ <rect x="30" y="96" width="300" height="20" fill="#101a30" stroke="#2d3f66"/>
+ <text x="40" y="111" fill="#6b7fa6" font-size="11">Description</text>
+ <text x="30" y="140" fill="#cbd5e1" font-size="12">Measure type</text>
+ <rect x="120" y="126" width="120" height="20" fill="#16213a" stroke="#2d3f66"/>
+ <text x="128" y="141" fill="#e6edf7" font-size="12">Nominal ▾</text>
+ <text x="30" y="168" fill="#cbd5e1" font-size="12">Data type</text>
+ <rect x="120" y="154" width="120" height="20" fill="#16213a" stroke="#2d3f66"/>
+ <text x="128" y="169" fill="#e6edf7" font-size="12">Integer ▾</text>
+ <text x="30" y="196" fill="#cbd5e1" font-size="12">Missing values</text>
+ <rect x="120" y="182" width="120" height="20" fill="#16213a" stroke="#2d3f66"/>
+ <rect x="360" y="126" width="140" height="80" fill="#16213a" stroke="#2d3f66"/>
+ <text x="368" y="122" fill="#93a4c4" font-size="11">Levels</text>
+ <text x="372" y="146" fill="#e6edf7" font-size="12">Male</text>
+ <text x="372" y="168" fill="#e6edf7" font-size="12">Female</text>
+ <g class="hs" data-k="measure" role="button" tabindex="0" aria-label="Measure type dropdown"><rect x="118" y="124" width="124" height="24"/></g>
+ <g class="hs" data-k="dtype" role="button" tabindex="0" aria-label="Data type dropdown"><rect x="118" y="152" width="124" height="24"/></g>
+ <g class="hs" data-k="levels" role="button" tabindex="0" aria-label="Levels list"><rect x="358" y="124" width="144" height="84"/></g>
+ <g class="hs" data-k="name" role="button" tabindex="0" aria-label="Variable name field"><rect x="28" y="66" width="304" height="28"/></g>
+</svg>`;}
+
+function badSlideSVG(){return `
+<svg viewBox="0 0 520 300" role="group" aria-label="Draft presentation slide containing a dense paragraph of very small text and an unlabelled chart">
+ <rect width="520" height="300" fill="#f8fafc"/>
+ <rect x="0" y="0" width="520" height="34" fill="#1e3a5f"/>
+ <text x="16" y="23" fill="#fff" font-size="15" font-weight="bold">Results</text>
+ ${Array.from({length:11},(_,i)=>`<text x="18" y="${54+i*13}" fill="#1f2937" font-size="7">Students who attended more frequently had better grades and this was the case across the whole first term of the module and also when we looked at each week separately, and in addition</text>`).join("")}
+ <g transform="translate(330,150)">
+   <rect x="0" y="0" width="170" height="130" fill="#ffffff" stroke="#cbd5e1"/>
+   <rect x="24" y="60" width="26" height="50" fill="#60a5fa"/>
+   <rect x="66" y="36" width="26" height="74" fill="#60a5fa"/>
+   <rect x="108" y="20" width="26" height="90" fill="#60a5fa"/>
+   <line x1="16" y1="110" x2="158" y2="110" stroke="#94a3b8"/>
+   <line x1="16" y1="14" x2="16" y2="110" stroke="#94a3b8"/>
+ </g>
+ <g class="hs" data-k="text" role="button" tabindex="0" aria-label="Dense block of very small body text"><rect x="12" y="42" width="300" height="152"/></g>
+ <g class="hs" data-k="chart" role="button" tabindex="0" aria-label="Chart with no axis labels or title"><rect x="326" y="146" width="178" height="138"/></g>
+ <g class="hs" data-k="title" role="button" tabindex="0" aria-label="Slide title bar reading Results"><rect x="4" y="4" width="180" height="26"/></g>
+</svg>`;}
+
+function titlePageSVG(){return `
+<svg viewBox="0 0 400 300" role="group" aria-label="Report title page with a title, a blank author line, an affiliation line and a date">
+ <rect width="400" height="300" fill="#f8fafc"/>
+ <text x="200" y="88" fill="#111827" font-size="15" text-anchor="middle" font-weight="bold">Is university attendance</text>
+ <text x="200" y="108" fill="#111827" font-size="15" text-anchor="middle" font-weight="bold">associated with grades?</text>
+ <line x1="120" y1="150" x2="280" y2="150" stroke="#cbd5e1" stroke-width="1"/>
+ <text x="200" y="146" fill="#9ca3af" font-size="10" text-anchor="middle">[author line]</text>
+ <text x="200" y="182" fill="#374151" font-size="11" text-anchor="middle">School of Psychology</text>
+ <text x="200" y="200" fill="#374151" font-size="11" text-anchor="middle">University of Birmingham</text>
+ <text x="200" y="250" fill="#374151" font-size="11" text-anchor="middle">Research Methods A</text>
+ <g class="hs" data-k="author" role="button" tabindex="0" aria-label="Blank author line"><rect x="112" y="130" width="176" height="28"/></g>
+ <g class="hs" data-k="title" role="button" tabindex="0" aria-label="Report title"><rect x="60" y="72" width="280" height="42"/></g>
+ <g class="hs" data-k="aff" role="button" tabindex="0" aria-label="Affiliation lines"><rect x="90" y="168" width="220" height="40"/></g>
+ <g class="hs" data-k="mod" role="button" tabindex="0" aria-label="Module name line"><rect x="110" y="236" width="180" height="24"/></g>
+</svg>`;}
+
+function barNoLabelsSVG(){return `
+<svg viewBox="0 0 380 240" aria-hidden="true">
+ <rect width="380" height="240" fill="#0a1020"/>
+ <line x1="60" y1="20" x2="60" y2="196" stroke="#3f5a8f" stroke-width="2"/>
+ <line x1="60" y1="196" x2="350" y2="196" stroke="#3f5a8f" stroke-width="2"/>
+ <rect x="90" y="96" width="46" height="100" fill="#60a5fa"/>
+ <rect x="150" y="76" width="46" height="120" fill="#a78bfa"/>
+ <rect x="220" y="110" width="46" height="86" fill="#60a5fa"/>
+ <rect x="280" y="66" width="46" height="130" fill="#a78bfa"/>
+</svg>`;}
+
+function histSVG(bars,label){
+ const w=260,h=150,bw=w/bars.length,mx=Math.max(...bars);
+ return `<svg viewBox="0 0 ${w+40} ${h+44}" aria-hidden="true">
+  <rect width="${w+40}" height="${h+44}" fill="#0a1020"/>
+  ${bars.map((v,i)=>{const bh=(v/mx)*h;return `<rect x="${24+i*bw}" y="${14+h-bh}" width="${bw-3}" height="${bh}" fill="#60a5fa" stroke="#1e3a5f"/>`;}).join("")}
+  <line x1="20" y1="${14+h}" x2="${24+w}" y2="${14+h}" stroke="#3f5a8f" stroke-width="2"/>
+  <text x="${(w+40)/2}" y="${h+36}" fill="#93a4c4" font-size="11" text-anchor="middle">${label}</text>
+ </svg>`;}
+
+/* ---- TERRITORIES ---- */
+const TERR=[
+/* ========== BLOCK 1 — WEEKS 3–4 ========== */
+{id:1,name:"Source Sound",sub:"Finding sources",wk:1,x:110,y:120,needs:[],
+ blurb:"Week 3. Where good evidence comes from, and what should never end up in your reference list.",
+ ch:[
+ {type:"sort",q:"Sort these sources by how appropriate they are to cite in a first-year psychology assignment.",
+  i:"Tap a card, then tap a bin.",
+  bins:["High-quality evidence","Use sparingly","Not appropriate at this level"],
+  items:[{t:"Peer-reviewed journal article",b:0},{t:"Published specialist book",b:0},
+         {t:"NHS report / official government statistics",b:0},{t:"Diagnostic manual",b:0},
+         {t:"Recent news article showing a topic is topical",b:1},
+         {t:"Wikipedia or another openly edited website",b:2}],
+  explain:"Week 3 lists peer-reviewed articles, specialist books, diagnostic manuals, conference presentations and reports from public bodies such as the NHS or official government statistics as high-quality evidence. News articles can occasionally be cited to show a topic is contemporary and important, but they do not carry the same weight. Openly edited sites such as Wikipedia should not be cited at this level."},
+ {type:"mcq",q:"A textbook describes a classic 1987 study in two sentences. You want to use it in your essay. What does Week 3 tell you to do?",
+  opts:["Cite the textbook — it is a published specialist book, so that is enough",
+        "Find and read the original 1987 study, and cite that",
+        "Cite both the textbook and the original without reading either",
+        "Cite the textbook but change the wording so it is not plagiarism"],
+  a:1,
+  explain:"Where a textbook refers to a particular theory or study, you should always try to find and read the original source, so you can be sure you have understood it correctly. Citing a summary of a summary is how errors get passed along."},
+ {type:"multi",q:"Which of these are true about Generative AI and sources? Select every true statement.",
+  i:"Select all that apply, then check.",
+  opts:["Generative AI often cites sources that do not exist",
+        "Generative AI sometimes cites real sources that are actually about unrelated topics",
+        "Citing fabricated or unrelated sources can lead to disciplinary processes",
+        "An AI-produced reference list is acceptable as long as it is formatted in APA style",
+        "You are expected to find, read and cite authentic sources yourself"],
+  a:[0,1,2,4],
+  explain:"Week 3 is explicit: Generative AI often cites sources which do not exist, or which are about unrelated topics. You are held to a higher standard — find, read and cite authentic, high-quality sources. Correct APA formatting does not make a fabricated reference acceptable, and unethical use can result in disciplinary processes under the student code of conduct."}
+ ]},
+
+{id:2,name:"Citation Cove",sub:"In-text citations",wk:1,x:110,y:320,needs:[1],
+ blurb:"Week 3. Which claims need backing up, and the two in-text citation formats used in psychology.",
+ ch:[
+ {type:"segments",q:"One sentence in this paragraph makes a claim that needs a citation. Click it.",
+  i:"Click the sentence, then check.",
+  segs:["We recruited 60 first-year students through the School participant scheme. ",
+        "Previous research has shown that SSRIs can reduce depressive symptoms. ",
+        "Testing took place in a quiet room on the University campus."],
+  a:1,
+  explain:"The first and third sentences describe what <b>you</b> did — they are your own procedure, so they do not need a citation. The middle sentence is a claim about what is already known, so it must be supported by evidence. Week 3's rule: every claim you make should be supported, so it is clear it is not your own speculation or hearsay."},
+ {type:"match",q:"Match each in-text citation to what it is.",
+  i:"Click one on the left, then its partner on the right. These are the illustrative examples used in the Week 3 handout.",
+  pairs:[
+   {l:"Anderson (2020) investigated the effects of SSRIs on depression.",r:"Narrative citation — the author's name is part of the sentence"},
+   {l:"A study was conducted into the effects of SSRIs on depression (Anderson, 2020).",r:"Parenthetical citation — author and year in brackets at the end"},
+   {l:"(Anderson, 2020; Callums, 2018; Stark, 2021)",r:"Several sources at once, ordered alphabetically by surname"}],
+  explain:"Psychology uses two in-text formats and you choose whichever makes the sentence flow better. When several studies support one point, they go together in one bracket, separated by semicolons and ordered alphabetically by surname. <i>Anderson, Callums and Stark are illustrative examples from the handout, not real papers.</i>"},
+ {type:"multi",q:"This example reference list breaks several of the module's rules. Select every problem you can see.",
+  i:"Example references — these are illustrative, not real sources.",
+  pre:`<div class="segwrap" style="font-size:.85rem;line-height:1.9">
+   1. <u>Stark, P. (2021).</u> Sleep and memory consolidation. <i>Journal of Sleep Research, 30</i>, 112–125.<br>
+   2. <u>Anderson, R. (2020).</u> Effects of SSRIs on depression. <i>Clinical Psychology Review, 41</i>, 9–21.<br>
+   &bull; Callums, J. (2018). Attention in early childhood. <i>Developmental Science, 21</i>, 44–58.
+  </div>`,
+  opts:["The list is numbered","The list is not in alphabetical order by surname",
+        "A bullet point has been used","Entries are underlined",
+        "Surnames are placed before initials","Journal titles are in italics"],
+  a:[0,1,2,3],
+  explain:"Week 3's rules for the reference list: alphabetical order by the author's surname, not numbered, not bullet pointed, and no underlining. Surname before initials and italicised journal titles are <b>correct</b> here, so those two are not faults."}
+ ]},
+
+{id:3,name:"Formatting Fjord",sub:"Word & APA formatting",wk:1,x:110,y:520,needs:[2],
+ blurb:"Week 4. Getting a document into the format the School actually asks for.",
+ ch:[
+ {type:"order",q:"Put the Week 4 editing exercise into the right order.",
+  i:"Use the arrows to reorder.",
+  items:["Download the file labelled Editing Exercise from the Week 4 Canvas folder",
+         "Rename the file using your student number, e.g. 1102345_Word",
+         "Go to the Review tab and turn Track Changes ON",
+         "Set the drop-down to All Markup so your edits show in a distinct colour",
+         "Edit the document so it conforms to APA style and School formatting",
+         "Check your edits against the Exercise Answers file"],
+  explain:"Track Changes has to be on <b>before</b> you start editing, otherwise your changes are invisible to whoever reviews them. Setting the view to All Markup is what makes the edits appear in a distinct colour. This exercise is formative — it is not submitted, and you check your own work against the answers file."},
+ {type:"hotspot",q:"On this title page, click where your student number should go.",
+  i:"Click the region, then check.",
+  svg:titlePageSVG(),a:["author"],
+  explain:"Your student number goes where an author's name would normally appear on a published article — on the title page. Week 4 asks you to make sure your student number is written somewhere sensible in the document, because without it markers cannot tell whose work it is."},
+ {type:"mcq",q:"Which filename follows the naming convention used in Research Methods A?",
+  opts:["Word_1102345","1102345_Word","RMA essay FINAL v2","1102345 word final"],
+  a:1,
+  explain:"The convention is student number, then an underscore, then the submission title — so 1102345_Word. It is worth getting into the habit now, because you will be expected to use this format when submitting real assignments."}
+ ]},
+
+/* ========== BLOCK 2 — WEEKS 5 & 7 ========== */
+{id:4,name:"Spreadsheet Shores",sub:"Excel: sorting & functions",wk:2,x:350,y:120,needs:[1],
+ blurb:"Week 5. Sorting the IQ dataset and using Excel's built-in functions.",
+ ch:[
+ {type:"hotspot",q:"You want to sort the IQ dataset by Sex and then by Diagnosis. Which ribbon tab do you click?",
+  i:"Click the tab, then check.",
+  svg:ribbonSVG(),a:["Data"],
+  explain:"Sort lives under the <b>Data</b> tab. Week 5 asks you to sort by Sex and then by Diagnosis so that male and female participants are separated into ASD and TD groups. Formulas is where AVERAGE and AutoSum live — a different job."},
+ {type:"order",q:"Put the steps for turning a proportion into a percentage in Excel into order.",
+  i:"Use the arrows to reorder.",
+  items:["Click on an empty cell",
+         "Enter a formula dividing the category count by the group total, e.g. =b2/c2",
+         "Press Enter to produce the value",
+         "Click the cell containing the new value",
+         "Press Ctrl+Shift+% to display it as a percentage"],
+  explain:"Week 5's method: divide the number of participants in a category by the total number in that group, then use Ctrl+Shift+% to convert the resulting proportion into a percentage. The division has to happen before the formatting — formatting an empty cell does nothing."},
+ {type:"mcq",q:"A group has SD = 12 and N = 36. What is the standard error of the mean?",
+  i:"SEM = standard deviation ÷ √(sample size).",
+  opts:["0.33","2","6","12"],
+  a:1,
+  explain:"SEM is the standard deviation divided by the square root of the sample size — the number of observations in the sample. Here √36 = 6, and 12 ÷ 6 = <b>2</b>. A larger sample gives a smaller standard error, which is why SEM error bars shrink as N grows."}
+ ]},
+
+{id:5,name:"Error Bar Bay",sub:"Pivot tables & charts",wk:2,x:350,y:320,needs:[4],
+ blurb:"Week 5. From pivot table to a clustered bar chart with error bars.",
+ ch:[
+ {type:"order",q:"Put the Week 5 chart pipeline into order.",
+  i:"Use the arrows to reorder.",
+  items:["Insert a Pivot Table and place it in Tab 2",
+         "Drag Sex to rows and Diagnosis to columns, with Age and IQ in Values",
+         "Change the Sum values to Average using Value Field Settings",
+         "Copy the pivot table and paste values only into Tab 3 using the 123 paste option",
+         "Highlight the data and Insert a clustered 2-D Column chart",
+         "Add standard error of the mean bars to each column",
+         "Label both axes and add a clear key"],
+  explain:"The values-only paste (the 123 icon under Paste Options) matters — pasting the live pivot table into the chart area causes problems later. Week 5 asks for two charts: mean IQ, and mean age, each split by sex and diagnosis, each with SEM error bars, clearly labelled axes and a clear key."},
+ {type:"multi",q:"This chart was submitted as-is. Select everything it is missing.",
+  i:"Select all that apply.",
+  pre:`<div class="figbox">${barNoLabelsSVG()}</div>`,
+  opts:["Axis labels","A chart title","A key identifying the two colours",
+        "Error bars","Numbers on the bars showing the exact p-value"],
+  a:[0,1,2,3],
+  explain:"Week 5 asks for clearly formatted and labelled axes, a clear key, and standard error of the mean bars on each column. A title is expected too. The last option is not a thing — p-values belong in the text, not printed on bars, and this chart is descriptive anyway."},
+ {type:"sort",q:"Which tab of the IQ data workbook does each piece of work belong in?",
+  i:"Tap a card, then tap a tab.",
+  bins:["Tab 1 (data)","Tab 2","Tab 3"],
+  items:[{t:"Your calculated means, in the bright yellow boxes",b:0},
+         {t:"Your calculated SEM values",b:0},
+         {t:"The three pivot tables",b:1},
+         {t:"The two clustered bar charts with error bars",b:2}],
+  explain:"Week 5 is specific about where things go: answers to the calculations go in the bright yellow boxes on the first tab, pivot tables go in Tab 2, and graphs go in Tab 3. Keeping a workbook organised this way is a habit worth forming now."}
+ ]},
+
+{id:6,name:"Slide Summit",sub:"Presenting your work",wk:2,x:350,y:520,needs:[5],
+ blurb:"Week 7. Building a five-slide deck that an audience can actually read.",
+ ch:[
+ {type:"order",q:"Put the five slides of the Week 7 presentation into order.",
+  i:"Use the arrows to reorder.",
+  items:["Title slide — study title, your name and affiliation",
+         "Introduction — background on the topic",
+         "Methods — participants, procedure, materials",
+         "Results — findings, with the chart",
+         "Conclusion — what it means"],
+  explain:"This is the standard shape of a research presentation and it mirrors the sections of a report. Week 7 asks for exactly these five slides, with the chart on the Results slide, axes labelled Grade and Attendance, and a title on the chart."},
+ {type:"hotspot",q:"Click the two design problems on this draft slide.",
+  i:"Click both, then check.",
+  svg:badSlideSVG(),a:["text","chart"],
+  explain:"Two faults. The body text is a dense block in a font far too small — Week 7 says you should be able to read everything without zooming in, and that slides should be concise and uncluttered. The chart has no axis labels and no title, so the audience cannot tell what is being plotted. Charts should also carry alternative text so someone using a screen reader can hear what they show."},
+ {type:"match",q:"Each statement comes from the Week 7 example study. Match it to the slide it belongs on.",
+  i:"Click one on the left, then its slide on the right.",
+  pairs:[
+   {l:"\"Is university attendance associated with grades?\"",r:"Title slide"},
+   {l:"\"Findings of a previously published study suggest students with better attendance have better grades.\"",r:"Introduction"},
+   {l:"\"300 university students (200 females, 100 males; mean age = 19).\"",r:"Methods"},
+   {l:"\"Students who attended more frequently had better grades.\"",r:"Results"},
+   {l:"\"Students should be encouraged to attend all modules.\"",r:"Conclusion"}],
+  explain:"Sorting content into the right section is most of what makes a deck readable. Note the jump between the last two: the result is a <b>relationship</b> observed in existing attendance records, but the conclusion is a <b>recommendation</b>. Reviewer #2 will want a word about that later."}
+ ]},
+
+/* ========== BLOCK 3 — WEEK 8 ========== */
+{id:7,name:"Variable Valley",sub:"Setting up variables",wk:3,x:600,y:220,needs:[5],
+ blurb:"Week 8. jamovi's data view, measure types and why labelling matters.",
+ ch:[
+ {type:"hotspot",q:"In jamovi's variable setup, click where you set whether a variable is nominal, ordinal or continuous.",
+  i:"Click the field, then check.",
+  svg:jamoviSetupSVG(),a:["measure"],
+  explain:"The <b>Measure type</b> dropdown sets the measurement level. <b>Data type</b> (integer, decimal, text) is a separate setting describing how the values are stored. Week 8 warns that if your variables have the wrong measure type, your analyses might not work correctly."},
+ {type:"sort",q:"Classify each variable from the Week 8 employees dataset by its measurement level.",
+  i:"Tap a card, then tap a level.",
+  bins:["Nominal","Ordinal","Continuous"],
+  items:[{t:"GENDER (male / female)",b:0},
+         {t:"MINORITY (0 = not a minority, 1 = minority)",b:0},
+         {t:"JOBCAT (manual / office / corporate)",b:0},
+         {t:"SALARY (£)",b:2},
+         {t:"EDUC (years of education)",b:2},
+         {t:"Satisfaction rated 1–5, strongly disagree to strongly agree",b:1}],
+  explain:"Nominal variables name categories with no order. Ordinal variables have a meaningful order but the gaps between points are not necessarily equal — a 1–5 agreement rating is the classic case. Continuous (scale) variables are measured on a numeric scale where the intervals do mean something, like salary or years of education."},
+ {type:"multi",q:"Which of these are good practice when setting up variables in jamovi? Select all that apply.",
+  opts:["Add value labels so 0 and 1 appear as meaningful category names in your output",
+        "Set the measure type correctly for every variable before analysing",
+        "Only collect demographic information you can actually justify needing",
+        "Offering just two options for gender identity, since that is how most datasets are coded"],
+  a:[0,1,2],
+  explain:"Week 8 makes all three points. Unlabelled 0/1 columns like MINORITY are meaningless to anyone reading the output, so add labels. Wrong measure types break analyses. And the handout is direct about the last one: listing only two labels for gender identity is <b>bad practice</b>, because it excludes anyone who does not identify with either — and you should only ever collect personal data you can justify as necessary and relevant."}
+ ]},
+
+{id:8,name:"Descriptives Delta",sub:"Exploring your data",wk:3,x:600,y:430,needs:[6,7],
+ blurb:"Week 8. Descriptives, splitting output by group, and reading the results panel.",
+ ch:[
+ {type:"order",q:"Put the jamovi steps in order to get mean salary split by job category, with a histogram.",
+  i:"Use the arrows to reorder.",
+  items:["Click the Analyses tab",
+         "Click Exploration",
+         "Click Descriptives",
+         "Move SALARY into the Variables box",
+         "Move JOBCAT into the Split by box",
+         "Open Plots and tick Histogram"],
+  explain:"Analyses → Exploration → Descriptives is the route for all of Week 8's summary statistics. <b>Split by</b> uses a categorical grouping variable to break the output into separate summaries for each group; in this exercise, JOBCAT is the grouping variable."},
+ {type:"grid",q:"This is the Week 8 output for SALARY split by JOBCAT. Click the mean salary of job category 3.",
+  i:"Click one cell, then check.",
+  cols:["","1","2","3"],
+  rows:[["N","363","27","84"],["Missing","0","0","0"],
+        ["Mean","27839","30939","63978"],["Median","26550","30750","60500"],
+        ["Standard deviation","7568","2115","18245"],
+        ["Minimum","15750","24300","34410"],["Maximum","80000","35250","135000"]],
+  a:"2,3",
+  explain:"Read down to the Mean row, then across to the column headed 3 — <b>63,978</b>. Category 3 is Corporate, and it is worth noticing how much larger its standard deviation is (18,245) than category 2's (2,115): the corporate salaries are far more spread out."},
+ {type:"mcq",q:"What does putting GENDER in the Split by box actually do to your Descriptives output?",
+  opts:["It removes everyone who is not in the first group from the analysis",
+        "It reports the descriptive statistics separately for each gender rather than for the whole sample",
+        "It tests whether the genders differ significantly",
+        "It sorts the spreadsheet rows by gender"],
+  a:1,
+  explain:"Split by reports your descriptives separately for each level of that variable, instead of pooling everyone together. Nothing is removed and nothing is tested — it is purely descriptive. Week 8 walks through exactly this with EDUC and JOBCAT split by GENDER."}
+ ]},
+
+/* ========== BLOCK 4 — WEEKS 9–10 ========== */
+{id:9,name:"Hypothesis Harbour",sub:"Hypothesis testing",wk:4,x:850,y:110,needs:[7],
+ blurb:"Week 9. The vocabulary of hypothesis testing — and what a non-significant result does and does not mean.",
+ ch:[
+ {type:"match",q:"Match each term to what it actually means.",
+  i:"Click a term, then its meaning.",
+  pairs:[
+   {l:"Null hypothesis (H₀)",r:"The statement of no effect, no difference or no association that the test is set up against"},
+   {l:"Significance level (α)",r:"The threshold chosen before testing; commonly .05 in this module"},
+   {l:"Critical value",r:"The cut-off value of the test statistic that marks the edge of the rejection region"},
+   {l:"p-value",r:"Calculated from the observed data, then compared against the chosen threshold"},
+   {l:"Two-tailed test",r:"The rejection probability is divided between both tails of the distribution"}],
+  explain:"These three get tangled constantly, so it is worth separating them. <b>α</b> is the threshold you pick in advance — .05 in this module. The <b>critical value</b> is the point on the test statistic's scale that corresponds to that threshold. The <b>p-value</b> comes out of your actual data and gets compared with α. Week 9 uses a 5% significance level with a 95% confidence level — the two add up to 100%."},
+ {type:"hotspot",q:"For a two-tailed test at the 5% level, click BOTH regions where the null hypothesis would be rejected.",
+  i:"Click both, then check.",
+  svg:twoTailSVG(),a:["left","right"],
+  explain:"A two-tailed, non-directional test splits the 5% across both ends — the lowest 2.5% and the highest 2.5%, making 5% altogether. The middle of the distribution is where results consistent with H₀ fall.",
+  note:"A one-tailed test places the whole rejection region in one pre-specified direction. That direction has to be set out <b>in advance</b> on the basis of theory — not chosen after seeing which way the data went. For this module, two-tailed tests are the usual approach, since it is rare to know the direction beforehand."},
+ {type:"mcq",q:"Your test comes back non-significant. What is the correct interpretation?",
+  opts:["The null hypothesis has been proved — there is no effect",
+        "Fail to reject H₀ — the data do not provide sufficient evidence for the alternative hypothesis at the chosen significance level",
+        "The effect exists but the test was not sensitive enough to find it",
+        "The result should be reported as approaching significance"],
+  a:1,
+  explain:"You <b>fail to reject</b> H₀. Week 9 is firm that you can never claim to have proved the null — you cannot 100% prove a null statement. Nor does it establish that no effect exists; it only means the evidence you collected was not sufficient to reject H₀ under the analysis and threshold you chose. And a result is either below your threshold or it is not — there is no in-between category."}
+ ]},
+
+{id:10,name:"Correlation Coast",sub:"Pearson's r in jamovi",wk:4,x:850,y:300,needs:[8,9],
+ blurb:"Week 9. Running and reporting a correlation, and reading r properly.",
+ ch:[
+ {type:"order",q:"Put the jamovi steps for the Week 9 correlation into order.",
+  i:"Use the arrows to reorder.",
+  items:["Open the Correlation data file in jamovi",
+         "Click Analyses, then Regression",
+         "Click Correlation Matrix",
+         "Move ICE_CREAM and Temp into the variables box",
+         "Tick Pearson and Report significance",
+         "Select 'Correlated' under Hypothesis"],
+  explain:"Correlation Matrix sits under <b>Regression</b> in jamovi, which surprises people. 'Correlated' is the non-directional option — it tests for a relationship in either direction, which matches the two-tailed default. The alternatives, 'Correlated positively' and 'Correlated negatively', are directional."},
+ {type:"segments",q:"In this result, click the degrees of freedom.",
+  i:"Click the right part of the line, then check.",
+  mono:true,
+  segs:["r","(18)"," = .893",", p < .001"],
+  a:1,
+  explain:"The number in brackets after r is the degrees of freedom. There were 20 days of observations, and for a correlation df = N − 2, so df = 18. Then .893 is the correlation coefficient itself and p < .001 is the significance."},
+ {type:"match",q:"Match each r value to its strength band.",
+  i:"Using the interpretation bands taught in this module.",
+  pairs:[
+   {l:"r = .08",r:"Very weak (0–.19)"},
+   {l:"r = −.31",r:"Weak (.20–.39)"},
+   {l:"r = .47",r:"Moderate (.40–.59)"},
+   {l:"r = −.68",r:"Strong (.60–.79)"},
+   {l:"r = .89",r:"Very strong (.80–1)"}],
+  explain:"These bands are the rule of thumb taught in this module — they are a convention for describing a coefficient, not a universal law of nature, and different fields use different cut-offs. Note that the bands apply to the <b>size</b> of r regardless of sign: −.68 is just as strong as +.68, it simply runs the other way."}
+ ]},
+
+{id:11,name:"Distribution Dunes",sub:"Histograms & outliers",wk:4,x:850,y:490,needs:[10],
+ blurb:"Week 9. Looking at the shape of your data before you trust a test.",
+ ch:[
+ {type:"pick",q:"Which of these histograms looks roughly normally distributed?",
+  i:"Click one, then check.",
+  picks:[{svg:histSVG([2,5,9,14,15,10,6,2],"Variable A"),cap:"A"},
+         {svg:histSVG([16,13,9,6,4,3,2,1],"Variable B"),cap:"B"},
+         {svg:histSVG([9,4,3,9,10,4,8,9],"Variable C"),cap:"C"}],
+  a:0,
+  explain:"A shows the classic bell shape — most scores in the middle, tapering off symmetrically at both ends. B is skewed, with the scores pushed up against one end. C is lumpy and flat with no clear central peak, much like the MOTIVATION histogram in Week 9. Histograms are the quickest way to check whether data look normally distributed."},
+ {type:"hotspot",q:"This boxplot shows participant age. Click the potential outlier.",
+  i:"Click it, then check.",
+  svg:boxplotSVG(),a:["out"],
+  explain:"The isolated point sitting well above the upper whisker is a potential outlier — one participant is a lot older than the rest of the sample. The gold line inside the box is the median, and the cap at the top of the line is the upper whisker.",
+  note:"Spotting it is only step one. An outlier should be <b>investigated</b>, not automatically deleted."},
+ {type:"multi",q:"You have found a potential outlier. Select every action that is good practice.",
+  opts:["Go back to the original data and investigate why that value is unusual",
+        "If it turns out to be a data-entry or measurement error, correct it or exclude it with a stated justification",
+        "Keep the original data file untouched and save any cleaned version under a new name",
+        "Document any exclusion so a reader knows what you removed and why",
+        "Delete the participant straight away because extreme values distort results"],
+  a:[0,1,2,3],
+  explain:"Investigate first. If the value is a typo or a measurement failure, you can correct or exclude it with justification. If it is a genuine observation, do not delete it simply because it is extreme — consider how it affects the analysis and follow the module guidance. Week 9 is emphatic on one point in particular: <b>always keep the original data file</b>, and save changed versions under a different name, such as 'Correlation data outliers removed'."}
+ ]},
+
+{id:12,name:"Chi-Square Chasm",sub:"χ² test of association",wk:4,x:1030,y:300,needs:[11],
+ blurb:"Week 10. Comparing observed frequencies with what the null model predicts.",
+ ch:[
+ {type:"sort",q:"Which of these research questions suits the χ² test of association taught in Week 10?",
+  i:"Tap a card, then tap a bin. This test needs two categorical variables.",
+  bins:["χ² test of association","A different analysis"],
+  items:[{t:"Is there an association between gender and smoking?",b:0},
+         {t:"Is course choice associated with gender?",b:0},
+         {t:"Is whether someone plays football associated with their gender?",b:0},
+         {t:"Is temperature related to the number of ice creams sold?",b:1},
+         {t:"Do students score higher on motivation than on stress?",b:1}],
+  explain:"The procedure Week 10 teaches — Frequencies → Independent Samples — tests whether <b>two categorical variables</b> are associated, with each observation contributing to exactly one cell. Temperature and ice cream sales are both continuous, so that is a correlation (Week 9). Comparing motivation with stress means comparing scores, not frequencies, so that is a different kind of test again."},
+ {type:"grid",q:"In this contingency table, click the expected count for females who smoke.",
+  i:"Click one cell, then check.",
+  cols:["","Yes","No","Total"],
+  rows:[["Female — Observed","12","85","97"],["Female — Expected","14.4","82.6","97.0"],
+        ["Male — Observed","25","128","153"],["Male — Expected","22.6","130.4","153.0"],
+        ["Total — Observed","37","213","250"]],
+  a:"1,1",
+  explain:"Expected counts are the frequencies predicted under the null hypothesis that the two categorical variables are independent — they are the baseline the observed counts get compared against. Here 12 were observed against 14.4 expected. The observed and expected values are close throughout this table, which is why χ²(1) = .742, p = .389 — no significant association."},
+ {type:"mcq",q:"A second chi-square gives χ² = 21.9 with 1 degree of freedom, and jamovi displays the p-value as < .001. How should you report it?",
+  opts:["χ²(1) = 21.9, p = .000","χ²(1) = 21.9, p < .001",
+        "χ²(1) = 21.9, p = 0","χ²(250) = 21.9, p < .001"],
+  a:1,
+  explain:"Report the exact p-value when the software gives you one — as in χ²(1) = .742, <b>p = .389</b>. When the p-value is below .001, report <b>p &lt; .001</b> rather than p = .000. Do not report <b>p = .000</b>; when software indicates a value below .001, report <b>p &lt; .001</b>. Note also that the number in brackets is the degrees of freedom (1), not the sample size."}
+ ]}
+];
+
+const EDGES=[[1,2],[2,3],[1,4],[4,5],[5,6],[3,6],[5,7],[6,8],[7,8],[7,9],[8,10],[9,10],[10,11],[11,12]];
+
+/* --- Reviewer #2 --- */
+const BOSS=[
+ {type:"mcq",q:"The Week 7 example study recorded attendance registers and final grades, and found students who attended more frequently had better grades. Which conclusion is justified?",
+  opts:["Attending lectures causes grades to improve",
+        "Attendance and grades are associated in this sample; this design cannot establish that one caused the other",
+        "Students who miss lectures are less motivated",
+        "Nothing can be concluded because the sample was mostly female"],
+  a:1,
+  explain:"Nobody assigned students to attend or not attend — attendance was simply observed. So although the relationship is real in this sample, other explanations remain wide open: students who are already doing well may find it easier to attend, and illness, work or caring responsibilities could affect attendance and grades at once. A relationship between two measured variables does not establish which one is driving the other."},
+ {type:"sort",q:"Match each question to the analysis taught in Research Methods A.",
+  i:"Tap a card, then tap a bin.",
+  bins:["Pearson's correlation","χ² test of association","Descriptives only"],
+  items:[{t:"Is temperature related to daily ice cream sales?",b:0},
+         {t:"Is reported stress related to motivation score?",b:0},
+         {t:"Is gender associated with whether someone smokes?",b:1},
+         {t:"What is the mean and SD of salary in each job category?",b:2}],
+  explain:"Two continuous variables and a question about relationship → correlation. Two categorical variables and a question about association → chi-square. A question that just asks what the data look like → descriptives, no inferential test needed."},
+ {type:"grid",q:"Click the cell showing the degrees of freedom for this chi-square result.",
+  i:"Click one cell, then check.",
+  cols:["","Value","df","p"],
+  rows:[["χ²","21.9","1","< .001"],["N","330","",""]],
+  a:"0,2",
+  explain:"df = 1, in the df column. The 330 underneath is N, the total number of observations — a common thing to grab by mistake. For a 2×2 contingency table, df = (rows − 1) × (columns − 1) = 1."},
+ {type:"match",q:"Each sentence has one problem. Match it to what is wrong.",
+  i:"Click a sentence, then its fault.",
+  pairs:[
+   {l:"\"The correlation was significant, p = .000.\"",r:"Report p < .001 instead — do not report software output as p = .000"},
+   {l:"\"The chi-square was non-significant, so gender and smoking are not associated.\"",r:"Failing to reject H₀ is not proof that no association exists"},
+   {l:"\"See Table 1.\"",r:"You must interpret what the table shows in the text, not just point at it"},
+   {l:"\"We used a one-tailed test because the effect turned out to be positive.\"",r:"A direction has to be specified in advance, not chosen after seeing the results"}],
+  explain:"All four are things markers flag constantly. The Week 9 handout highlights the third one in particular: it is never enough to say 'see Table 1' — you have to tell the reader what the table shows, e.g. 'Figure 1 shows a scatterplot depicting the correlation between temperature and ice cream sales'."},
+ {type:"mcq",q:"You want to examine the relationship between two variables, but one is an ordinal satisfaction rating from 1 to 5 and the other is clearly non-normal. Which is the better choice?",
+  opts:["Pearson's r, because it is the default",
+        "Spearman's correlation, because it works on ranks and suits ordinal data or monotonic relationships where Pearson's assumptions are not appropriate",
+        "A chi-square test of association",
+        "No analysis is possible"],
+  a:1,
+  explain:"Pearson is used when the data meet parametric assumptions — interval or scale data, roughly normal, free from problematic outliers. Spearman works on the <b>ranks</b> of the data instead, which makes it suitable for ordinal variables and for monotonic relationships where Pearson's assumptions do not fit. It is a different tool for a different kind of data, not an emergency substitute. Chi-square would be wrong here — neither variable is a set of category counts."}
+];
+
+/* --- reaction lines --- */
+const GOOD=["Reviewer 2 approves.","Methodologically acceptable.","The data survive.","Clean.",
+ "That variable knows its role.","Suspiciously competent.","Research methods instincts activated.",
+ "Noted and accepted.","No revisions required.","Statistically satisfying."];
+const BAD=["Reviewer 2 has questions.","Inspect the design again.","Something in this study is misbehaving.",
+ "Not quite — look at the evidence.","One variable is causing trouble.","The data would like another attempt.",
+ "Close. Check it once more."];
+const SWEEP=["Three for three. Reviewer 2 is silent.","Flawless. Suspiciously prepared.",
+ "Clean sweep — no revisions requested.","All first attempts. Methodologically immaculate.",
+ "Perfect run. The null hypothesis has left the building."];
+
+/* ============================================================
+   2. STATE + STORAGE
+   ============================================================ */
+const KEYS=["statconquer_rma_v2","statconquer_rma_v1","statconquer_rma"];
+let storeOK=true;
+let S={stars:{},revealed:false,boss:0,seenBadge:{}};
+let freeExplore=false;
+
+function tryStore(){
+  try{const k="__sc_test";localStorage.setItem(k,"1");localStorage.removeItem(k);return true;}
+  catch(e){return false;}
+}
+function load(){
+  storeOK=tryStore();
+  if(!storeOK){document.getElementById("noStore").classList.add("show");return;}
+  for(const k of KEYS){
+    let raw=null;try{raw=localStorage.getItem(k);}catch(e){}
+    if(!raw)continue;
+    try{
+      const o=JSON.parse(raw);
+      if(o&&typeof o==="object"){
+        const st={};
+        const src=o.stars||o;
+        for(const id in src){
+          const v=src[id];
+          const n=(v&&typeof v==="object")?(v.stars|0):(v|0);
+          if(n>0&&n<=3)st[id]=n;
+        }
+        S.stars=st;
+        S.revealed=!!o.revealed;S.boss=o.boss|0;S.seenBadge=o.seenBadge||{};
+        return;
+      }
+    }catch(e){}
+  }
+}
+function save(){
+  if(!storeOK)return;
+  try{localStorage.setItem(KEYS[0],JSON.stringify(S));}catch(e){storeOK=false;
+    document.getElementById("noStore").classList.add("show");}
+}
+const T=id=>TERR.find(t=>t.id===id);
+const held=id=>(S.stars[id]|0)>0;
+function campaignOpen(id){
+  const t=T(id);if(!t)return false;
+  if(t.needs.length===0)return true;
+  return t.needs.some(n=>held(n));
+}
+const totalStars=()=>TERR.reduce((a,t)=>a+(S.stars[t.id]|0),0);
+const totalHeld=()=>TERR.filter(t=>held(t.id)).length;
+function rankOf(s){let r=RANKS[0][1];for(const [n,t] of RANKS)if(s>=n)r=t;return r;}
+function weekDone(w){return TERR.filter(t=>t.wk===w).every(t=>held(t.id));}
+const allDone=()=>TERR.every(t=>held(t.id));
+
+/* ============================================================
+   3. PROGRESS CODE
+   ============================================================ */
+const AB="23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+const VER=1;
+const PREFIX=["RHO","CHI","ALPHA","SIGMA","BETA"];
+function prefixFor(){
+  const i=Math.min(PREFIX.length-1,RANKS.filter(r=>totalStars()>=r[0]).length-1);
+  return PREFIX[Math.max(0,i)];
+}
+function makeCode(){
+  let bits=0;
+  for(let i=0;i<12;i++){bits=bits*4+(S.stars[i+1]|0);}       // 24 bits
+  let payload=VER*16777216+bits;                              // 4 + 24 bits
+  let sum=0,tmp=payload;
+  while(tmp>0){sum+=tmp%64;tmp=Math.floor(tmp/64);}
+  const chk=sum%64;
+  let val=payload*64+chk;                                     // 34 bits
+  let out="";
+  for(let i=0;i<7;i++){out=AB[val%32]+out;val=Math.floor(val/32);}
+  return prefixFor()+"-"+out.slice(0,4)+"-"+out.slice(4);
+}
+function readCode(str){
+  const parts=String(str).toUpperCase().replace(/\s+/g,"").split("-").filter(Boolean);
+  if(parts.length<2)return{err:"That does not look like a progress code."};
+  const body=parts.slice(1).join("");
+  if(body.length!==7)return{err:"A progress code has 7 characters after the prefix."};
+  let val=0;
+  for(const c of body){const i=AB.indexOf(c);
+    if(i<0)return{err:"Unrecognised character \u201c"+c+"\u201d in the code."};
+    val=val*32+i;}
+  const chk=val%64,payload=Math.floor(val/64);
+  let sum=0,tmp=payload;
+  while(tmp>0){sum+=tmp%64;tmp=Math.floor(tmp/64);}
+  if(sum%64!==chk)return{err:"That code failed its check — a character may have been mistyped."};
+  const ver=Math.floor(payload/16777216);
+  if(ver!==VER)return{err:"That code is from a different version of the game."};
+  let bits=payload%16777216;
+  const stars={};
+  for(let i=11;i>=0;i--){const v=bits%4;bits=Math.floor(bits/4);if(v>0)stars[i+1]=v;}
+  return{stars};
+}
+
+/* ============================================================
+   4. MAP
+   ============================================================ */
+const svg=document.getElementById("map");
+const gEdges=document.getElementById("edges");
+const gNodes=document.getElementById("nodes");
+const mapview=document.getElementById("mapview");
+const VB={x:0,y:0,w:1120,h:660};
+const BASE={x:0,y:0,w:1120,h:660};
+const R=82,H=R*0.866;
+function hexPts(cx,cy){
+  return [[cx+R,cy],[cx+R/2,cy+H],[cx-R/2,cy+H],[cx-R,cy],[cx-R/2,cy-H],[cx+R/2,cy-H]]
+    .map(p=>p.join(",")).join(" ");
+}
+function applyVB(){svg.setAttribute("viewBox",`${VB.x} ${VB.y} ${VB.w} ${VB.h}`);}
+function zoomBy(f,cx,cy){
+  const nw=Math.min(BASE.w*1.4,Math.max(BASE.w*0.32,VB.w*f));
+  const k=nw/VB.w;
+  if(cx==null){cx=VB.x+VB.w/2;cy=VB.y+VB.h/2;}
+  VB.x=cx-(cx-VB.x)*k;VB.y=cy-(cy-VB.y)*k;
+  VB.w=nw;VB.h=BASE.h*(nw/BASE.w);
+  applyVB();
+}
+function fitAll(){VB.x=BASE.x;VB.y=BASE.y;VB.w=BASE.w;VB.h=BASE.h;applyVB();}
+function centreOn(t,w){
+  VB.w=w||BASE.w*0.5;VB.h=BASE.h*(VB.w/BASE.w);
+  VB.x=t.x-VB.w/2;VB.y=t.y-VB.h/2;applyVB();
+}
+function nextObjective(){
+  const open=TERR.filter(t=>!held(t.id)&&campaignOpen(t.id));
+  return open[0]||TERR.find(t=>!held(t.id))||TERR[0];
+}
+function svgPoint(evt){
+  const r=svg.getBoundingClientRect();
+  return{x:VB.x+((evt.clientX-r.left)/r.width)*VB.w,
+         y:VB.y+((evt.clientY-r.top)/r.height)*VB.h};
+}
+
+function buildMap(){
+  gEdges.innerHTML="";gNodes.innerHTML="";
+  for(const [a,b] of EDGES){
+    const A=T(a),B=T(b);
+    const l=document.createElementNS("http://www.w3.org/2000/svg","line");
+    l.setAttribute("x1",A.x);l.setAttribute("y1",A.y);
+    l.setAttribute("x2",B.x);l.setAttribute("y2",B.y);
+    l.setAttribute("class","edge");l.dataset.a=a;l.dataset.b=b;
+    gEdges.appendChild(l);
+  }
+  for(const t of TERR){
+    const g=document.createElementNS("http://www.w3.org/2000/svg","g");
+    g.setAttribute("class","hex");g.setAttribute("role","button");
+    g.setAttribute("tabindex","0");g.dataset.id=t.id;
+    const ring=document.createElementNS("http://www.w3.org/2000/svg","polygon");
+    ring.setAttribute("points",hexPts(t.x,t.y));ring.setAttribute("class","ring");
+    const p=document.createElementNS("http://www.w3.org/2000/svg","polygon");
+    p.setAttribute("points",hexPts(t.x,t.y));p.setAttribute("class","body");
+    g.appendChild(ring);g.appendChild(p);
+    const mk=(cls,dy,txt)=>{const e=document.createElementNS("http://www.w3.org/2000/svg","text");
+      e.setAttribute("x",t.x);e.setAttribute("y",t.y+dy);e.setAttribute("class",cls);
+      e.textContent=txt;g.appendChild(e);return e;};
+    mk("wk",-42,WEEKS[t.wk-1].wk.toUpperCase());
+    const words=t.name.split(" ");
+    mk("nm",-16,words[0]);mk("nm",2,words.slice(1).join(" "));
+    mk("sb",20,t.sub);
+    const st=mk("st",46,"");st.dataset.role="stars";
+    gNodes.appendChild(g);
+  }
+  drawBrain();
+  refresh();
+}
+function drawBrain(){
+  const L=document.getElementById("brainLayer");
+  L.innerHTML=`
+   <path class="glow" d="M210 330 C180 170 400 70 600 100 C820 70 1010 160 1000 320
+     C1010 480 820 600 600 570 C400 600 180 500 210 330 Z"/>
+   <path d="M210 330 C180 170 400 70 600 100 C820 70 1010 160 1000 320
+     C1010 480 820 600 600 570 C400 600 180 500 210 330 Z"/>
+   <path d="M600 100 C580 240 600 420 600 570"/>
+   <path d="M330 200 C430 280 430 400 330 470"/>
+   <path d="M870 190 C770 280 770 400 870 470"/>
+   <path d="M250 330 C400 300 480 360 600 330 C720 300 820 360 980 330"/>`;
+}
+
+function refresh(){
+  for(const t of TERR){
+    const g=gNodes.querySelector(`.hex[data-id="${t.id}"]`);
+    if(!g)continue;
+    const s=S.stars[t.id]|0;
+    const open=campaignOpen(t.id);
+    const state=s>0?"held":(open?"open":"locked");
+    g.dataset.state=state;
+    g.classList.toggle("free",freeExplore&&state==="locked");
+    const body=g.querySelector("polygon.body");
+    body.setAttribute("fill",state==="held"?"var(--held)":state==="open"?WEEKS[t.wk-1].col:"var(--locked)");
+    body.setAttribute("opacity",state==="locked"?"0.62":"1");
+    const stEl=g.querySelector('text[data-role="stars"]');
+    stEl.textContent=state==="locked"?(freeExplore?"◇ practice":"🔒"):"★".repeat(s)+"☆".repeat(3-s);
+    stEl.setAttribute("class",state==="locked"?"lk":"st");
+    let lbl=t.name+", "+t.sub+", "+WEEKS[t.wk-1].wk+". ";
+    lbl+= state==="held"?`Conquered, ${s} of 3 stars.`
+        : state==="open"?"Open and ready."
+        : freeExplore?"Locked in campaign, open for practice in Free Explore."
+        : "Locked. Conquer "+t.needs.map(n=>T(n).name).join(" or ")+" to open this route.";
+    g.setAttribute("aria-label",lbl);
+  }
+  for(const l of gEdges.querySelectorAll(".edge")){
+    const a=+l.dataset.a,b=+l.dataset.b;
+    l.classList.toggle("held",held(a)&&held(b));
+    l.classList.toggle("live",!(held(a)&&held(b))&&(held(a)||held(b)));
+  }
+  svg.classList.toggle("brain",allDone());
+  const s=totalStars(),h=totalHeld();
+  document.getElementById("tStars").textContent=s;
+  document.getElementById("tTerr").textContent=h;
+  document.getElementById("tRank").textContent=rankOf(s);
+  const pct=Math.round(h/TERR.length*100);
+  document.getElementById("pAll").style.width=pct+"%";
+  document.getElementById("pAllTxt").textContent=pct+"%";
+  const wl=document.getElementById("weekList");
+  wl.innerHTML=WEEKS.map(w=>{
+    const ts=TERR.filter(t=>t.wk===w.id);
+    const got=ts.filter(t=>held(t.id)).length,max=ts.length;
+    const done=weekDone(w.id);
+    return `<div class="wkrow"><span>${w.name} <small style="opacity:.7">(${w.wk})</small></span>
+      <span>${done?`<span class="bdg">${w.badge}</span>`:got+"/"+max}</span></div>
+      <div class="bar"><i style="width:${got/max*100}%;background:${w.col}"></i></div>`;
+  }).join("");
+  document.getElementById("bBrain").style.display=(allDone()||S.revealed)?"":"none";
+  document.getElementById("bBoss").style.display=allDone()?"":"none";
+  buildList();
+}
+function buildList(){
+  const ul=document.getElementById("listview");
+  ul.innerHTML="";
+  for(const t of TERR){
+    const s=S.stars[t.id]|0,open=campaignOpen(t.id);
+    const state=s>0?"held":(open?"open":"locked");
+    const li=document.createElement("li");
+    const b=document.createElement("button");
+    b.type="button";b.className="lrow";b.dataset.id=t.id;
+    b.innerHTML=`<span class="ldot" style="background:${
+      state==="held"?"var(--held)":state==="open"?WEEKS[t.wk-1].col:"var(--locked)"}"></span>
+      <span class="lnm"><b>${t.name}</b><small>${t.sub} · ${WEEKS[t.wk-1].wk} · ${
+        state==="held"?"conquered":state==="open"?"open":"locked"}</small></span>
+      <span class="lst">${state==="locked"&&!freeExplore?"🔒":"★".repeat(s)+"☆".repeat(3-s)}</span>`;
+    b.addEventListener("click",()=>openIntro(t.id));
+    li.appendChild(b);ul.appendChild(li);
+  }
+}
+
+/* ---- POINTER: click vs drag, properly separated ---- */
+const DRAG_THRESHOLD=7;
+let pdown=null, dragging=false, suppressClick=false;
+const pointers=new Map();
+let pinchStart=null;
+
+mapview.addEventListener("pointerdown",e=>{
+  if(e.pointerType==="mouse"&&e.button!==0)return;
+  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pointers.size===2){
+    const [a,b]=[...pointers.values()];
+    pinchStart={d:Math.hypot(a.x-b.x,a.y-b.y),w:VB.w,
+      c:svgPoint({clientX:(a.x+b.x)/2,clientY:(a.y+b.y)/2})};
+    dragging=true;pdown=null;return;
+  }
+  const target=e.target instanceof Element?e.target.closest(".hex"):null;
+  pdown={id:e.pointerId,sx:e.clientX,sy:e.clientY,
+         vx:VB.x,vy:VB.y,hex:target};
+  dragging=false;
+},{passive:true});
+
+mapview.addEventListener("pointermove",e=>{
+  if(pointers.has(e.pointerId))pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pinchStart&&pointers.size>=2){
+    const [a,b]=[...pointers.values()];
+    const d=Math.hypot(a.x-b.x,a.y-b.y);
+    if(d>4){
+      const target=Math.min(BASE.w*1.4,Math.max(BASE.w*0.32,pinchStart.w*(pinchStart.d/d)));
+      const k=target/VB.w;
+      VB.x=pinchStart.c.x-(pinchStart.c.x-VB.x)*k;
+      VB.y=pinchStart.c.y-(pinchStart.c.y-VB.y)*k;
+      VB.w=target;VB.h=BASE.h*(target/BASE.w);applyVB();
+    }
+    return;
+  }
+  if(!pdown||e.pointerId!==pdown.id)return;
+  const dx=e.clientX-pdown.sx, dy=e.clientY-pdown.sy;
+  if(!dragging&&Math.hypot(dx,dy)<DRAG_THRESHOLD)return;
+  if(!dragging){
+    dragging=true;
+    svg.classList.add("dragging");
+    try{mapview.setPointerCapture(e.pointerId);}catch(err){}
+  }
+  const r=svg.getBoundingClientRect();
+  VB.x=pdown.vx-(dx/r.width)*VB.w;
+  VB.y=pdown.vy-(dy/r.height)*VB.h;
+  applyVB();
+});
+
+function endPointer(e){
+  const wasDragging=dragging;
+  const d=pdown;
+  pointers.delete(e.pointerId);
+  if(pointers.size<2)pinchStart=null;
+  try{if(mapview.hasPointerCapture(e.pointerId))mapview.releasePointerCapture(e.pointerId);}catch(err){}
+  svg.classList.remove("dragging");
+  if(d&&e.pointerId===d.id){
+    pdown=null;dragging=false;
+    if(!wasDragging&&d.hex){
+      const up=e.target instanceof Element?e.target.closest(".hex"):null;
+      if(up===d.hex){
+        suppressClick=true;
+        setTimeout(()=>{suppressClick=false;},350);
+        openIntro(+d.hex.dataset.id);
+        return;
+      }
+    }
+    if(wasDragging){suppressClick=true;setTimeout(()=>{suppressClick=false;},120);}
+  }else{dragging=pointers.size>=2;}
+}
+mapview.addEventListener("pointerup",endPointer);
+mapview.addEventListener("pointercancel",e=>{
+  pointers.delete(e.pointerId);if(pointers.size<2)pinchStart=null;
+  pdown=null;dragging=false;svg.classList.remove("dragging");
+});
+
+/* swallow the synthesised click that follows an activation or a drag */
+mapview.addEventListener("click",e=>{
+  if(suppressClick){e.stopPropagation();e.preventDefault();suppressClick=false;}
+},true);
+
+/* keyboard activation on territories */
+gNodes.addEventListener("keydown",e=>{
+  const hex=e.target instanceof Element?e.target.closest(".hex"):null;
+  if(!hex)return;
+  if(e.key==="Enter"||e.key===" "||e.key==="Spacebar"){
+    e.preventDefault();openIntro(+hex.dataset.id);
+  }
+});
+
+mapview.addEventListener("wheel",e=>{
+  e.preventDefault();
+  const p=svgPoint(e);
+  zoomBy(e.deltaY>0?1.12:0.89,p.x,p.y);
+},{passive:false});
+
+document.getElementById("bZoomIn").onclick=()=>zoomBy(0.82);
+document.getElementById("bZoomOut").onclick=()=>zoomBy(1.22);
+document.getElementById("bFit").onclick=fitAll;
+document.getElementById("bNext").onclick=()=>{centreOn(nextObjective());toast("Next objective: "+nextObjective().name);};
+document.getElementById("bList").onclick=function(){
+  const lv=document.getElementById("listview");
+  const on=lv.classList.toggle("show");
+  mapview.style.display=on?"none":"";
+  document.getElementById("mapHint").style.display=on?"none":"";
+  this.setAttribute("aria-pressed",String(on));
+  this.classList.toggle("on",on);
+  this.textContent=on?"Map view":"List view";
+};
+
+/* ============================================================
+   5. CHALLENGE ENGINES
+   ============================================================ */
+const shuffle=a=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;};
+const pickOne=a=>a[Math.floor(Math.random()*a.length)];
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+const ENGINES={
+
+ mcq(host,c){
+  const wrap=document.createElement("div");wrap.className="opts";
+  let sel=-1;const dead=new Set();
+  c.opts.forEach((o,i)=>{
+    const b=document.createElement("button");b.type="button";b.className="opt";b.innerHTML=o;
+    b.onclick=(event)=>{if(dead.has(i))return;sel=i;
+      [...wrap.children].forEach((x,j)=>x.classList.toggle("sel",j===i));};
+    wrap.appendChild(b);
+  });
+  host.appendChild(wrap);
+  return{check(){
+    if(sel<0)return{pending:"Choose an answer first."};
+    const ok=sel===c.a;
+    if(!ok){dead.add(sel);wrap.children[sel].classList.add("dead");
+      wrap.children[sel].classList.remove("sel");sel=-1;}
+    else{wrap.children[sel].classList.add("right");
+      [...wrap.children].forEach(x=>x.disabled=true);}
+    return{ok};
+  }};
+ },
+
+ multi(host,c){
+  if(c.pre){const d=document.createElement("div");d.innerHTML=c.pre;d.style.marginBottom="12px";host.appendChild(d);}
+  const wrap=document.createElement("div");wrap.className="opts";
+  const sel=new Set();
+  c.opts.forEach((o,i)=>{
+    const b=document.createElement("button");b.type="button";b.className="opt";
+    b.setAttribute("aria-pressed","false");b.innerHTML="☐ "+o;
+    b.onclick=(event)=>{
+      if(sel.has(i)){sel.delete(i);b.classList.remove("sel");b.innerHTML="☐ "+o;b.setAttribute("aria-pressed","false");}
+      else{sel.add(i);b.classList.add("sel");b.innerHTML="☑ "+o;b.setAttribute("aria-pressed","true");}
+    };
+    wrap.appendChild(b);
+  });
+  host.appendChild(wrap);
+  return{check(){
+    if(sel.size===0)return{pending:"Select at least one option."};
+    const key=new Set(c.a);
+    const ok=sel.size===key.size&&[...sel].every(i=>key.has(i));
+    [...wrap.children].forEach((b,i)=>{
+      b.classList.remove("right","wrong");
+      if(ok){if(key.has(i))b.classList.add("right");b.disabled=true;}
+      else if(sel.has(i)&&!key.has(i))b.classList.add("dead");
+    });
+    if(!ok){
+      for(const i of [...sel]) if(!key.has(i)){sel.delete(i);
+        wrap.children[i].classList.remove("sel");wrap.children[i].innerHTML="☐ "+c.opts[i];
+        wrap.children[i].setAttribute("aria-pressed","false");}
+      return{ok:false,pending:null};
+    }
+    return{ok:true};
+  }};
+ },
+
+ sort(host,c){
+  const pool=document.createElement("div");pool.className="pool";
+  pool.setAttribute("aria-label","Cards waiting to be sorted");
+  const bins=document.createElement("div");bins.className="bins";
+  let armed=null;
+  const place={};
+  const mkCard=(it,idx)=>{
+    const b=document.createElement("button");b.type="button";b.className="card";
+    b.textContent=it.t;b.dataset.i=idx;
+    b.onclick=(event)=>{
+      event?.stopPropagation?.();
+      if(armed===b){armed=null;b.classList.remove("sel");[...bins.children].forEach(x=>x.classList.remove("armed"));return;}
+      if(armed)armed.classList.remove("sel");
+      armed=b;b.classList.add("sel");
+      [...bins.children].forEach(x=>x.classList.add("armed"));
+    };
+    return b;
+  };
+  c.items.forEach((it,i)=>pool.appendChild(mkCard(it,i)));
+  c.bins.forEach((bn,bi)=>{
+    const d=document.createElement("div");d.className="bin";
+    d.innerHTML=`<h4>${esc(bn)}</h4>`;
+    const drop=document.createElement("div");drop.className="drop";
+    d.appendChild(drop);
+    const placeArmed=()=>{
+      if(!armed)return;
+      drop.appendChild(armed);place[armed.dataset.i]=bi;
+      armed.classList.remove("sel");armed=null;
+      [...bins.children].forEach(x=>x.classList.remove("armed"));
+    };
+    const h=d.querySelector("h4");
+    h.setAttribute("role","button");h.tabIndex=0;
+    h.setAttribute("aria-label","Place selected card in "+bn);
+    h.onkeydown=e=>{if(e.key==="Enter"||e.key===" "||e.key==="Spacebar"){e.preventDefault();placeArmed();}};
+    d.onclick=placeArmed;
+    bins.appendChild(d);
+  });
+  host.appendChild(pool);host.appendChild(bins);
+  return{check(){
+    if(Object.keys(place).length<c.items.length)
+      return{pending:"Place every card before checking."};
+    let right=0;
+    for(const el of host.querySelectorAll(".card")){
+      const i=+el.dataset.i;const ok=place[i]===c.items[i].b;
+      el.classList.toggle("right",ok);el.classList.toggle("wrong",!ok);
+      if(ok)right++;
+    }
+    const ok=right===c.items.length;
+    if(!ok)return{ok:false,pending:null,note:right+" of "+c.items.length+" are in the right place."};
+    host.querySelectorAll(".card").forEach(x=>x.disabled=true);
+    return{ok:true};
+  }};
+ },
+
+ match(host,c){
+  const wrap=document.createElement("div");wrap.className="matchwrap";
+  const L=document.createElement("div"),Rc=document.createElement("div");
+  L.className=Rc.className="mcol";
+  const rights=shuffle(c.pairs.map((p,i)=>({t:p.r,i})));
+  let selL=null;const doneSet=new Set();
+  c.pairs.forEach((p,i)=>{
+    const b=document.createElement("button");b.type="button";b.className="mitem";
+    b.innerHTML=p.l;b.dataset.i=i;
+    b.onclick=(event)=>{if(doneSet.has(i))return;
+      if(selL)selL.classList.remove("sel");
+      selL=b;b.classList.add("sel");};
+    L.appendChild(b);
+  });
+  rights.forEach(r=>{
+    const b=document.createElement("button");b.type="button";b.className="mitem";
+    b.innerHTML=r.t;b.dataset.i=r.i;
+    b.onclick=(event)=>{
+      if(!selL||doneSet.has(r.i))return;
+      const li=+selL.dataset.i;
+      if(li===r.i){
+        doneSet.add(li);selL.classList.remove("sel");
+        selL.classList.add("done");b.classList.add("done");
+        selL.disabled=true;b.disabled=true;selL=null;
+      }else{
+        st.miss=true;
+        b.classList.add("sel");
+        setTimeout(()=>{b.classList.remove("sel");
+          if(selL)selL.classList.remove("sel");selL=null;},280);
+      }
+    };
+    Rc.appendChild(b);
+  });
+  wrap.appendChild(L);wrap.appendChild(Rc);host.appendChild(wrap);
+  const st={miss:false};
+  return{check(){
+    if(doneSet.size<c.pairs.length)
+      return{pending:doneSet.size+" of "+c.pairs.length+" matched. Keep going."};
+    return{ok:true,noFirst:st.miss};
+  }};
+ },
+
+ order(host,c){
+  let arr=shuffle(c.items.map((t,i)=>({t,i})));
+  if(arr.every((o,k)=>o.i===k))arr=arr.reverse();
+  const box=document.createElement("div");host.appendChild(box);
+  function draw(){
+    box.innerHTML="";
+    arr.forEach((o,k)=>{
+      const row=document.createElement("div");row.className="orow";
+      row.innerHTML=`<span class="num">${k+1}</span><span class="txt">${esc(o.t)}</span>`;
+      const up=document.createElement("button");up.type="button";up.textContent="↑";
+      up.setAttribute("aria-label","Move \u201c"+o.t+"\u201d up");up.disabled=k===0;
+      up.onclick=()=>{[arr[k-1],arr[k]]=[arr[k],arr[k-1]];draw();};
+      const dn=document.createElement("button");dn.type="button";dn.textContent="↓";
+      dn.setAttribute("aria-label","Move \u201c"+o.t+"\u201d down");dn.disabled=k===arr.length-1;
+      dn.onclick=()=>{[arr[k+1],arr[k]]=[arr[k],arr[k+1]];draw();};
+      row.appendChild(up);row.appendChild(dn);box.appendChild(row);
+    });
+  }
+  draw();
+  return{check(){
+    const ok=arr.every((o,k)=>o.i===k);
+    if(ok)box.querySelectorAll("button").forEach(b=>b.disabled=true);
+    else{
+      const n=arr.filter((o,k)=>o.i===k).length;
+      return{ok:false,note:n+" of "+arr.length+" are in the right position."};
+    }
+    return{ok:true};
+  }};
+ },
+
+ hotspot(host,c){
+  const box=document.createElement("div");box.className="figbox";
+  box.innerHTML=c.svg;host.appendChild(box);
+  const sel=new Set();
+  const spots=[...box.querySelectorAll(".hs")];
+  spots.forEach(s=>{
+    s.setAttribute("aria-pressed","false");
+    const toggle=()=>{
+      const k=s.dataset.k;
+      if(sel.has(k)){sel.delete(k);s.setAttribute("aria-pressed","false");}
+      else{
+        if(c.a.length===1){sel.clear();spots.forEach(o=>o.setAttribute("aria-pressed","false"));}
+        sel.add(k);s.setAttribute("aria-pressed","true");
+      }
+    };
+    s.addEventListener("click",toggle);
+    s.addEventListener("keydown",e=>{
+      if(e.key==="Enter"||e.key===" "||e.key==="Spacebar"){e.preventDefault();toggle();}
+    });
+  });
+  return{check(){
+    if(sel.size===0)return{pending:"Click a region on the figure first."};
+    const key=new Set(c.a);
+    const ok=sel.size===key.size&&[...sel].every(k=>key.has(k));
+    spots.forEach(s=>{
+      s.classList.remove("right","wrong");
+      const k=s.dataset.k;
+      if(ok){if(key.has(k))s.classList.add("right");}
+      else if(sel.has(k))s.classList.add(key.has(k)?"right":"wrong");
+    });
+    if(!ok){
+      for(const k of [...sel])if(!key.has(k)){
+        sel.delete(k);
+        const s=spots.find(x=>x.dataset.k===k);
+        if(s)s.setAttribute("aria-pressed","false");
+      }
+      return{ok:false,note:c.a.length>1?"Looking for "+c.a.length+" regions.":null};
+    }
+    return{ok:true};
+  }};
+ },
+
+ grid(host,c){
+  const w=document.createElement("div");w.className="gwrap";
+  const t=document.createElement("table");t.className="gt";
+  const th=document.createElement("tr");
+  c.cols.forEach(h=>{const e=document.createElement("th");e.textContent=h;th.appendChild(e);});
+  t.appendChild(th);
+  let sel=null;
+  c.rows.forEach((r,ri)=>{
+    const tr=document.createElement("tr");
+    r.forEach((v,ci)=>{
+      const td=document.createElement("td");td.textContent=v;
+      if(ci===0){td.className="lab";}
+      else if(v!==""){
+        td.className="cell";td.tabIndex=0;td.setAttribute("role","button");
+        td.setAttribute("aria-label",r[0]+", "+c.cols[ci]+", value "+v);
+        td.dataset.k=ri+","+ci;
+        const act=()=>{
+          if(sel)sel.classList.remove("sel");
+          sel=td;td.classList.add("sel");
+        };
+        td.onclick=act;
+        td.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();act();}};
+      }
+      tr.appendChild(td);
+    });
+    t.appendChild(tr);
+  });
+  w.appendChild(t);host.appendChild(w);
+  return{check(){
+    if(!sel)return{pending:"Click a cell in the table first."};
+    const ok=sel.dataset.k===c.a;
+    sel.classList.remove("sel");
+    sel.classList.add(ok?"right":"wrong");
+    if(!ok){const bad=sel;sel=null;setTimeout(()=>bad.classList.remove("wrong"),900);}
+    else{t.querySelectorAll(".cell").forEach(x=>{x.onclick=null;x.tabIndex=-1;});}
+    return{ok};
+  }};
+ },
+
+ slider(host,c){
+  const ro=document.createElement("div");ro.className="readout";
+  const fig=document.createElement("div");fig.className="figbox";
+  const inp=document.createElement("input");
+  inp.type="range";inp.min="-100";inp.max="100";inp.step="5";inp.value="0";
+  inp.className="sld";inp.setAttribute("aria-label","Correlation strength");
+  const Z1=[-1.4,-1.1,-0.9,-0.7,-0.5,-0.35,-0.2,-0.05,0.1,0.25,0.4,0.55,0.7,0.85,1.0,1.15,1.3,-0.6,0.6,0.0];
+  const Z2=[0.4,-0.8,1.1,-0.3,0.9,-1.2,0.2,1.3,-1.0,0.5,-0.6,1.0,-0.4,0.3,-1.1,0.7,-0.2,1.2,-0.9,0.6];
+  function band(r){const a=Math.abs(r);
+    if(a<0.20)return"very weak";if(a<0.40)return"weak";
+    if(a<0.60)return"moderate";if(a<0.80)return"strong";return"very strong";}
+  function draw(){
+    const r=(+inp.value)/100;
+    const pts=Z1.map((z,i)=>{
+      const y=r*z+Math.sqrt(Math.max(0,1-r*r))*Z2[i];
+      return[200+z*62,120-y*44];
+    });
+    fig.innerHTML=`<svg viewBox="0 0 400 240" aria-hidden="true">
+      <rect width="400" height="240" fill="#0a1020"/>
+      <line x1="40" y1="210" x2="380" y2="210" stroke="#3f5a8f" stroke-width="2"/>
+      <line x1="40" y1="20" x2="40" y2="210" stroke="#3f5a8f" stroke-width="2"/>
+      ${pts.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${(p[1]+40).toFixed(1)}" r="4.5" fill="#7dd3fc"/>`).join("")}
+      <text x="210" y="232" fill="#93a4c4" font-size="11" text-anchor="middle">Variable X</text>
+    </svg>`;
+    const sign=r<0?"negative":r>0?"positive":"no direction";
+    ro.innerHTML=`r = ${r.toFixed(2)}<small>${band(r)} ${r===0?"":sign}</small>`;
+    inp.setAttribute("aria-valuetext",`r equals ${r.toFixed(2)}, ${band(r)} ${sign}`);
+  }
+  inp.addEventListener("input",draw);
+  host.appendChild(ro);host.appendChild(fig);host.appendChild(inp);
+  draw();
+  return{check(){
+    const r=(+inp.value)/100;
+    const ok=r<=-0.60&&r>=-0.79;
+    return{ok,note:ok?null:"You are showing a "+band(r)+" "+(r<0?"negative":"positive")+" relationship."};
+  }};
+ },
+
+ segments(host,c){
+  const w=document.createElement("div");w.className="segwrap";
+  if(c.mono)w.style.fontFamily="ui-monospace,Menlo,monospace";
+  w.style.fontSize=c.mono?"1.25rem":"1rem";
+  let sel=-1;
+  c.segs.forEach((s,i)=>{
+    const e=document.createElement("span");
+    e.className="seg";e.textContent=s;e.tabIndex=0;
+    e.setAttribute("role","button");e.setAttribute("aria-pressed","false");
+    e.setAttribute("aria-label","Select: "+s.trim());
+    const act=()=>{
+      [...w.children].forEach(x=>{x.classList.remove("sel");x.setAttribute("aria-pressed","false");});
+      sel=i;e.classList.add("sel");e.setAttribute("aria-pressed","true");
+    };
+    e.onclick=act;
+    e.onkeydown=ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();act();}};
+    w.appendChild(e);
+  });
+  host.appendChild(w);
+  return{check(){
+    if(sel<0)return{pending:"Click a part of the text first."};
+    const ok=sel===c.a;
+    const e=w.children[sel];
+    e.classList.remove("sel");e.classList.add(ok?"right":"wrong");
+    if(!ok){const bad=e;sel=-1;setTimeout(()=>bad.classList.remove("wrong"),900);}
+    return{ok};
+  }};
+ },
+
+ pick(host,c){
+  const w=document.createElement("div");w.className="picks";
+  let sel=-1;
+  c.picks.forEach((p,i)=>{
+    const b=document.createElement("button");b.type="button";b.className="pick";
+    b.innerHTML=p.svg+`<div class="cap">${esc(p.cap)}</div>`;
+    b.setAttribute("aria-label","Option "+p.cap);
+    b.onclick=(event)=>{sel=i;[...w.children].forEach((x,j)=>x.classList.toggle("sel",j===i));};
+    w.appendChild(b);
+  });
+  host.appendChild(w);
+  return{check(){
+    if(sel<0)return{pending:"Choose one of the figures first."};
+    const ok=sel===c.a;
+    w.children[sel].classList.remove("sel");
+    w.children[sel].classList.add(ok?"right":"wrong");
+    if(!ok){w.children[sel].disabled=true;sel=-1;}
+    else w.querySelectorAll("button").forEach(b=>b.disabled=true);
+    return{ok};
+  }};
+ }
+};
+
+/* ============================================================
+   6. GAME FLOW
+   ============================================================ */
+const dIntro=document.getElementById("dIntro"),dCh=document.getElementById("dCh"),
+      dRes=document.getElementById("dRes"),dBrain=document.getElementById("dBrain"),
+      dCodeD=document.getElementById("dCodeD");
+let run=null;
+
+function openIntro(id){
+  const t=T(id);if(!t)return;
+  const open=campaignOpen(id);
+  document.getElementById("iName").textContent=t.name;
+  document.getElementById("iSub").textContent=t.sub+" · "+WEEKS[t.wk-1].wk;
+  document.getElementById("iBlurb").textContent=t.blurb;
+  document.getElementById("iMode").textContent=
+    open?(freeExplore?"Free Explore":"Campaign"):"Practice run";
+  const lk=document.getElementById("iLocked");
+  const go=document.getElementById("iGo");
+  const s=S.stars[id]|0;
+  if(!open&&!freeExplore){
+    lk.innerHTML=`<div class="fb bad show" style="margin-top:0"><span class="quip">Route not open yet</span>
+      <span class="why">Conquer <b>${t.needs.map(n=>T(n).name).join("</b> or <b>")}</b> to open the road
+      to ${t.name}. Or switch on <b>Free Explore</b> to practise it now without affecting your campaign.</span></div>`;
+    go.style.display="none";
+  }else{
+    let msg="";
+    if(!open&&freeExplore)
+      msg=`<div class="fb show" style="background:#1e1b4b;border:1px solid #6366f1;margin-top:0">
+        <span class="quip" style="color:#c7d2fe">Practice run</span>
+        <span class="why">This territory is not open in your campaign yet, so nothing here will change your
+        stars or unlock anything. Feedback still works — practise away.</span></div>`;
+    else if(s>0)
+      msg=`<div class="exp">Already conquered with <b style="color:var(--gold)">${"★".repeat(s)}</b>.
+        Replaying can only improve your saved score, never reduce it.</div>`;
+    else
+      msg=`<div class="exp">3 challenges. Stars are awarded for correct <b>first attempts</b> —
+        but you can retry a question as many times as you need.</div>`;
+    lk.innerHTML=msg;
+    go.style.display="";
+    go.textContent=s>0?"Replay ▸":"Begin ▸";
+  }
+  dIntro.dataset.id=id;
+  dIntro.showModal();
+}
+document.getElementById("iClose").onclick=()=>dIntro.close();
+document.getElementById("iGo").onclick=()=>{
+  const id=+dIntro.dataset.id;dIntro.close();startRun(id);
+};
+
+function startRun(id){
+  const t=T(id);
+  run={id,i:0,firsts:0,chs:t.ch,title:t.name,
+       awardable:campaignOpen(id),boss:false};
+  showChallenge();
+}
+function startBoss(){
+  run={id:0,i:0,firsts:0,chs:BOSS,title:"Reviewer #2",awardable:false,boss:true};
+  showChallenge();
+}
+function showChallenge(){
+  const c=run.chs[run.i];
+  document.getElementById("cTitle").textContent=
+    run.title+(run.awardable||run.boss?"":" — practice");
+  document.getElementById("cProg").textContent=(run.i+1)+" / "+run.chs.length;
+  document.getElementById("cQ").innerHTML=c.q;
+  const ie=document.getElementById("cI");
+  ie.innerHTML=c.i||"";ie.style.display=c.i?"":"none";
+  const host=document.getElementById("cHost");host.innerHTML="";
+  const fb=document.getElementById("cFb");fb.className="fb";
+  document.getElementById("cCheck").style.display="";
+  document.getElementById("cCheck").disabled=false;
+  document.getElementById("cNext").style.display="none";
+  run.tries=0;
+  run.engine=ENGINES[c.type](host,c);
+  if(!dCh.open)dCh.showModal();
+  const b=dCh.querySelector(".dbody");if(b)b.scrollTop=0;
+}
+document.getElementById("cCheck").onclick=()=>{
+  const c=run.chs[run.i];
+  const r=run.engine.check();
+  const fb=document.getElementById("cFb");
+  const quip=document.getElementById("cQuip"),why=document.getElementById("cWhy");
+  if(r.pending!==undefined&&r.pending!==null&&r.ok===undefined){
+    fb.className="fb bad show";quip.textContent="Hold on.";why.textContent=r.pending;return;
+  }
+  run.tries++;
+  if(r.ok){
+    if(run.tries===1&&!r.noFirst)run.firsts++;
+    fb.className="fb good show";
+    quip.textContent=pickOne(GOOD);
+    why.innerHTML=(c.explain||"")+(c.note?`<div class="modnote">${c.note}</div>`:"");
+    document.getElementById("cCheck").style.display="none";
+    const n=document.getElementById("cNext");
+    n.style.display="";
+    n.textContent=run.i<run.chs.length-1?"Next ▸":"Finish ▸";
+    n.focus();
+  }else{
+    fb.className="fb bad show";
+    quip.textContent=pickOne(BAD);
+    why.textContent=r.note||"Not that one. Have another go — you can retry as many times as you like.";
+  }
+};
+document.getElementById("cNext").onclick=()=>{
+  run.i++;
+  if(run.i<run.chs.length)showChallenge();
+  else{dCh.close();finishRun();}
+};
+document.getElementById("cQuit").onclick=()=>{dCh.close();run=null;};
+
+function finishRun(){
+  if(run.boss){
+    const n=run.firsts;
+    S.boss=Math.max(S.boss,n);save();
+    const verdict=n===5?"Accept without revision.":n>=4?"Accept with minor revisions.":
+      n>=3?"Major revisions required.":"Revise and resubmit.";
+    document.getElementById("rTitle").textContent="Reviewer #2 reports";
+    document.getElementById("rBody").innerHTML=
+      `<div class="stats"><div class="stat"><b>${n}/5</b><small>first attempts</small></div>
+       <div class="stat"><b>${S.boss}/5</b><small>your best</small></div></div>
+       <p class="exp"><b>Verdict:</b> ${verdict}</p>
+       <p class="exp">This was bonus revision — it does not affect your campaign stars or your rank.</p>`;
+    dRes.showModal();run=null;return;
+  }
+  const t=T(run.id);
+  const stars=run.firsts===3?3:run.firsts===2?2:1;
+  const sweep=run.firsts===3;
+  let gained=false,newBadges=[],opened=[];
+  if(run.awardable){
+    const prev=S.stars[t.id]|0;
+    const before=TERR.filter(x=>campaignOpen(x.id)).map(x=>x.id);
+    if(stars>prev){S.stars[t.id]=stars;gained=true;}
+    else if(prev===0){S.stars[t.id]=stars;gained=true;}
+    const after=TERR.filter(x=>campaignOpen(x.id)).map(x=>x.id);
+    opened=after.filter(x=>!before.includes(x));
+    for(const w of WEEKS){
+      if(weekDone(w.id)&&!S.seenBadge[w.id]){S.seenBadge[w.id]=true;newBadges.push(w.badge);}
+    }
+    save();
+  }
+  document.getElementById("rTitle").textContent=
+    run.awardable?t.name+" conquered":t.name+" — practice complete";
+  let html="";
+  if(sweep)html+=`<div class="sweep">★★★ CLEAN SWEEP<br><span style="font-weight:400;font-size:.84rem">${pickOne(SWEEP)}</span></div>`;
+  html+=`<div class="stats">
+    <div class="stat"><b>${"★".repeat(stars)}${"☆".repeat(3-stars)}</b><small>this run</small></div>
+    <div class="stat"><b>${run.firsts}/3</b><small>first attempts</small></div>
+    <div class="stat"><b>${totalStars()}</b><small>total stars</small></div></div>`;
+  if(!run.awardable){
+    html+=`<p class="exp">This was a Free Explore practice run, so your campaign progress is unchanged.
+      Conquer <b>${t.needs.map(n=>T(n).name).join("</b> or <b>")}</b> in Campaign Mode to claim these stars for real.</p>`;
+  }else if(!gained){
+    html+=`<p class="exp">Your saved best of <b>${"★".repeat(S.stars[t.id]|0)}</b> stands — a replay only ever improves it.</p>`;
+  }
+  if(newBadges.length)
+    html+=`<div class="badges">${newBadges.map(b=>`<span class="badge">${b}</span>`).join("")}</div>
+      <p class="exp">Topic block complete. Badges are for fun — they do not affect your stars or your rank.</p>`;
+  document.getElementById("rBody").innerHTML=html;
+  dRes.showModal();
+  refresh();
+  if(run.awardable){
+    animateTake(t.id,opened);
+    if(allDone()&&!S.revealed){
+      S.revealed=true;save();
+      setTimeout(()=>{if(!dRes.open)showBrain();},600);
+    }
+  }
+  run=null;
+}
+document.getElementById("rClose").onclick=()=>{
+  dRes.close();
+  if(allDone()&&S.revealed&&!dBrain.open&&document.getElementById("bBrain").dataset.shown!=="1"){
+    document.getElementById("bBrain").dataset.shown="1";
+    setTimeout(showBrain,350);
+  }
+};
+
+function animateTake(id,opened){
+  const reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const g=gNodes.querySelector(`.hex[data-id="${id}"]`);
+  if(g&&!reduce){g.classList.add("justTaken");setTimeout(()=>g.classList.remove("justTaken"),950);}
+  opened.forEach((oid,k)=>{
+    setTimeout(()=>{
+      const e=gEdges.querySelector(`.edge[data-a="${Math.min(id,oid)}"][data-b="${Math.max(id,oid)}"]`)
+            ||gEdges.querySelector(`.edge[data-a="${id}"][data-b="${oid}"]`)
+            ||gEdges.querySelector(`.edge[data-a="${oid}"][data-b="${id}"]`);
+      if(e&&!reduce){
+        const len=Math.hypot(+e.getAttribute("x2")-+e.getAttribute("x1"),
+                             +e.getAttribute("y2")-+e.getAttribute("y1"));
+        e.style.setProperty("--len",len);
+        e.classList.add("drawing");setTimeout(()=>e.classList.remove("drawing"),800);
+      }
+      const n=gNodes.querySelector(`.hex[data-id="${oid}"]`);
+      if(n&&!reduce){n.classList.add("justOpen");setTimeout(()=>n.classList.remove("justOpen"),3100);}
+      toast("Route opened: "+T(oid).name);
+    },400+k*900);
+  });
+}
+
+/* ============================================================
+   7. COMPLETION
+   ============================================================ */
+function showBrain(){
+  const s=totalStars();
+  const badges=WEEKS.filter(w=>weekDone(w.id)).map(w=>w.badge);
+  let html=`<p class="task" style="color:var(--gold)">First-year methods cortex activated.</p>
+   <p class="instr">Research Methods A network complete. Every territory from Week 3 to Week 10 is held,
+   and the routes between them are lit.</p>
+   <div class="stats">
+     <div class="stat"><b>${totalHeld()}/12</b><small>territories</small></div>
+     <div class="stat"><b>${s}/36</b><small>stars</small></div>
+     <div class="stat"><b style="font-size:1rem;line-height:2">${rankOf(s)}</b><small>final rank</small></div>
+   </div>
+   <div class="badges">${badges.map(b=>`<span class="badge">${b}</span>`).join("")}</div>`;
+  if(s===36)html+=`<div class="bonus">Maximum stars — Reviewer 2 has been temporarily silenced.</div>`;
+  html+=`<p class="exp" style="margin-top:14px">Reviewer #2 is now available from the header —
+   five mixed challenges drawn across the whole module. Entirely optional, and it does not affect your campaign.</p>`;
+  document.getElementById("brainBody").innerHTML=html;
+  dBrain.showModal();
+  svg.classList.add("brain");
+}
+document.getElementById("brainClose").onclick=()=>dBrain.close();
+document.getElementById("bBrain").onclick=showBrain;
+document.getElementById("bBoss").onclick=startBoss;
+
+/* ============================================================
+   8. CONTROLS
+   ============================================================ */
+function toast(msg){
+  const t=document.getElementById("toast");
+  t.textContent=msg;t.classList.add("show");
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),2200);
+}
+/* fullscreen / focus */
+const bFull=document.getElementById("bFull");
+let focusMode=false;
+function fsActive(){return document.fullscreenElement||document.webkitFullscreenElement;}
+function syncFull(){
+  const on=!!fsActive()||focusMode;
+  bFull.textContent=on?"⛶ Exit Full Screen":"⛶ Full Screen";
+  bFull.classList.toggle("on",on);
+}
+bFull.onclick=async()=>{
+  if(fsActive()){
+    try{await (document.exitFullscreen?document.exitFullscreen():document.webkitExitFullscreen());}catch(e){}
+    syncFull();return;
+  }
+  if(focusMode){focusMode=false;document.body.classList.remove("focus");syncFull();return;}
+  const el=document.getElementById("app");
+  try{
+    if(el.requestFullscreen)await el.requestFullscreen();
+    else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();
+    else throw new Error("no fs");
+  }catch(e){
+    focusMode=true;document.body.classList.add("focus");
+    toast("Focus mode — full browser fullscreen is unavailable here");
+  }
+  syncFull();
+};
+document.addEventListener("fullscreenchange",syncFull);
+document.addEventListener("webkitfullscreenchange",syncFull);
+
+/* free explore */
+const bFree=document.getElementById("bFree");
+function setFree(v){
+  freeExplore=v;
+  bFree.classList.toggle("on",v);
+  bFree.textContent=v?"Free Explore: ON":"Free Explore";
+  bFree.setAttribute("aria-pressed",String(v));
+  document.getElementById("feFlag").classList.toggle("show",v);
+  refresh();
+}
+bFree.setAttribute("aria-pressed","false");
+bFree.onclick=()=>setFree(!freeExplore);
+document.getElementById("bCampaign").onclick=()=>{setFree(false);toast("Campaign Mode");};
+
+/* progress code */
+document.getElementById("bCode").onclick=()=>{
+  document.getElementById("codeOut").textContent=makeCode();
+  document.getElementById("codeMsg").textContent="";
+  document.getElementById("codeIn").value="";
+  dCodeD.showModal();
+};
+document.getElementById("codeClose").onclick=()=>dCodeD.close();
+document.getElementById("bCopy").onclick=async()=>{
+  const txt=document.getElementById("codeOut").textContent;
+  let ok=false;
+  try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(txt);ok=true;}}catch(e){}
+  if(!ok){
+    const ta=document.createElement("textarea");ta.value=txt;
+    ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);
+    ta.select();try{ok=document.execCommand("copy");}catch(e){}
+    document.body.removeChild(ta);
+  }
+  toast(ok?"Code copied":"Copy failed — select the code and copy it manually");
+};
+document.getElementById("bLoad").onclick=()=>{
+  const v=document.getElementById("codeIn").value.trim();
+  const msg=document.getElementById("codeMsg");
+  if(!v){msg.style.color="var(--bad)";msg.textContent="Enter a code first.";return;}
+  const r=readCode(v);
+  if(r.err){msg.style.color="var(--bad)";msg.textContent=r.err;return;}
+  S.stars=r.stars;
+  S.revealed=allDone();
+  S.seenBadge={};
+  for(const w of WEEKS)if(weekDone(w.id))S.seenBadge[w.id]=true;
+  save();refresh();
+  msg.style.color="var(--ok)";
+  msg.textContent="Loaded — "+totalHeld()+" territories, "+totalStars()+" stars.";
+  document.getElementById("codeOut").textContent=makeCode();
+  toast("Progress restored");
+};
+
+/* reset */
+document.getElementById("bReset").onclick=()=>{
+  if(!confirm("Reset all progress? Every star, badge and completion will be cleared."))return;
+  S={stars:{},revealed:false,boss:0,seenBadge:{}};
+  for(const k of KEYS){try{localStorage.removeItem(k);}catch(e){}}
+  document.getElementById("bBrain").dataset.shown="";
+  svg.classList.remove("brain");
+  setFree(false);refresh();fitAll();toast("Progress reset");
+};
+
+/* close dialogs on backdrop click */
+for(const d of [dIntro,dRes,dCodeD,dBrain]){
+  d.addEventListener("click",e=>{if(e.target===d)d.close();});
+}
+
+/* ============================================================
+   9. INIT
+   ============================================================ */
+load();
+buildMap();
+if(window.matchMedia("(max-width: 700px)").matches){
+  centreOn(nextObjective(),BASE.w*0.62);
+}else fitAll();
+syncFull();
+if(allDone())svg.classList.add("brain");
+</script>
+</body>
+</html>
