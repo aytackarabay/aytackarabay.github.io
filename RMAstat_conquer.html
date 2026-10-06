@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Stat Conquer — Research Methods A</title>
+<title>Stat Conquer: Research Methods A</title>
 <style>
 /* ============================================================
-   STAT CONQUER — RESEARCH METHODS A
+   STAT CONQUER : RESEARCH METHODS A
    Sections: TOKENS / LAYOUT / MAP / DIALOG / CHALLENGE UI
    ============================================================ */
 :root{
@@ -259,6 +259,10 @@ input[type=text]{width:100%;padding:12px;border-radius:9px;border:1px solid var(
 @media(prefers-reduced-motion:reduce){
   *{animation:none !important;transition:none !important}
 }
+
+.figbox svg,.pick svg{width:100%;height:auto;display:block}.picks{align-items:start}.pick .cap{padding:8px}.gt th{white-space:normal}.cell:focus-visible,.hs:focus-visible{outline:3px solid #fbbf24;outline-offset:3px}.dbody{overscroll-behavior:contain}.fb .why{line-height:1.6}
+@media(max-width:700px){.picks{grid-template-columns:1fr}.matchwrap{gap:8px}.mitem{font-size:.9rem;min-height:48px}.bins{grid-template-columns:1fr}.gt{font-size:.85rem}.gt td,.gt th{padding:12px 8px}dialog{max-height:calc(100dvh - 16px);width:calc(100vw - 16px)}.dfoot{padding-bottom:max(12px,env(safe-area-inset-bottom))}.pick svg{max-height:240px}.figbox{overflow:visible}}
+@media(max-width:620px){.dwrap{height:calc(100dvh - 16px);max-height:calc(100dvh - 16px)}}
 </style>
 </head>
 <body>
@@ -266,8 +270,8 @@ input[type=text]{width:100%;padding:12px;border-radius:9px;border:1px solid var(
 
 <header>
   <div class="hgroup">
-    <h1>Stat Conquer <span>— Research Methods A</span></h1>
-    <div class="sub">First-year campaign · Weeks 3–10 · 12 territories · 36 stars</div>
+    <h1>Stat Conquer <span>: Research Methods A</span></h1>
+    <div class="sub">University revision · Lectures 2 to 10 · 12 territories · 36 stars</div>
   </div>
   <div class="tally">
     <span><b id="tStars">0</b>/36 stars</span>
@@ -287,7 +291,7 @@ input[type=text]{width:100%;padding:12px;border-radius:9px;border:1px solid var(
 remembered. You can still play everything. Use <b>Progress Code</b> to carry your progress, or open the game in a new tab.</div>
 
 <div class="fe-flag" id="feFlag">
-  <span>Free Explore — all territories available · locked routes are practice-only</span>
+  <span>Free Explore : all territories available · all runs are practice only</span>
   <button id="bCampaign" type="button">Back to Campaign</button>
 </div>
 
@@ -323,10 +327,10 @@ remembered. You can still play everything. Use <b>Progress Code</b> to carry you
 
     <h2>Key</h2>
     <div class="key"><span class="sw" style="background:var(--locked)"></span>Locked 🔒</div>
-    <div class="key"><span class="sw" style="background:var(--open)"></span>Open — ready to take</div>
+    <div class="key"><span class="sw" style="background:var(--open)"></span>Open : ready to take</div>
     <div class="key"><span class="sw" style="background:var(--held)"></span>Conquered ★</div>
 
-    <h2>Session</h2>
+    <h2>How to play</h2><p class="hint">Conquer every territory by completing all three challenges. First responses determine stars. Retries are unlimited. Free Explore never changes campaign progress.</p><details class="hint"><summary>Materials and scope</summary><p>Based on the nine supplied Research Methods A lecture files. Lecture practice questions were used only to identify concepts and audit novelty. No separately identified previous exam paper was supplied. These are revision activities, not exam predictions.</p></details><h2>Session</h2>
     <div class="stack">
       <button id="bReset" type="button">Reset all progress</button>
     </div>
@@ -338,7 +342,7 @@ remembered. You can still play everything. Use <b>Progress Code</b> to carry you
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <!-- ============ DIALOGS ============ -->
-<dialog id="dIntro"><div class="dwrap">
+<dialog id="dIntro" aria-labelledby="iName"><div class="dwrap">
   <div class="dhead"><h3 id="iName">Territory</h3><span class="prog" id="iMode">Campaign</span></div>
   <div class="dbody">
     <p class="task" id="iSub"></p>
@@ -351,7 +355,7 @@ remembered. You can still play everything. Use <b>Progress Code</b> to carry you
   </div>
 </div></dialog>
 
-<dialog id="dCh"><div class="dwrap">
+<dialog id="dCh" aria-labelledby="cTitle"><div class="dwrap">
   <div class="dhead"><h3 id="cTitle">Challenge</h3><span class="prog" id="cProg">1 / 3</span></div>
   <div class="dbody">
     <p class="task" id="cQ"></p>
@@ -368,578 +372,66 @@ remembered. You can still play everything. Use <b>Progress Code</b> to carry you
   </div>
 </div></dialog>
 
-<dialog id="dRes"><div class="dwrap">
+<dialog id="dRes" aria-labelledby="rTitle"><div class="dwrap">
   <div class="dhead"><h3 id="rTitle">Territory conquered</h3></div>
   <div class="dbody"><div id="rBody"></div></div>
   <div class="dfoot"><span></span><button id="rClose" type="button" class="primary">Return to map</button></div>
 </div></dialog>
 
-<dialog id="dCodeD"><div class="dwrap">
+<dialog id="dCodeD" aria-label="Save and restore progress"><div class="dwrap">
   <div class="dhead"><h3>Progress code</h3></div>
   <div class="dbody">
     <p class="instr">Your progress is saved in this browser automatically. A progress code is a short backup you can
       paste into a note, so you can restore your stars on another device or after clearing your browser data.</p>
     <h4 style="margin:14px 0 4px;font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Save Progress Code</h4>
-    <div class="codebox" id="codeOut">—</div>
+    <div class="codebox" id="codeOut">:</div>
     <button id="bCopy" type="button" style="width:100%">Copy code</button>
     <h4 style="margin:20px 0 6px;font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">Load Progress Code</h4>
-    <input type="text" id="codeIn" placeholder="RHO-K7M2-X9R" autocomplete="off" spellcheck="false" aria-label="Enter a progress code">
+    <input type="text" id="codeIn" placeholder="RMA26 progress code" autocomplete="off" spellcheck="false" aria-label="Enter a progress code">
     <div id="codeMsg" style="font-size:.84rem;margin-top:8px;min-height:20px"></div>
     <button id="bLoad" type="button" style="width:100%;margin-top:4px">Load this code</button>
   </div>
   <div class="dfoot"><span></span><button id="codeClose" type="button" class="primary">Close</button></div>
 </div></dialog>
 
-<dialog id="dBrain"><div class="dwrap">
+<dialog id="dBrain" aria-label="Campaign complete"><div class="dwrap">
   <div class="dhead"><h3>STAT BRAIN: ONLINE</h3></div>
   <div class="dbody" id="brainBody"></div>
   <div class="dfoot"><span></span><button id="brainClose" type="button" class="primary">Close</button></div>
 </div></dialog>
 
 <script>
+// Every challenge carries source provenance. Prompts and stimuli are newly authored.
+
 "use strict";
 /* ============================================================
    1. CONTENT
    ============================================================ */
-const WEEKS=[
- {id:1,name:"Academic foundations",wk:"Weeks 3–4",col:"var(--w1)",badge:"SOURCE SCHOLAR"},
- {id:2,name:"Data & presentation",wk:"Weeks 5 & 7",col:"var(--w2)",badge:"DATA PRESENTER"},
- {id:3,name:"jamovi foundations",wk:"Week 8",col:"var(--w3)",badge:"JAMOVI NAVIGATOR"},
- {id:4,name:"Inference",wk:"Weeks 9–10",col:"var(--w4)",badge:"INFERENCE ANALYST"}
-];
-const RANKS=[[0,"Novice Researcher"],[8,"Lab Apprentice"],[16,"Data Handler"],[25,"Methods Analyst"],[33,"Research Lead"]];
-
-/* --- small SVG helpers used inside challenges --- */
-function boxplotSVG(){return `
-<svg viewBox="0 0 420 240" role="group" aria-label="Boxplot of participant age with one isolated point above the upper whisker">
- <rect width="420" height="240" fill="#0a1020"/>
- <line x1="60" y1="20" x2="60" y2="210" stroke="#3f5a8f" stroke-width="2"/>
- <line x1="60" y1="210" x2="400" y2="210" stroke="#3f5a8f" stroke-width="2"/>
- <text x="26" y="205" fill="#93a4c4" font-size="12">18</text>
- <text x="26" y="130" fill="#93a4c4" font-size="12">35</text>
- <text x="26" y="52" fill="#93a4c4" font-size="12">62</text>
- <text x="215" y="232" fill="#93a4c4" font-size="12" text-anchor="middle">AGE</text>
- <rect x="180" y="150" width="70" height="42" fill="#1f2d4d" stroke="#7dd3fc" stroke-width="2"/>
- <line x1="180" y1="172" x2="250" y2="172" stroke="#fbbf24" stroke-width="3"/>
- <line x1="215" y1="150" x2="215" y2="128" stroke="#7dd3fc" stroke-width="2"/>
- <line x1="195" y1="128" x2="235" y2="128" stroke="#7dd3fc" stroke-width="2"/>
- <line x1="215" y1="192" x2="215" y2="200" stroke="#7dd3fc" stroke-width="2"/>
- <line x1="195" y1="200" x2="235" y2="200" stroke="#7dd3fc" stroke-width="2"/>
- <circle cx="215" cy="56" r="5" fill="#e6edf7"/>
- <g class="hs" data-k="out" role="button" tabindex="0" aria-label="Isolated point far above the upper whisker">
-   <circle cx="215" cy="56" r="20"/></g>
- <g class="hs" data-k="med" role="button" tabindex="0" aria-label="Median line inside the box">
-   <rect x="182" y="162" width="66" height="20"/></g>
- <g class="hs" data-k="whisk" role="button" tabindex="0" aria-label="Upper whisker cap">
-   <rect x="190" y="118" width="50" height="20"/></g>
-</svg>`;}
-
-function twoTailSVG(){return `
-<svg viewBox="0 0 460 210" role="group" aria-label="Bell-shaped sampling distribution with a left tail region, a central region and a right tail region">
- <rect width="460" height="210" fill="#0a1020"/>
- <path d="M40 170 C110 170 120 40 230 40 C340 40 350 170 420 170" fill="none" stroke="#7dd3fc" stroke-width="3"/>
- <line x1="40" y1="170" x2="420" y2="170" stroke="#3f5a8f" stroke-width="2"/>
- <line x1="98" y1="170" x2="98" y2="120" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 4"/>
- <line x1="362" y1="170" x2="362" y2="120" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 4"/>
- <text x="230" y="196" fill="#93a4c4" font-size="12" text-anchor="middle">values of the test statistic</text>
- <g class="hs" data-k="left" role="button" tabindex="0" aria-label="Far left tail region">
-   <rect x="44" y="118" width="54" height="52"/></g>
- <g class="hs" data-k="mid" role="button" tabindex="0" aria-label="Central region of the distribution">
-   <rect x="150" y="60" width="160" height="110"/></g>
- <g class="hs" data-k="right" role="button" tabindex="0" aria-label="Far right tail region">
-   <rect x="362" y="118" width="54" height="52"/></g>
-</svg>`;}
-
-function ribbonSVG(){return `
-<svg viewBox="0 0 640 110" role="group" aria-label="Microsoft Excel ribbon tabs: File, Home, Insert, Page Layout, Formulas, Data, Review, View">
- <rect width="640" height="110" fill="#0a1020"/>
- <rect x="0" y="0" width="640" height="34" fill="#16213a"/>
- ${["File","Home","Insert","Page Layout","Formulas","Data","Review","View"].map((t,i)=>{
-   const x=8+i*78;return `<text x="${x+36}" y="22" fill="#cbd5e1" font-size="13" text-anchor="middle">${t}</text>`;}).join("")}
- <rect x="8" y="44" width="180" height="54" fill="#16213a" stroke="#2d3f66"/>
- <text x="98" y="76" fill="#93a4c4" font-size="12" text-anchor="middle">Sort &amp; Filter group</text>
- ${["File","Home","Insert","Page Layout","Formulas","Data","Review","View"].map((t,i)=>{
-   const x=8+i*78;return `<g class="hs" data-k="${t}" role="button" tabindex="0" aria-label="${t} tab"><rect x="${x}" y="2" width="72" height="30"/></g>`;}).join("")}
-</svg>`;}
-
-function jamoviSetupSVG(){return `
-<svg viewBox="0 0 520 240" role="group" aria-label="jamovi data variable setup panel showing name, description, Measure type, Data type and Missing values fields">
- <rect width="520" height="240" fill="#0a1020"/>
- <rect x="10" y="10" width="500" height="26" fill="#2563a8"/>
- <text x="24" y="28" fill="#fff" font-size="13">Data</text>
- <text x="78" y="28" fill="#cfe3ff" font-size="13">Analyses</text>
- <text x="150" y="28" fill="#cfe3ff" font-size="13">Edit</text>
- <text x="30" y="62" fill="#93a4c4" font-size="11">DATA VARIABLE</text>
- <rect x="30" y="68" width="300" height="24" fill="#16213a" stroke="#f59e0b"/>
- <text x="40" y="85" fill="#e6edf7" font-size="13">GENDER</text>
- <rect x="30" y="96" width="300" height="20" fill="#101a30" stroke="#2d3f66"/>
- <text x="40" y="111" fill="#6b7fa6" font-size="11">Description</text>
- <text x="30" y="140" fill="#cbd5e1" font-size="12">Measure type</text>
- <rect x="120" y="126" width="120" height="20" fill="#16213a" stroke="#2d3f66"/>
- <text x="128" y="141" fill="#e6edf7" font-size="12">Nominal ▾</text>
- <text x="30" y="168" fill="#cbd5e1" font-size="12">Data type</text>
- <rect x="120" y="154" width="120" height="20" fill="#16213a" stroke="#2d3f66"/>
- <text x="128" y="169" fill="#e6edf7" font-size="12">Integer ▾</text>
- <text x="30" y="196" fill="#cbd5e1" font-size="12">Missing values</text>
- <rect x="120" y="182" width="120" height="20" fill="#16213a" stroke="#2d3f66"/>
- <rect x="360" y="126" width="140" height="80" fill="#16213a" stroke="#2d3f66"/>
- <text x="368" y="122" fill="#93a4c4" font-size="11">Levels</text>
- <text x="372" y="146" fill="#e6edf7" font-size="12">Male</text>
- <text x="372" y="168" fill="#e6edf7" font-size="12">Female</text>
- <g class="hs" data-k="measure" role="button" tabindex="0" aria-label="Measure type dropdown"><rect x="118" y="124" width="124" height="24"/></g>
- <g class="hs" data-k="dtype" role="button" tabindex="0" aria-label="Data type dropdown"><rect x="118" y="152" width="124" height="24"/></g>
- <g class="hs" data-k="levels" role="button" tabindex="0" aria-label="Levels list"><rect x="358" y="124" width="144" height="84"/></g>
- <g class="hs" data-k="name" role="button" tabindex="0" aria-label="Variable name field"><rect x="28" y="66" width="304" height="28"/></g>
-</svg>`;}
-
-function badSlideSVG(){return `
-<svg viewBox="0 0 520 300" role="group" aria-label="Draft presentation slide containing a dense paragraph of very small text and an unlabelled chart">
- <rect width="520" height="300" fill="#f8fafc"/>
- <rect x="0" y="0" width="520" height="34" fill="#1e3a5f"/>
- <text x="16" y="23" fill="#fff" font-size="15" font-weight="bold">Results</text>
- ${Array.from({length:11},(_,i)=>`<text x="18" y="${54+i*13}" fill="#1f2937" font-size="7">Students who attended more frequently had better grades and this was the case across the whole first term of the module and also when we looked at each week separately, and in addition</text>`).join("")}
- <g transform="translate(330,150)">
-   <rect x="0" y="0" width="170" height="130" fill="#ffffff" stroke="#cbd5e1"/>
-   <rect x="24" y="60" width="26" height="50" fill="#60a5fa"/>
-   <rect x="66" y="36" width="26" height="74" fill="#60a5fa"/>
-   <rect x="108" y="20" width="26" height="90" fill="#60a5fa"/>
-   <line x1="16" y1="110" x2="158" y2="110" stroke="#94a3b8"/>
-   <line x1="16" y1="14" x2="16" y2="110" stroke="#94a3b8"/>
- </g>
- <g class="hs" data-k="text" role="button" tabindex="0" aria-label="Dense block of very small body text"><rect x="12" y="42" width="300" height="152"/></g>
- <g class="hs" data-k="chart" role="button" tabindex="0" aria-label="Chart with no axis labels or title"><rect x="326" y="146" width="178" height="138"/></g>
- <g class="hs" data-k="title" role="button" tabindex="0" aria-label="Slide title bar reading Results"><rect x="4" y="4" width="180" height="26"/></g>
-</svg>`;}
-
-function titlePageSVG(){return `
-<svg viewBox="0 0 400 300" role="group" aria-label="Report title page with a title, a blank author line, an affiliation line and a date">
- <rect width="400" height="300" fill="#f8fafc"/>
- <text x="200" y="88" fill="#111827" font-size="15" text-anchor="middle" font-weight="bold">Is university attendance</text>
- <text x="200" y="108" fill="#111827" font-size="15" text-anchor="middle" font-weight="bold">associated with grades?</text>
- <line x1="120" y1="150" x2="280" y2="150" stroke="#cbd5e1" stroke-width="1"/>
- <text x="200" y="146" fill="#9ca3af" font-size="10" text-anchor="middle">[author line]</text>
- <text x="200" y="182" fill="#374151" font-size="11" text-anchor="middle">School of Psychology</text>
- <text x="200" y="200" fill="#374151" font-size="11" text-anchor="middle">University of Birmingham</text>
- <text x="200" y="250" fill="#374151" font-size="11" text-anchor="middle">Research Methods A</text>
- <g class="hs" data-k="author" role="button" tabindex="0" aria-label="Blank author line"><rect x="112" y="130" width="176" height="28"/></g>
- <g class="hs" data-k="title" role="button" tabindex="0" aria-label="Report title"><rect x="60" y="72" width="280" height="42"/></g>
- <g class="hs" data-k="aff" role="button" tabindex="0" aria-label="Affiliation lines"><rect x="90" y="168" width="220" height="40"/></g>
- <g class="hs" data-k="mod" role="button" tabindex="0" aria-label="Module name line"><rect x="110" y="236" width="180" height="24"/></g>
-</svg>`;}
-
-function barNoLabelsSVG(){return `
-<svg viewBox="0 0 380 240" aria-hidden="true">
- <rect width="380" height="240" fill="#0a1020"/>
- <line x1="60" y1="20" x2="60" y2="196" stroke="#3f5a8f" stroke-width="2"/>
- <line x1="60" y1="196" x2="350" y2="196" stroke="#3f5a8f" stroke-width="2"/>
- <rect x="90" y="96" width="46" height="100" fill="#60a5fa"/>
- <rect x="150" y="76" width="46" height="120" fill="#a78bfa"/>
- <rect x="220" y="110" width="46" height="86" fill="#60a5fa"/>
- <rect x="280" y="66" width="46" height="130" fill="#a78bfa"/>
-</svg>`;}
-
-function histSVG(bars,label){
- const w=260,h=150,bw=w/bars.length,mx=Math.max(...bars);
- return `<svg viewBox="0 0 ${w+40} ${h+44}" aria-hidden="true">
-  <rect width="${w+40}" height="${h+44}" fill="#0a1020"/>
-  ${bars.map((v,i)=>{const bh=(v/mx)*h;return `<rect x="${24+i*bw}" y="${14+h-bh}" width="${bw-3}" height="${bh}" fill="#60a5fa" stroke="#1e3a5f"/>`;}).join("")}
-  <line x1="20" y1="${14+h}" x2="${24+w}" y2="${14+h}" stroke="#3f5a8f" stroke-width="2"/>
-  <text x="${(w+40)/2}" y="${h+36}" fill="#93a4c4" font-size="11" text-anchor="middle">${label}</text>
- </svg>`;}
-
-/* ---- TERRITORIES ---- */
-const TERR=[
-/* ========== BLOCK 1 — WEEKS 3–4 ========== */
-{id:1,name:"Source Sound",sub:"Finding sources",wk:1,x:110,y:120,needs:[],
- blurb:"Week 3. Where good evidence comes from, and what should never end up in your reference list.",
- ch:[
- {type:"sort",q:"Sort these sources by how appropriate they are to cite in a first-year psychology assignment.",
-  i:"Tap a card, then tap a bin.",
-  bins:["High-quality evidence","Use sparingly","Not appropriate at this level"],
-  items:[{t:"Peer-reviewed journal article",b:0},{t:"Published specialist book",b:0},
-         {t:"NHS report / official government statistics",b:0},{t:"Diagnostic manual",b:0},
-         {t:"Recent news article showing a topic is topical",b:1},
-         {t:"Wikipedia or another openly edited website",b:2}],
-  explain:"Week 3 lists peer-reviewed articles, specialist books, diagnostic manuals, conference presentations and reports from public bodies such as the NHS or official government statistics as high-quality evidence. News articles can occasionally be cited to show a topic is contemporary and important, but they do not carry the same weight. Openly edited sites such as Wikipedia should not be cited at this level."},
- {type:"mcq",q:"A textbook describes a classic 1987 study in two sentences. You want to use it in your essay. What does Week 3 tell you to do?",
-  opts:["Cite the textbook — it is a published specialist book, so that is enough",
-        "Find and read the original 1987 study, and cite that",
-        "Cite both the textbook and the original without reading either",
-        "Cite the textbook but change the wording so it is not plagiarism"],
-  a:1,
-  explain:"Where a textbook refers to a particular theory or study, you should always try to find and read the original source, so you can be sure you have understood it correctly. Citing a summary of a summary is how errors get passed along."},
- {type:"multi",q:"Which of these are true about Generative AI and sources? Select every true statement.",
-  i:"Select all that apply, then check.",
-  opts:["Generative AI often cites sources that do not exist",
-        "Generative AI sometimes cites real sources that are actually about unrelated topics",
-        "Citing fabricated or unrelated sources can lead to disciplinary processes",
-        "An AI-produced reference list is acceptable as long as it is formatted in APA style",
-        "You are expected to find, read and cite authentic sources yourself"],
-  a:[0,1,2,4],
-  explain:"Week 3 is explicit: Generative AI often cites sources which do not exist, or which are about unrelated topics. You are held to a higher standard — find, read and cite authentic, high-quality sources. Correct APA formatting does not make a fabricated reference acceptable, and unethical use can result in disciplinary processes under the student code of conduct."}
- ]},
-
-{id:2,name:"Citation Cove",sub:"In-text citations",wk:1,x:110,y:320,needs:[1],
- blurb:"Week 3. Which claims need backing up, and the two in-text citation formats used in psychology.",
- ch:[
- {type:"segments",q:"One sentence in this paragraph makes a claim that needs a citation. Click it.",
-  i:"Click the sentence, then check.",
-  segs:["We recruited 60 first-year students through the School participant scheme. ",
-        "Previous research has shown that SSRIs can reduce depressive symptoms. ",
-        "Testing took place in a quiet room on the University campus."],
-  a:1,
-  explain:"The first and third sentences describe what <b>you</b> did — they are your own procedure, so they do not need a citation. The middle sentence is a claim about what is already known, so it must be supported by evidence. Week 3's rule: every claim you make should be supported, so it is clear it is not your own speculation or hearsay."},
- {type:"match",q:"Match each in-text citation to what it is.",
-  i:"Click one on the left, then its partner on the right. These are the illustrative examples used in the Week 3 handout.",
-  pairs:[
-   {l:"Anderson (2020) investigated the effects of SSRIs on depression.",r:"Narrative citation — the author's name is part of the sentence"},
-   {l:"A study was conducted into the effects of SSRIs on depression (Anderson, 2020).",r:"Parenthetical citation — author and year in brackets at the end"},
-   {l:"(Anderson, 2020; Callums, 2018; Stark, 2021)",r:"Several sources at once, ordered alphabetically by surname"}],
-  explain:"Psychology uses two in-text formats and you choose whichever makes the sentence flow better. When several studies support one point, they go together in one bracket, separated by semicolons and ordered alphabetically by surname. <i>Anderson, Callums and Stark are illustrative examples from the handout, not real papers.</i>"},
- {type:"multi",q:"This example reference list breaks several of the module's rules. Select every problem you can see.",
-  i:"Example references — these are illustrative, not real sources.",
-  pre:`<div class="segwrap" style="font-size:.85rem;line-height:1.9">
-   1. <u>Stark, P. (2021).</u> Sleep and memory consolidation. <i>Journal of Sleep Research, 30</i>, 112–125.<br>
-   2. <u>Anderson, R. (2020).</u> Effects of SSRIs on depression. <i>Clinical Psychology Review, 41</i>, 9–21.<br>
-   &bull; Callums, J. (2018). Attention in early childhood. <i>Developmental Science, 21</i>, 44–58.
-  </div>`,
-  opts:["The list is numbered","The list is not in alphabetical order by surname",
-        "A bullet point has been used","Entries are underlined",
-        "Surnames are placed before initials","Journal titles are in italics"],
-  a:[0,1,2,3],
-  explain:"Week 3's rules for the reference list: alphabetical order by the author's surname, not numbered, not bullet pointed, and no underlining. Surname before initials and italicised journal titles are <b>correct</b> here, so those two are not faults."}
- ]},
-
-{id:3,name:"Formatting Fjord",sub:"Word & APA formatting",wk:1,x:110,y:520,needs:[2],
- blurb:"Week 4. Getting a document into the format the School actually asks for.",
- ch:[
- {type:"order",q:"Put the Week 4 editing exercise into the right order.",
-  i:"Use the arrows to reorder.",
-  items:["Download the file labelled Editing Exercise from the Week 4 Canvas folder",
-         "Rename the file using your student number, e.g. 1102345_Word",
-         "Go to the Review tab and turn Track Changes ON",
-         "Set the drop-down to All Markup so your edits show in a distinct colour",
-         "Edit the document so it conforms to APA style and School formatting",
-         "Check your edits against the Exercise Answers file"],
-  explain:"Track Changes has to be on <b>before</b> you start editing, otherwise your changes are invisible to whoever reviews them. Setting the view to All Markup is what makes the edits appear in a distinct colour. This exercise is formative — it is not submitted, and you check your own work against the answers file."},
- {type:"hotspot",q:"On this title page, click where your student number should go.",
-  i:"Click the region, then check.",
-  svg:titlePageSVG(),a:["author"],
-  explain:"Your student number goes where an author's name would normally appear on a published article — on the title page. Week 4 asks you to make sure your student number is written somewhere sensible in the document, because without it markers cannot tell whose work it is."},
- {type:"mcq",q:"Which filename follows the naming convention used in Research Methods A?",
-  opts:["Word_1102345","1102345_Word","RMA essay FINAL v2","1102345 word final"],
-  a:1,
-  explain:"The convention is student number, then an underscore, then the submission title — so 1102345_Word. It is worth getting into the habit now, because you will be expected to use this format when submitting real assignments."}
- ]},
-
-/* ========== BLOCK 2 — WEEKS 5 & 7 ========== */
-{id:4,name:"Spreadsheet Shores",sub:"Excel: sorting & functions",wk:2,x:350,y:120,needs:[1],
- blurb:"Week 5. Sorting the IQ dataset and using Excel's built-in functions.",
- ch:[
- {type:"hotspot",q:"You want to sort the IQ dataset by Sex and then by Diagnosis. Which ribbon tab do you click?",
-  i:"Click the tab, then check.",
-  svg:ribbonSVG(),a:["Data"],
-  explain:"Sort lives under the <b>Data</b> tab. Week 5 asks you to sort by Sex and then by Diagnosis so that male and female participants are separated into ASD and TD groups. Formulas is where AVERAGE and AutoSum live — a different job."},
- {type:"order",q:"Put the steps for turning a proportion into a percentage in Excel into order.",
-  i:"Use the arrows to reorder.",
-  items:["Click on an empty cell",
-         "Enter a formula dividing the category count by the group total, e.g. =b2/c2",
-         "Press Enter to produce the value",
-         "Click the cell containing the new value",
-         "Press Ctrl+Shift+% to display it as a percentage"],
-  explain:"Week 5's method: divide the number of participants in a category by the total number in that group, then use Ctrl+Shift+% to convert the resulting proportion into a percentage. The division has to happen before the formatting — formatting an empty cell does nothing."},
- {type:"mcq",q:"A group has SD = 12 and N = 36. What is the standard error of the mean?",
-  i:"SEM = standard deviation ÷ √(sample size).",
-  opts:["0.33","2","6","12"],
-  a:1,
-  explain:"SEM is the standard deviation divided by the square root of the sample size — the number of observations in the sample. Here √36 = 6, and 12 ÷ 6 = <b>2</b>. A larger sample gives a smaller standard error, which is why SEM error bars shrink as N grows."}
- ]},
-
-{id:5,name:"Error Bar Bay",sub:"Pivot tables & charts",wk:2,x:350,y:320,needs:[4],
- blurb:"Week 5. From pivot table to a clustered bar chart with error bars.",
- ch:[
- {type:"order",q:"Put the Week 5 chart pipeline into order.",
-  i:"Use the arrows to reorder.",
-  items:["Insert a Pivot Table and place it in Tab 2",
-         "Drag Sex to rows and Diagnosis to columns, with Age and IQ in Values",
-         "Change the Sum values to Average using Value Field Settings",
-         "Copy the pivot table and paste values only into Tab 3 using the 123 paste option",
-         "Highlight the data and Insert a clustered 2-D Column chart",
-         "Add standard error of the mean bars to each column",
-         "Label both axes and add a clear key"],
-  explain:"The values-only paste (the 123 icon under Paste Options) matters — pasting the live pivot table into the chart area causes problems later. Week 5 asks for two charts: mean IQ, and mean age, each split by sex and diagnosis, each with SEM error bars, clearly labelled axes and a clear key."},
- {type:"multi",q:"This chart was submitted as-is. Select everything it is missing.",
-  i:"Select all that apply.",
-  pre:`<div class="figbox">${barNoLabelsSVG()}</div>`,
-  opts:["Axis labels","A chart title","A key identifying the two colours",
-        "Error bars","Numbers on the bars showing the exact p-value"],
-  a:[0,1,2,3],
-  explain:"Week 5 asks for clearly formatted and labelled axes, a clear key, and standard error of the mean bars on each column. A title is expected too. The last option is not a thing — p-values belong in the text, not printed on bars, and this chart is descriptive anyway."},
- {type:"sort",q:"Which tab of the IQ data workbook does each piece of work belong in?",
-  i:"Tap a card, then tap a tab.",
-  bins:["Tab 1 (data)","Tab 2","Tab 3"],
-  items:[{t:"Your calculated means, in the bright yellow boxes",b:0},
-         {t:"Your calculated SEM values",b:0},
-         {t:"The three pivot tables",b:1},
-         {t:"The two clustered bar charts with error bars",b:2}],
-  explain:"Week 5 is specific about where things go: answers to the calculations go in the bright yellow boxes on the first tab, pivot tables go in Tab 2, and graphs go in Tab 3. Keeping a workbook organised this way is a habit worth forming now."}
- ]},
-
-{id:6,name:"Slide Summit",sub:"Presenting your work",wk:2,x:350,y:520,needs:[5],
- blurb:"Week 7. Building a five-slide deck that an audience can actually read.",
- ch:[
- {type:"order",q:"Put the five slides of the Week 7 presentation into order.",
-  i:"Use the arrows to reorder.",
-  items:["Title slide — study title, your name and affiliation",
-         "Introduction — background on the topic",
-         "Methods — participants, procedure, materials",
-         "Results — findings, with the chart",
-         "Conclusion — what it means"],
-  explain:"This is the standard shape of a research presentation and it mirrors the sections of a report. Week 7 asks for exactly these five slides, with the chart on the Results slide, axes labelled Grade and Attendance, and a title on the chart."},
- {type:"hotspot",q:"Click the two design problems on this draft slide.",
-  i:"Click both, then check.",
-  svg:badSlideSVG(),a:["text","chart"],
-  explain:"Two faults. The body text is a dense block in a font far too small — Week 7 says you should be able to read everything without zooming in, and that slides should be concise and uncluttered. The chart has no axis labels and no title, so the audience cannot tell what is being plotted. Charts should also carry alternative text so someone using a screen reader can hear what they show."},
- {type:"match",q:"Each statement comes from the Week 7 example study. Match it to the slide it belongs on.",
-  i:"Click one on the left, then its slide on the right.",
-  pairs:[
-   {l:"\"Is university attendance associated with grades?\"",r:"Title slide"},
-   {l:"\"Findings of a previously published study suggest students with better attendance have better grades.\"",r:"Introduction"},
-   {l:"\"300 university students (200 females, 100 males; mean age = 19).\"",r:"Methods"},
-   {l:"\"Students who attended more frequently had better grades.\"",r:"Results"},
-   {l:"\"Students should be encouraged to attend all modules.\"",r:"Conclusion"}],
-  explain:"Sorting content into the right section is most of what makes a deck readable. Note the jump between the last two: the result is a <b>relationship</b> observed in existing attendance records, but the conclusion is a <b>recommendation</b>. Reviewer #2 will want a word about that later."}
- ]},
-
-/* ========== BLOCK 3 — WEEK 8 ========== */
-{id:7,name:"Variable Valley",sub:"Setting up variables",wk:3,x:600,y:220,needs:[5],
- blurb:"Week 8. jamovi's data view, measure types and why labelling matters.",
- ch:[
- {type:"hotspot",q:"In jamovi's variable setup, click where you set whether a variable is nominal, ordinal or continuous.",
-  i:"Click the field, then check.",
-  svg:jamoviSetupSVG(),a:["measure"],
-  explain:"The <b>Measure type</b> dropdown sets the measurement level. <b>Data type</b> (integer, decimal, text) is a separate setting describing how the values are stored. Week 8 warns that if your variables have the wrong measure type, your analyses might not work correctly."},
- {type:"sort",q:"Classify each variable from the Week 8 employees dataset by its measurement level.",
-  i:"Tap a card, then tap a level.",
-  bins:["Nominal","Ordinal","Continuous"],
-  items:[{t:"GENDER (male / female)",b:0},
-         {t:"MINORITY (0 = not a minority, 1 = minority)",b:0},
-         {t:"JOBCAT (manual / office / corporate)",b:0},
-         {t:"SALARY (£)",b:2},
-         {t:"EDUC (years of education)",b:2},
-         {t:"Satisfaction rated 1–5, strongly disagree to strongly agree",b:1}],
-  explain:"Nominal variables name categories with no order. Ordinal variables have a meaningful order but the gaps between points are not necessarily equal — a 1–5 agreement rating is the classic case. Continuous (scale) variables are measured on a numeric scale where the intervals do mean something, like salary or years of education."},
- {type:"multi",q:"Which of these are good practice when setting up variables in jamovi? Select all that apply.",
-  opts:["Add value labels so 0 and 1 appear as meaningful category names in your output",
-        "Set the measure type correctly for every variable before analysing",
-        "Only collect demographic information you can actually justify needing",
-        "Offering just two options for gender identity, since that is how most datasets are coded"],
-  a:[0,1,2],
-  explain:"Week 8 makes all three points. Unlabelled 0/1 columns like MINORITY are meaningless to anyone reading the output, so add labels. Wrong measure types break analyses. And the handout is direct about the last one: listing only two labels for gender identity is <b>bad practice</b>, because it excludes anyone who does not identify with either — and you should only ever collect personal data you can justify as necessary and relevant."}
- ]},
-
-{id:8,name:"Descriptives Delta",sub:"Exploring your data",wk:3,x:600,y:430,needs:[6,7],
- blurb:"Week 8. Descriptives, splitting output by group, and reading the results panel.",
- ch:[
- {type:"order",q:"Put the jamovi steps in order to get mean salary split by job category, with a histogram.",
-  i:"Use the arrows to reorder.",
-  items:["Click the Analyses tab",
-         "Click Exploration",
-         "Click Descriptives",
-         "Move SALARY into the Variables box",
-         "Move JOBCAT into the Split by box",
-         "Open Plots and tick Histogram"],
-  explain:"Analyses → Exploration → Descriptives is the route for all of Week 8's summary statistics. <b>Split by</b> uses a categorical grouping variable to break the output into separate summaries for each group; in this exercise, JOBCAT is the grouping variable."},
- {type:"grid",q:"This is the Week 8 output for SALARY split by JOBCAT. Click the mean salary of job category 3.",
-  i:"Click one cell, then check.",
-  cols:["","1","2","3"],
-  rows:[["N","363","27","84"],["Missing","0","0","0"],
-        ["Mean","27839","30939","63978"],["Median","26550","30750","60500"],
-        ["Standard deviation","7568","2115","18245"],
-        ["Minimum","15750","24300","34410"],["Maximum","80000","35250","135000"]],
-  a:"2,3",
-  explain:"Read down to the Mean row, then across to the column headed 3 — <b>63,978</b>. Category 3 is Corporate, and it is worth noticing how much larger its standard deviation is (18,245) than category 2's (2,115): the corporate salaries are far more spread out."},
- {type:"mcq",q:"What does putting GENDER in the Split by box actually do to your Descriptives output?",
-  opts:["It removes everyone who is not in the first group from the analysis",
-        "It reports the descriptive statistics separately for each gender rather than for the whole sample",
-        "It tests whether the genders differ significantly",
-        "It sorts the spreadsheet rows by gender"],
-  a:1,
-  explain:"Split by reports your descriptives separately for each level of that variable, instead of pooling everyone together. Nothing is removed and nothing is tested — it is purely descriptive. Week 8 walks through exactly this with EDUC and JOBCAT split by GENDER."}
- ]},
-
-/* ========== BLOCK 4 — WEEKS 9–10 ========== */
-{id:9,name:"Hypothesis Harbour",sub:"Hypothesis testing",wk:4,x:850,y:110,needs:[7],
- blurb:"Week 9. The vocabulary of hypothesis testing — and what a non-significant result does and does not mean.",
- ch:[
- {type:"match",q:"Match each term to what it actually means.",
-  i:"Click a term, then its meaning.",
-  pairs:[
-   {l:"Null hypothesis (H₀)",r:"The statement of no effect, no difference or no association that the test is set up against"},
-   {l:"Significance level (α)",r:"The threshold chosen before testing; commonly .05 in this module"},
-   {l:"Critical value",r:"The cut-off value of the test statistic that marks the edge of the rejection region"},
-   {l:"p-value",r:"Calculated from the observed data, then compared against the chosen threshold"},
-   {l:"Two-tailed test",r:"The rejection probability is divided between both tails of the distribution"}],
-  explain:"These three get tangled constantly, so it is worth separating them. <b>α</b> is the threshold you pick in advance — .05 in this module. The <b>critical value</b> is the point on the test statistic's scale that corresponds to that threshold. The <b>p-value</b> comes out of your actual data and gets compared with α. Week 9 uses a 5% significance level with a 95% confidence level — the two add up to 100%."},
- {type:"hotspot",q:"For a two-tailed test at the 5% level, click BOTH regions where the null hypothesis would be rejected.",
-  i:"Click both, then check.",
-  svg:twoTailSVG(),a:["left","right"],
-  explain:"A two-tailed, non-directional test splits the 5% across both ends — the lowest 2.5% and the highest 2.5%, making 5% altogether. The middle of the distribution is where results consistent with H₀ fall.",
-  note:"A one-tailed test places the whole rejection region in one pre-specified direction. That direction has to be set out <b>in advance</b> on the basis of theory — not chosen after seeing which way the data went. For this module, two-tailed tests are the usual approach, since it is rare to know the direction beforehand."},
- {type:"mcq",q:"Your test comes back non-significant. What is the correct interpretation?",
-  opts:["The null hypothesis has been proved — there is no effect",
-        "Fail to reject H₀ — the data do not provide sufficient evidence for the alternative hypothesis at the chosen significance level",
-        "The effect exists but the test was not sensitive enough to find it",
-        "The result should be reported as approaching significance"],
-  a:1,
-  explain:"You <b>fail to reject</b> H₀. Week 9 is firm that you can never claim to have proved the null — you cannot 100% prove a null statement. Nor does it establish that no effect exists; it only means the evidence you collected was not sufficient to reject H₀ under the analysis and threshold you chose. And a result is either below your threshold or it is not — there is no in-between category."}
- ]},
-
-{id:10,name:"Correlation Coast",sub:"Pearson's r in jamovi",wk:4,x:850,y:300,needs:[8,9],
- blurb:"Week 9. Running and reporting a correlation, and reading r properly.",
- ch:[
- {type:"order",q:"Put the jamovi steps for the Week 9 correlation into order.",
-  i:"Use the arrows to reorder.",
-  items:["Open the Correlation data file in jamovi",
-         "Click Analyses, then Regression",
-         "Click Correlation Matrix",
-         "Move ICE_CREAM and Temp into the variables box",
-         "Tick Pearson and Report significance",
-         "Select 'Correlated' under Hypothesis"],
-  explain:"Correlation Matrix sits under <b>Regression</b> in jamovi, which surprises people. 'Correlated' is the non-directional option — it tests for a relationship in either direction, which matches the two-tailed default. The alternatives, 'Correlated positively' and 'Correlated negatively', are directional."},
- {type:"segments",q:"In this result, click the degrees of freedom.",
-  i:"Click the right part of the line, then check.",
-  mono:true,
-  segs:["r","(18)"," = .893",", p < .001"],
-  a:1,
-  explain:"The number in brackets after r is the degrees of freedom. There were 20 days of observations, and for a correlation df = N − 2, so df = 18. Then .893 is the correlation coefficient itself and p < .001 is the significance."},
- {type:"match",q:"Match each r value to its strength band.",
-  i:"Using the interpretation bands taught in this module.",
-  pairs:[
-   {l:"r = .08",r:"Very weak (0–.19)"},
-   {l:"r = −.31",r:"Weak (.20–.39)"},
-   {l:"r = .47",r:"Moderate (.40–.59)"},
-   {l:"r = −.68",r:"Strong (.60–.79)"},
-   {l:"r = .89",r:"Very strong (.80–1)"}],
-  explain:"These bands are the rule of thumb taught in this module — they are a convention for describing a coefficient, not a universal law of nature, and different fields use different cut-offs. Note that the bands apply to the <b>size</b> of r regardless of sign: −.68 is just as strong as +.68, it simply runs the other way."}
- ]},
-
-{id:11,name:"Distribution Dunes",sub:"Histograms & outliers",wk:4,x:850,y:490,needs:[10],
- blurb:"Week 9. Looking at the shape of your data before you trust a test.",
- ch:[
- {type:"pick",q:"Which of these histograms looks roughly normally distributed?",
-  i:"Click one, then check.",
-  picks:[{svg:histSVG([2,5,9,14,15,10,6,2],"Variable A"),cap:"A"},
-         {svg:histSVG([16,13,9,6,4,3,2,1],"Variable B"),cap:"B"},
-         {svg:histSVG([9,4,3,9,10,4,8,9],"Variable C"),cap:"C"}],
-  a:0,
-  explain:"A shows the classic bell shape — most scores in the middle, tapering off symmetrically at both ends. B is skewed, with the scores pushed up against one end. C is lumpy and flat with no clear central peak, much like the MOTIVATION histogram in Week 9. Histograms are the quickest way to check whether data look normally distributed."},
- {type:"hotspot",q:"This boxplot shows participant age. Click the potential outlier.",
-  i:"Click it, then check.",
-  svg:boxplotSVG(),a:["out"],
-  explain:"The isolated point sitting well above the upper whisker is a potential outlier — one participant is a lot older than the rest of the sample. The gold line inside the box is the median, and the cap at the top of the line is the upper whisker.",
-  note:"Spotting it is only step one. An outlier should be <b>investigated</b>, not automatically deleted."},
- {type:"multi",q:"You have found a potential outlier. Select every action that is good practice.",
-  opts:["Go back to the original data and investigate why that value is unusual",
-        "If it turns out to be a data-entry or measurement error, correct it or exclude it with a stated justification",
-        "Keep the original data file untouched and save any cleaned version under a new name",
-        "Document any exclusion so a reader knows what you removed and why",
-        "Delete the participant straight away because extreme values distort results"],
-  a:[0,1,2,3],
-  explain:"Investigate first. If the value is a typo or a measurement failure, you can correct or exclude it with justification. If it is a genuine observation, do not delete it simply because it is extreme — consider how it affects the analysis and follow the module guidance. Week 9 is emphatic on one point in particular: <b>always keep the original data file</b>, and save changed versions under a different name, such as 'Correlation data outliers removed'."}
- ]},
-
-{id:12,name:"Chi-Square Chasm",sub:"χ² test of association",wk:4,x:1030,y:300,needs:[11],
- blurb:"Week 10. Comparing observed frequencies with what the null model predicts.",
- ch:[
- {type:"sort",q:"Which of these research questions suits the χ² test of association taught in Week 10?",
-  i:"Tap a card, then tap a bin. This test needs two categorical variables.",
-  bins:["χ² test of association","A different analysis"],
-  items:[{t:"Is there an association between gender and smoking?",b:0},
-         {t:"Is course choice associated with gender?",b:0},
-         {t:"Is whether someone plays football associated with their gender?",b:0},
-         {t:"Is temperature related to the number of ice creams sold?",b:1},
-         {t:"Do students score higher on motivation than on stress?",b:1}],
-  explain:"The procedure Week 10 teaches — Frequencies → Independent Samples — tests whether <b>two categorical variables</b> are associated, with each observation contributing to exactly one cell. Temperature and ice cream sales are both continuous, so that is a correlation (Week 9). Comparing motivation with stress means comparing scores, not frequencies, so that is a different kind of test again."},
- {type:"grid",q:"In this contingency table, click the expected count for females who smoke.",
-  i:"Click one cell, then check.",
-  cols:["","Yes","No","Total"],
-  rows:[["Female — Observed","12","85","97"],["Female — Expected","14.4","82.6","97.0"],
-        ["Male — Observed","25","128","153"],["Male — Expected","22.6","130.4","153.0"],
-        ["Total — Observed","37","213","250"]],
-  a:"1,1",
-  explain:"Expected counts are the frequencies predicted under the null hypothesis that the two categorical variables are independent — they are the baseline the observed counts get compared against. Here 12 were observed against 14.4 expected. The observed and expected values are close throughout this table, which is why χ²(1) = .742, p = .389 — no significant association."},
- {type:"mcq",q:"A second chi-square gives χ² = 21.9 with 1 degree of freedom, and jamovi displays the p-value as < .001. How should you report it?",
-  opts:["χ²(1) = 21.9, p = .000","χ²(1) = 21.9, p < .001",
-        "χ²(1) = 21.9, p = 0","χ²(250) = 21.9, p < .001"],
-  a:1,
-  explain:"Report the exact p-value when the software gives you one — as in χ²(1) = .742, <b>p = .389</b>. When the p-value is below .001, report <b>p &lt; .001</b> rather than p = .000. Do not report <b>p = .000</b>; when software indicates a value below .001, report <b>p &lt; .001</b>. Note also that the number in brackets is the degrees of freedom (1), not the sample size."}
- ]}
-];
-
-const EDGES=[[1,2],[2,3],[1,4],[4,5],[5,6],[3,6],[5,7],[6,8],[7,8],[7,9],[8,10],[9,10],[10,11],[11,12]];
-
-/* --- Reviewer #2 --- */
-const BOSS=[
- {type:"mcq",q:"The Week 7 example study recorded attendance registers and final grades, and found students who attended more frequently had better grades. Which conclusion is justified?",
-  opts:["Attending lectures causes grades to improve",
-        "Attendance and grades are associated in this sample; this design cannot establish that one caused the other",
-        "Students who miss lectures are less motivated",
-        "Nothing can be concluded because the sample was mostly female"],
-  a:1,
-  explain:"Nobody assigned students to attend or not attend — attendance was simply observed. So although the relationship is real in this sample, other explanations remain wide open: students who are already doing well may find it easier to attend, and illness, work or caring responsibilities could affect attendance and grades at once. A relationship between two measured variables does not establish which one is driving the other."},
- {type:"sort",q:"Match each question to the analysis taught in Research Methods A.",
-  i:"Tap a card, then tap a bin.",
-  bins:["Pearson's correlation","χ² test of association","Descriptives only"],
-  items:[{t:"Is temperature related to daily ice cream sales?",b:0},
-         {t:"Is reported stress related to motivation score?",b:0},
-         {t:"Is gender associated with whether someone smokes?",b:1},
-         {t:"What is the mean and SD of salary in each job category?",b:2}],
-  explain:"Two continuous variables and a question about relationship → correlation. Two categorical variables and a question about association → chi-square. A question that just asks what the data look like → descriptives, no inferential test needed."},
- {type:"grid",q:"Click the cell showing the degrees of freedom for this chi-square result.",
-  i:"Click one cell, then check.",
-  cols:["","Value","df","p"],
-  rows:[["χ²","21.9","1","< .001"],["N","330","",""]],
-  a:"0,2",
-  explain:"df = 1, in the df column. The 330 underneath is N, the total number of observations — a common thing to grab by mistake. For a 2×2 contingency table, df = (rows − 1) × (columns − 1) = 1."},
- {type:"match",q:"Each sentence has one problem. Match it to what is wrong.",
-  i:"Click a sentence, then its fault.",
-  pairs:[
-   {l:"\"The correlation was significant, p = .000.\"",r:"Report p < .001 instead — do not report software output as p = .000"},
-   {l:"\"The chi-square was non-significant, so gender and smoking are not associated.\"",r:"Failing to reject H₀ is not proof that no association exists"},
-   {l:"\"See Table 1.\"",r:"You must interpret what the table shows in the text, not just point at it"},
-   {l:"\"We used a one-tailed test because the effect turned out to be positive.\"",r:"A direction has to be specified in advance, not chosen after seeing the results"}],
-  explain:"All four are things markers flag constantly. The Week 9 handout highlights the third one in particular: it is never enough to say 'see Table 1' — you have to tell the reader what the table shows, e.g. 'Figure 1 shows a scatterplot depicting the correlation between temperature and ice cream sales'."},
- {type:"mcq",q:"You want to examine the relationship between two variables, but one is an ordinal satisfaction rating from 1 to 5 and the other is clearly non-normal. Which is the better choice?",
-  opts:["Pearson's r, because it is the default",
-        "Spearman's correlation, because it works on ranks and suits ordinal data or monotonic relationships where Pearson's assumptions are not appropriate",
-        "A chi-square test of association",
-        "No analysis is possible"],
-  a:1,
-  explain:"Pearson is used when the data meet parametric assumptions — interval or scale data, roughly normal, free from problematic outliers. Spearman works on the <b>ranks</b> of the data instead, which makes it suitable for ordinal variables and for monotonic relationships where Pearson's assumptions do not fit. It is a different tool for a different kind of data, not an emergency substitute. Chi-square would be wrong here — neither variable is a set of category counts."}
-];
-
-/* --- reaction lines --- */
+const WEEKS=[{"id": 1, "name": "Research and responsibility", "wk": "Lectures 2 to 5", "col": "var(--w1)", "badge": "DESIGN AUDITOR"}, {"id": 2, "name": "Measurement and description", "wk": "Lectures 6 and 7", "col": "var(--w2)", "badge": "DATA INTERPRETER"}, {"id": 3, "name": "Association and method choice", "wk": "Lectures 4 and 8", "col": "var(--w3)", "badge": "EVIDENCE INSPECTOR"}, {"id": 4, "name": "Distributions and inference", "wk": "Lectures 9 and 10", "col": "var(--w4)", "badge": "INFERENCE ANALYST"}];
+const RANKS=[[0,"Novice Researcher"],[8,"Lab Apprentice"],[16,"Data Interpreter"],[25,"Methods Analyst"],[33,"Research Lead"]];
+const TERR=[{"id": 1, "name": "Evidence Lens", "sub": "Observation", "wk": 1, "x": 110, "y": 120, "needs": [], "blurb": "Observe, describe, evaluate. Three challenges, unlimited retries. Inspect the evidence before committing.", "ch": [{"type": "sort", "q": "A team audits three field protocols. Route each revision to the problem it directly addresses.", "explain": "Independent coding checks agreement; familiarisation may reduce reactivity; diaries shorten the recall interval. None of these changes alone establishes causality.", "source": "Week Two: slides 9 to 17", "hint": "Ask whether the problem concerns the observer, being observed, or remembering.", "i": "Tap a card, then its destination. Every card must be placed.", "bins": ["Observer agreement", "Participant reactivity", "Recall error"], "items": [{"t": "Have two observers independently code the same recordings.", "b": 0}, {"t": "Allow people to become familiar with the observer before recording behaviour.", "b": 1}, {"t": "Replace a monthly retrospective questionnaire with a daily diary.", "b": 2}]}, {"type": "match", "q": "An evidence panel rejects these claims. Match each claim to the missing safeguard.", "explain": "A case study can provide depth without population representativeness. Association alone does not establish direction. Structured interviews improve comparability, whereas flexible interviews prioritise depth.", "source": "Week Two: slides 11 to 24", "hint": "Separate generalisation, causal inference and comparability.", "i": "Select a card on the left, then its partner on the right.", "pairs": [{"l": "One unusual case establishes what all adults do.", "r": "Evidence from a broader sample"}, {"l": "The recorded association establishes which variable causes the other.", "r": "A design that addresses causal direction and confounding"}, {"l": "Our flexible interviews gave identical coverage of every topic.", "r": "A fixed interview schedule for comparable coverage"}]}, {"type": "pick", "q": "Researchers need minimal disturbance and a record of actual actions rather than remembered actions. Which protocol best meets BOTH requirements?", "explain": "Naturalistic observation records ongoing actions without assigning an intervention. Recall questions and experimental manipulation fail one of the requirements. Privacy and ethical review still matter.", "source": "Week Two: slides 8 to 17", "hint": "Look for a protocol that neither assigns behaviour nor depends on recall.", "i": "Inspect the displays, then choose one.", "picks": [{"svg": "<svg viewBox=\"0 0 420 126\" role=\"img\" aria-label=\"Study sequence: Ask yesterday’s actions, Record recalled frequencies\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"126\" fill=\"#101a30\" rx=\"12\"/><rect x=\"25\" y=\"16\" width=\"370\" height=\"42\" rx=\"8\" fill=\"#1f2d4d\" stroke=\"#60a5fa\"/><text x=\"210\" y=\"42\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">Ask yesterday’s actions</text><text x=\"210\" y=\"70\" fill=\"#cbd5e1\" font-size=\"18\" text-anchor=\"middle\">↓</text><rect x=\"25\" y=\"71\" width=\"370\" height=\"42\" rx=\"8\" fill=\"#1f2d4d\" stroke=\"#60a5fa\"/><text x=\"210\" y=\"97\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">Record recalled frequencies</text></svg>", "cap": "Protocol A"}, {"svg": "<svg viewBox=\"0 0 420 126\" role=\"img\" aria-label=\"Study sequence: Assign an activity, Measure the response\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"126\" fill=\"#101a30\" rx=\"12\"/><rect x=\"25\" y=\"16\" width=\"370\" height=\"42\" rx=\"8\" fill=\"#1f2d4d\" stroke=\"#60a5fa\"/><text x=\"210\" y=\"42\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">Assign an activity</text><text x=\"210\" y=\"70\" fill=\"#cbd5e1\" font-size=\"18\" text-anchor=\"middle\">↓</text><rect x=\"25\" y=\"71\" width=\"370\" height=\"42\" rx=\"8\" fill=\"#1f2d4d\" stroke=\"#60a5fa\"/><text x=\"210\" y=\"97\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">Measure the response</text></svg>", "cap": "Protocol B"}, {"svg": "<svg viewBox=\"0 0 420 126\" role=\"img\" aria-label=\"Study sequence: Observe an existing setting, Code actions unobtrusively\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"126\" fill=\"#101a30\" rx=\"12\"/><rect x=\"25\" y=\"16\" width=\"370\" height=\"42\" rx=\"8\" fill=\"#1f2d4d\" stroke=\"#60a5fa\"/><text x=\"210\" y=\"42\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">Observe an existing setting</text><text x=\"210\" y=\"70\" fill=\"#cbd5e1\" font-size=\"18\" text-anchor=\"middle\">↓</text><rect x=\"25\" y=\"71\" width=\"370\" height=\"42\" rx=\"8\" fill=\"#1f2d4d\" stroke=\"#60a5fa\"/><text x=\"210\" y=\"97\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">Code actions unobtrusively</text></svg>", "cap": "Protocol C"}], "a": 2}]}, {"id": 2, "name": "Design Repair", "sub": "Design control", "wk": 1, "x": 110, "y": 320, "needs": [1], "blurb": "Manipulations and alternative explanations. Three challenges, unlimited retries. Inspect the evidence before committing.", "ch": [{"type": "hotspot", "q": "A navigation interface trial has four stages. Select the stage that makes interface and testing room inseparable.", "explain": "The room differs systematically with interface. A difference in errors could reflect interface, noise, or both. Balance room across interfaces or hold it constant. Random allocation does not repair a confounded testing protocol.", "source": "Week Three: slides 4 to 11; Week Four: slides 3 to 4", "hint": "Find the factor that changes alongside the intended manipulation.", "i": "Select the indicated region or regions, then check.", "svg": "<svg viewBox=\"0 0 420 236\" role=\"group\" aria-label=\"Selectable study protocol stages\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"236\" fill=\"#101a30\" rx=\"12\"/><rect x=\"20\" y=\"12\" width=\"380\" height=\"42\" rx=\"6\" fill=\"#1f2d4d\"/><text x=\"210\" y=\"38\" fill=\"#cbd5e1\" font-size=\"13\" text-anchor=\"middle\">Randomly allocate people to interface A or B</text><g class=\"hs\" data-k=\"0\" role=\"button\" tabindex=\"0\" aria-label=\"Randomly allocate people to interface A or B\"><rect x=\"20\" y=\"12\" width=\"380\" height=\"42\" rx=\"6\"/></g><rect x=\"20\" y=\"66\" width=\"380\" height=\"42\" rx=\"6\" fill=\"#1f2d4d\"/><text x=\"210\" y=\"92\" fill=\"#cbd5e1\" font-size=\"13\" text-anchor=\"middle\">Test A only in a quiet room and B only in noise</text><g class=\"hs\" data-k=\"1\" role=\"button\" tabindex=\"0\" aria-label=\"Test A only in a quiet room and B only in noise\"><rect x=\"20\" y=\"66\" width=\"380\" height=\"42\" rx=\"6\"/></g><rect x=\"20\" y=\"120\" width=\"380\" height=\"42\" rx=\"6\" fill=\"#1f2d4d\"/><text x=\"210\" y=\"146\" fill=\"#cbd5e1\" font-size=\"13\" text-anchor=\"middle\">Give both groups the same route problems</text><g class=\"hs\" data-k=\"2\" role=\"button\" tabindex=\"0\" aria-label=\"Give both groups the same route problems\"><rect x=\"20\" y=\"120\" width=\"380\" height=\"42\" rx=\"6\"/></g><rect x=\"20\" y=\"174\" width=\"380\" height=\"42\" rx=\"6\" fill=\"#1f2d4d\"/><text x=\"210\" y=\"200\" fill=\"#cbd5e1\" font-size=\"13\" text-anchor=\"middle\">Record errors with the same scoring rule</text><g class=\"hs\" data-k=\"3\" role=\"button\" tabindex=\"0\" aria-label=\"Record errors with the same scoring rule\"><rect x=\"20\" y=\"174\" width=\"380\" height=\"42\" rx=\"6\"/></g></svg>", "a": ["1"]}, {"type": "pick", "q": "Every participant tries two interfaces. Choose the schedule that separates interface from session position across the sample.", "explain": "Both interfaces occur equally often first and second. This balances simple order effects while retaining a within subjects design. Counterbalancing does not guarantee removal of persistent carryover.", "source": "Week Four: slides 6 to 11", "hint": "Retain repeated measurements while balancing which interface comes first.", "i": "Inspect the displays, then choose one.", "picks": [{"svg": "<svg viewBox=\"0 0 420 126\" role=\"img\" aria-label=\"Study sequence: Different people: A only, Different people: B only\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"126\" fill=\"#101a30\" rx=\"12\"/><rect x=\"25\" y=\"16\" width=\"370\" height=\"42\" rx=\"8\" fill=\"#1f2d4d\" stroke=\"#60a5fa\"/><text x=\"210\" y=\"42\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">Different people: A only</text><text x=\"210\" y=\"70\" fill=\"#cbd5e1\" font-size=\"18\" text-anchor=\"middle\">↓</text><rect x=\"25\" y=\"71\" width=\"370\" height=\"42\" rx=\"8\" fill=\"#1f2d4d\" stroke=\"#60a5fa\"/><text x=\"210\" y=\"97\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">Different people: B only</text></svg>", "cap": "Schedule C"}, {"svg": "<svg viewBox=\"0 0 420 126\" role=\"img\" aria-label=\"Study sequence: All participants: A in session 1, All participants: B in session 2\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"126\" fill=\"#101a30\" rx=\"12\"/><rect x=\"25\" y=\"16\" width=\"370\" height=\"42\" rx=\"8\" fill=\"#1f2d4d\" stroke=\"#60a5fa\"/><text x=\"210\" y=\"42\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">All participants: A in session 1</text><text x=\"210\" y=\"70\" fill=\"#cbd5e1\" font-size=\"18\" text-anchor=\"middle\">↓</text><rect x=\"25\" y=\"71\" width=\"370\" height=\"42\" rx=\"8\" fill=\"#1f2d4d\" stroke=\"#60a5fa\"/><text x=\"210\" y=\"97\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">All participants: B in session 2</text></svg>", "cap": "Schedule A"}, {"svg": "<svg viewBox=\"0 0 420 126\" role=\"img\" aria-label=\"Study sequence: Half: A then B, Half: B then A\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"126\" fill=\"#101a30\" rx=\"12\"/><rect x=\"25\" y=\"16\" width=\"370\" height=\"42\" rx=\"8\" fill=\"#1f2d4d\" stroke=\"#60a5fa\"/><text x=\"210\" y=\"42\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">Half: A then B</text><text x=\"210\" y=\"70\" fill=\"#cbd5e1\" font-size=\"18\" text-anchor=\"middle\">↓</text><rect x=\"25\" y=\"71\" width=\"370\" height=\"42\" rx=\"8\" fill=\"#1f2d4d\" stroke=\"#60a5fa\"/><text x=\"210\" y=\"97\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">Half: B then A</text></svg>", "cap": "Schedule B"}], "a": 2}, {"type": "grid", "q": "Which missing condition would allow a team to test whether icon shape changes the effect of screen contrast?", "explain": "The missing square and high contrast combination completes the two by two design. Adding another shape at low contrast does not complete the comparison needed to assess whether the contrast effect depends on shape.", "source": "Week Three: slides 14 to 19", "hint": "Complete the combination of both existing factors, rather than adding another factor level.", "i": "Select the single cell that answers the question.", "cols": ["Condition", "Shape", "Contrast"], "rows": [["Existing 1", "Round", "Low"], ["Existing 2", "Round", "High"], ["Existing 3", "Square", "Low"], ["Candidate 1", "Triangle", "Low"], ["Candidate 2", "Square", "High"]], "a": "4,2"}]}, {"id": 3, "name": "Ethics Gate", "sub": "Ethical safeguards", "wk": 1, "x": 110, "y": 520, "needs": [], "blurb": "Participation, privacy and protection. Three challenges, unlimited retries. Inspect the evidence before committing.", "ch": [{"type": "sort", "q": "Route each proposed safeguard to the primary ethical problem it repairs.", "explain": "Authority can undermine voluntary choice. Access control protects confidentiality. Debriefing restores understanding after justified deception; it cannot retrospectively justify avoidable harm.", "source": "Week 5: slides 6 to 11 and 19", "hint": "Consider freedom to choose, who sees the data, and what participants understand.", "i": "Tap a card, then its destination. Every card must be placed.", "bins": ["Voluntary participation", "Confidentiality", "Deception and understanding"], "items": [{"t": "An independent recruiter replaces the students’ assessor.", "b": 0}, {"t": "The identifying key is restricted to the authorised research team.", "b": 1}, {"t": "A justified concealment is explained in a careful debriefing.", "b": 2}, {"t": "Participants are explicitly told that leaving will not affect their grade.", "b": 0}]}, {"type": "segments", "q": "The committee reads this protocol. Select the sentence that uses debriefing as an unjustified permission slip.", "explain": "Debriefing does not remove the responsibility to minimise physical and psychological harm. Ethical evaluation considers the protocol before participation, not only explanations afterwards.", "source": "Week 5: slides 7 to 13 and 19", "hint": "An explanation after a study does not cancel obligations during the study.", "i": "Select the claim requiring correction.", "segs": ["The team will assess foreseeable distress before recruitment. ", "The information sheet will explain withdrawal. ", "Because a debriefing is planned, any level of distress is ethically acceptable. ", "Identifying information will have restricted access."], "a": 2}, {"type": "match", "q": "Repair an animal study before review. Match each amendment to the principle it implements.", "explain": "The lecture requires alternatives where possible, a justified minimum number, and minimised suffering. Reducing numbers below what can answer the question is not automatically an ethical improvement.", "source": "Week 5: slides 15 to 17", "hint": "Distinguish an alternative method, a justified sample size and improved procedures.", "i": "Select a card on the left, then its partner on the right.", "pairs": [{"l": "Use a validated simulation where it answers the same research question.", "r": "Replacement"}, {"l": "Use the smallest scientifically justified number of animals.", "r": "Reduction"}, {"l": "Improve handling to minimise discomfort.", "r": "Refinement"}]}]}, {"id": 4, "name": "Measure Lab", "sub": "Operationalisation", "wk": 2, "x": 350, "y": 120, "needs": [], "blurb": "Operations and measurement properties. Three challenges, unlimited retries. Inspect the evidence before committing.", "ch": [{"type": "match", "q": "A data manager proposes transformations. Match each to the information that can safely be preserved.", "explain": "Category codes are labels. Ordered labels preserve rank but do not establish equal gaps. A change of duration units multiplies all values by a positive constant and preserves ratios.", "source": "Week 7: slides 7 to 14", "hint": "Ask which relationships among values survive the recoding.", "i": "Select a card on the left, then its partner on the right.", "pairs": [{"l": "Replace corridor category codes 1, 2, 3 with 90, 10, 40.", "r": "Category membership"}, {"l": "Replace low, moderate, high with ranks 1, 2, 3.", "r": "Order without guaranteed equal intervals"}, {"l": "Convert measured duration from seconds to milliseconds.", "r": "Ratios and a meaningful zero"}]}, {"type": "mcq", "q": "Two laboratories operationalise hesitation as silence longer than two seconds and as an observer’s impression of uncertainty. What must be resolved before their results are combined?", "explain": "Operationalisation specifies how a concept is measured. A common construct name does not establish that different measures are interchangeable. Sample size cannot resolve a difference in meaning.", "source": "Week 7: slides 4 to 6", "hint": "The same label can conceal different measurement procedures.", "opts": ["A larger combined sample makes the definitions equivalent.", "The two operational definitions may capture different aspects of the construct.", "Convert both laboratory names into numerical codes."], "a": 1}, {"type": "sort", "q": "A reviewer evaluates mathematical claims. Sort them by whether the stated scale supports the claim.", "explain": "Nominal numbers identify categories and ordinal values identify rank. Interval scales support equal differences. Ratio scales additionally support meaningful ratios because zero represents absence.", "source": "Week 7: slides 8 to 14", "hint": "A numeric label is not necessarily a quantity.", "i": "Tap a card, then its destination. Every card must be placed.", "bins": ["Supported by the scale", "Not supported by the scale"], "items": [{"t": "Category code 8 is twice as much category as code 4.", "b": 1}, {"t": "The gap between ranks 1 and 2 must equal the gap between 2 and 3.", "b": 1}, {"t": "A duration of 8 seconds is twice a duration of 4 seconds.", "b": 0}, {"t": "Two intervals of 5 units on an interval scale have equal size.", "b": 0}]}]}, {"id": 5, "name": "Centre Shift", "sub": "Central tendency", "wk": 2, "x": 350, "y": 320, "needs": [4], "blurb": "Summaries that preserve meaning. Three challenges, unlimited retries. Inspect the evidence before committing.", "ch": [{"type": "pick", "q": "Data are 4, 4, 6, 8, 12. The verified value 12 is revised to 120. Choose the resulting summary dashboard.", "explain": "For 4, 4, 6, 8, 12 the mean is 6.8, the median is 6 and the mode is 4. Replacing 12 with 120 gives mean 28.4, median 6 and mode 4. A valid extreme value is not automatically an error.", "source": "Week 7: slides 15 to 22", "hint": "The largest observation changes, but the middle position and most frequent value remain the same.", "i": "Inspect the displays, then choose one.", "picks": [{"svg": "<svg viewBox=\"0 0 420 220\" role=\"img\" aria-label=\"B: mean 28.4 median 6 mode 4\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"220\" fill=\"#101a30\" rx=\"12\"/><path d=\"M36 20 V174 H404\" fill=\"none\" stroke=\"#93a4c4\"/><rect x=\"42.0\" y=\"42.0\" width=\"104.66666666666667\" height=\"132.0\" fill=\"#60a5fa\"/><text x=\"95.33333333333334\" y=\"34.0\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">28.4</text><text x=\"95.33333333333334\" y=\"197\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Mean</text><rect x=\"158.66666666666669\" y=\"146.11267605633802\" width=\"104.66666666666667\" height=\"27.887323943661976\" fill=\"#60a5fa\"/><text x=\"212.00000000000003\" y=\"138.11267605633802\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">6</text><text x=\"212.00000000000003\" y=\"197\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Median</text><rect x=\"275.33333333333337\" y=\"155.40845070422534\" width=\"104.66666666666667\" height=\"18.591549295774648\" fill=\"#60a5fa\"/><text x=\"328.6666666666667\" y=\"147.40845070422534\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">4</text><text x=\"328.6666666666667\" y=\"197\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Mode</text></svg>", "cap": "B: mean changes"}, {"svg": "<svg viewBox=\"0 0 420 220\" role=\"img\" aria-label=\"C: all 28.4\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"220\" fill=\"#101a30\" rx=\"12\"/><path d=\"M36 20 V174 H404\" fill=\"none\" stroke=\"#93a4c4\"/><rect x=\"42.0\" y=\"42.0\" width=\"104.66666666666667\" height=\"132.0\" fill=\"#60a5fa\"/><text x=\"95.33333333333334\" y=\"34.0\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">28.4</text><text x=\"95.33333333333334\" y=\"197\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Mean</text><rect x=\"158.66666666666669\" y=\"42.0\" width=\"104.66666666666667\" height=\"132.0\" fill=\"#60a5fa\"/><text x=\"212.00000000000003\" y=\"34.0\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">28.4</text><text x=\"212.00000000000003\" y=\"197\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Median</text><rect x=\"275.33333333333337\" y=\"42.0\" width=\"104.66666666666667\" height=\"132.0\" fill=\"#60a5fa\"/><text x=\"328.6666666666667\" y=\"34.0\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">28.4</text><text x=\"328.6666666666667\" y=\"197\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Mode</text></svg>", "cap": "C: all change"}, {"svg": "<svg viewBox=\"0 0 420 220\" role=\"img\" aria-label=\"A: mean 6.8 median 6 mode 4\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"220\" fill=\"#101a30\" rx=\"12\"/><path d=\"M36 20 V174 H404\" fill=\"none\" stroke=\"#93a4c4\"/><rect x=\"42.0\" y=\"42.0\" width=\"104.66666666666667\" height=\"132.0\" fill=\"#60a5fa\"/><text x=\"95.33333333333334\" y=\"34.0\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">6.8</text><text x=\"95.33333333333334\" y=\"197\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Mean</text><rect x=\"158.66666666666669\" y=\"57.529411764705884\" width=\"104.66666666666667\" height=\"116.47058823529412\" fill=\"#60a5fa\"/><text x=\"212.00000000000003\" y=\"49.529411764705884\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">6</text><text x=\"212.00000000000003\" y=\"197\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Median</text><rect x=\"275.33333333333337\" y=\"96.35294117647058\" width=\"104.66666666666667\" height=\"77.64705882352942\" fill=\"#60a5fa\"/><text x=\"328.6666666666667\" y=\"88.35294117647058\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">4</text><text x=\"328.6666666666667\" y=\"197\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Mode</text></svg>", "cap": "A: unchanged"}], "a": 0}, {"type": "grid", "q": "A catalogue stores preferred study locations as unordered labels. Select the summary that remains meaningful after arbitrary numeric recoding of the labels.", "explain": "The most frequent category is unchanged when category codes are relabelled. The mean and median of arbitrary codes depend on the coding scheme and have no location magnitude interpretation.", "source": "Week 7: slides 9, 21 to 23", "hint": "A useful summary must not change its meaning when category codes are renamed.", "i": "Select the single cell that answers the question.", "cols": ["Summary", "Proposed interpretation"], "rows": [["Mean code", "Average location = 2.4"], ["Median code", "Middle location = 2"], ["Mode", "Library is the most frequent location"]], "a": "2,1"}, {"type": "mcq", "q": "An analyst reports only a mean for a sample containing two distinct peaks. What is the most defensible next step?", "explain": "A single mean can conceal distinct clusters. Inspect the distribution and investigate plausible subgroup or procedural explanations. Bimodality does not by itself prove a confound or justify deletion.", "source": "Week 7: slides 21 to 22; Week 8: slide 14", "hint": "A summary may conceal structure without establishing why that structure exists.", "opts": ["Inspect the distribution and report features that the mean conceals.", "Conclude that the two peaks prove a confound.", "Delete one peak to obtain a typical sample."], "a": 0}]}, {"id": 6, "name": "Spread Studio", "sub": "Variability", "wk": 2, "x": 350, "y": 520, "needs": [4], "blurb": "Distribution and variability. Three challenges, unlimited retries. Inspect the evidence before committing.", "ch": [{"type": "pick", "q": "Two samples have the same median. Which display supports the claim that sample B has a smaller spread in its middle 50 percent?", "explain": "The box spans Q1 to Q3. Its width on a common horizontal scale represents the interquartile range. Neither the median nor the overall whisker span defines the middle 50 percent.", "source": "Week 8: slides 6 and 22 to 24", "hint": "Inspect the box width, not its centre or the whisker length.", "i": "Inspect the displays, then choose one.", "picks": [{"svg": "<svg viewBox=\"0 0 420 220\" role=\"img\" aria-label=\"Boxplot A and B have same median. B has a wider box.\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"220\" fill=\"#101a30\" rx=\"12\"/><text x=\"210\" y=\"20\" fill=\"#cbd5e1\" font-size=\"15\" text-anchor=\"middle\">Two samples, same median</text><text x=\"24\" y=\"75\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">A</text><line x1=\"70\" y1=\"70\" x2=\"350\" y2=\"70\" stroke=\"#7dd3fc\"/><rect x=\"130\" y=\"50\" width=\"120\" height=\"40\" fill=\"#1f2d4d\" stroke=\"#7dd3fc\"/><line x1=\"190\" y1=\"50\" x2=\"190\" y2=\"90\" stroke=\"#fbbf24\" stroke-width=\"3\"/><text x=\"24\" y=\"150\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">B</text><line x1=\"70\" y1=\"145\" x2=\"350\" y2=\"145\" stroke=\"#7dd3fc\"/><rect x=\"100\" y=\"125\" width=\"180\" height=\"40\" fill=\"#1f2d4d\" stroke=\"#7dd3fc\"/><line x1=\"190\" y1=\"125\" x2=\"190\" y2=\"165\" stroke=\"#fbbf24\" stroke-width=\"3\"/><text x=\"210\" y=\"207\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Identical horizontal scale</text></svg>", "cap": "Display A"}, {"svg": "<svg viewBox=\"0 0 420 220\" role=\"img\" aria-label=\"Boxplot A and B have same median. B has a narrower box.\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"220\" fill=\"#101a30\" rx=\"12\"/><text x=\"210\" y=\"20\" fill=\"#cbd5e1\" font-size=\"15\" text-anchor=\"middle\">Two samples, same median</text><text x=\"24\" y=\"75\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">A</text><line x1=\"70\" y1=\"70\" x2=\"350\" y2=\"70\" stroke=\"#7dd3fc\"/><rect x=\"130\" y=\"50\" width=\"120\" height=\"40\" fill=\"#1f2d4d\" stroke=\"#7dd3fc\"/><line x1=\"190\" y1=\"50\" x2=\"190\" y2=\"90\" stroke=\"#fbbf24\" stroke-width=\"3\"/><text x=\"24\" y=\"150\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">B</text><line x1=\"70\" y1=\"145\" x2=\"350\" y2=\"145\" stroke=\"#7dd3fc\"/><rect x=\"160\" y=\"125\" width=\"60\" height=\"40\" fill=\"#1f2d4d\" stroke=\"#7dd3fc\"/><line x1=\"190\" y1=\"125\" x2=\"190\" y2=\"165\" stroke=\"#fbbf24\" stroke-width=\"3\"/><text x=\"210\" y=\"207\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Identical horizontal scale</text></svg>", "cap": "Display B"}], "a": 1}, {"type": "order", "q": "A calculation squares deviations from a mean and labels their average as SD. Rebuild the calculation using the lecture’s descriptive divisor n.", "explain": "Squaring prevents signed deviations from cancelling. Averaging squared deviations gives variance; taking the square root gives SD in the original units. The lecture uses divisor n for this descriptive calculation; sample variance estimation commonly uses n minus 1.", "source": "Week 8: slides 7 to 12", "hint": "Variance has squared units. The final operation must restore the original units.", "i": "Use the arrow buttons to arrange the operations.", "items": ["Find the mean of the observations", "Subtract the mean from each observation", "Square each separate deviation", "Sum the squared deviations and divide by n", "Take the square root"]}, {"type": "sort", "q": "Different display requests reach a graphics desk. Route each to the display that best serves its stated purpose.", "explain": "Histograms show numerical distributions, scatterplots show paired quantitative observations, and bar charts compare categories. The requested purpose determines the display.", "source": "Week 8: slides 15 to 27", "hint": "Distinguish intervals of values, pairs of values and category labels.", "i": "Tap a card, then its destination. Every card must be placed.", "bins": ["Histogram", "Scatterplot", "Bar chart"], "items": [{"t": "Inspect the shape of a continuous distribution across value intervals.", "b": 0}, {"t": "Inspect paired quantitative observations for an association.", "b": 1}, {"t": "Compare counts of mutually exclusive unordered categories.", "b": 2}]}]}, {"id": 7, "name": "Pattern Patrol", "sub": "Association", "wk": 3, "x": 600, "y": 220, "needs": [4], "blurb": "Linear and nonlinear associations. Three challenges, unlimited retries. Inspect the evidence before committing.", "ch": [{"type": "pick", "q": "A linear correlation is near zero. Which display shows why that result alone cannot establish an absence of association?", "explain": "A U shaped pattern can have little overall linear correlation despite a systematic nonlinear association. Inspecting a scatterplot prevents a near zero coefficient being interpreted as no relationship of any kind.", "source": "Week 9: slides 4 to 13", "hint": "Look for a systematic pattern whose slope changes direction.", "i": "Inspect the displays, then choose one.", "picks": [{"svg": "<svg viewBox=\"0 0 420 220\" role=\"img\" aria-label=\"A U shaped association\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"220\" fill=\"#101a30\" rx=\"12\"/><path d=\"M40 20 V175 H390\" fill=\"none\" stroke=\"#93a4c4\"/><text x=\"210\" y=\"209\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Predictor X</text><text x=\"30\" y=\"15\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Y</text><circle cx=\"74\" cy=\"52.0\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"108\" cy=\"104.5\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"142\" cy=\"142.0\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"176\" cy=\"164.5\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"210\" cy=\"172.0\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"244\" cy=\"164.5\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"278\" cy=\"142.0\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"312\" cy=\"104.5\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"346\" cy=\"52.0\" r=\"5\" fill=\"#7dd3fc\"/></svg>", "cap": "B"}, {"svg": "<svg viewBox=\"0 0 420 220\" role=\"img\" aria-label=\"A decreasing linear pattern\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"220\" fill=\"#101a30\" rx=\"12\"/><path d=\"M40 20 V175 H390\" fill=\"none\" stroke=\"#93a4c4\"/><text x=\"210\" y=\"209\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Predictor X</text><text x=\"30\" y=\"15\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Y</text><circle cx=\"74\" cy=\"37.0\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"108\" cy=\"41.5\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"142\" cy=\"77.5\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"176\" cy=\"82.0\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"210\" cy=\"86.5\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"244\" cy=\"122.5\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"278\" cy=\"127.0\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"312\" cy=\"131.5\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"346\" cy=\"167.5\" r=\"5\" fill=\"#7dd3fc\"/></svg>", "cap": "C"}, {"svg": "<svg viewBox=\"0 0 420 220\" role=\"img\" aria-label=\"An increasing linear pattern\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"220\" fill=\"#101a30\" rx=\"12\"/><path d=\"M40 20 V175 H390\" fill=\"none\" stroke=\"#93a4c4\"/><text x=\"210\" y=\"209\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Predictor X</text><text x=\"30\" y=\"15\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Y</text><circle cx=\"74\" cy=\"157.0\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"108\" cy=\"131.5\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"142\" cy=\"137.5\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"176\" cy=\"112.0\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"210\" cy=\"86.5\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"244\" cy=\"92.5\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"278\" cy=\"67.0\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"312\" cy=\"41.5\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"346\" cy=\"47.499999999999986\" r=\"5\" fill=\"#7dd3fc\"/></svg>", "cap": "A"}], "a": 0}, {"type": "match", "q": "Match each data audit finding to the action it justifies.", "explain": "Pearson correlation is sensitive to influential observations. Spearman uses ranks and is appropriate for ordinal data. Positive changes of units do not change Pearson r. Extreme observations are not automatically errors.", "source": "Week 9: slides 9 to 13", "hint": "Distinguish a data problem, a measurement scale and a harmless unit conversion.", "i": "Select a card on the left, then its partner on the right.", "pairs": [{"l": "A plausible extreme observation strongly changes Pearson r.", "r": "Inspect and investigate the observation before deciding how to analyse"}, {"l": "Only ordered response categories were recorded.", "r": "Consider a rank based association such as Spearman"}, {"l": "Both axes are converted into new positive measurement units.", "r": "Retain the same correlation coefficient"}]}, {"type": "segments", "q": "A transport survey records walking distance and local facility use. Select the conclusion that exceeds what an observational association can establish.", "explain": "Without manipulation and adequate control of alternative explanations, the causal direction remains unresolved. Prediction and description do not require a causal claim.", "source": "Week Two: slides 19 to 24; Week 9: slide 11", "hint": "A relationship can support prediction without establishing which factor produces the other.", "i": "Select the claim requiring correction.", "segs": ["The sample shows a negative association. ", "The scatterplot should be inspected for unusual patterns. ", "The association establishes that walking less causes facility use to rise. ", "The observed pattern may support prediction within an appropriate population."], "a": 2}]}, {"id": 8, "name": "Frequency Forge", "sub": "Categorical counts", "wk": 3, "x": 600, "y": 430, "needs": [4], "blurb": "Categorical evidence and null models. Three challenges, unlimited retries. Inspect the evidence before committing.", "ch": [{"type": "sort", "q": "Route these analysis requests by the structure of the categorical evidence.", "explain": "Goodness of fit compares categories of one variable with specified proportions. Independence evaluates the association between two categorical variables. Measured durations are not a categorical count task unless a justified categorisation is introduced.", "source": "Week 9: slides 20 to 43", "hint": "Count the categorical variables and identify whether expected proportions come from an external specification.", "i": "Tap a card, then its destination. Every card must be placed.", "bins": ["Goodness of fit", "Independence", "Neither categorical frequency task"], "items": [{"t": "Audit whether one colour choice distribution matches a specified supplier distribution.", "b": 0}, {"t": "Audit whether colour choice proportions differ across two store types.", "b": 1}, {"t": "Summarise the association between two measured durations.", "b": 2}]}, {"type": "grid", "q": "A team mistakes an observed count for an expected count. Under independence, select the expected count for Online and Completed.", "explain": "Online has 60 observations; Completed has 50; the grand total is 100. Independence gives 60 × 50 / 100 = 30. Observed 36 describes the sample, while expected 30 follows the null model.", "source": "Week 9: slides 34 to 38", "hint": "Use the row total and column total, not the observed count in the target cell.", "i": "Select the single cell that answers the question.", "cols": ["Group", "Completed observed", "Incomplete observed", "Completed expected", "Incomplete expected"], "rows": [["Online", "36", "24", "30", "30"], ["In person", "14", "26", "20", "20"]], "a": "0,3"}, {"type": "mcq", "q": "A researcher records every participant’s category choice on four occasions and counts all choices as independent cases. What threatens the chi square analysis taught here?", "explain": "The frequency analysis taught in the lecture treats cases as independent. Repeated observations from the same participant do not become independent people when placed in a frequency table. Expected counts need not be integers.", "source": "Week 9: slides 20 to 23 and 31 to 38", "hint": "The relevant unit is an independent case, not the number of recorded rows.", "opts": ["Repeated contributions from the same participant violate the independent case structure.", "Four occasions guarantee a larger independent sample.", "The problem disappears if all expected counts are integers."], "a": 0}]}, {"id": 9, "name": "Method Match", "sub": "Method selection", "wk": 3, "x": 850, "y": 110, "needs": [], "blurb": "Sampling and measurement decisions. Three challenges, unlimited retries. Inspect the evidence before committing.", "ch": [{"type": "pick", "q": "A lab needs to distinguish two responses separated by tens of milliseconds. Which measurement plan most directly addresses the timing objective?", "explain": "EEG provides high temporal resolution and event related responses. fMRI provides stronger spatial localisation but its blood oxygen signal is temporally delayed. EEG scalp measurements also have limited spatial specificity and can contain eye movement artefacts.", "source": "Week Four: slides 15 to 19", "hint": "Choose the method suited to temporal separation rather than spatial localisation.", "i": "Inspect the displays, then choose one.", "picks": [{"svg": "<svg viewBox=\"0 0 420 126\" role=\"img\" aria-label=\"Study sequence: Measure blood oxygen changes, Localise a slow response\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"126\" fill=\"#101a30\" rx=\"12\"/><rect x=\"25\" y=\"16\" width=\"370\" height=\"42\" rx=\"8\" fill=\"#1f2d4d\" stroke=\"#60a5fa\"/><text x=\"210\" y=\"42\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">Measure blood oxygen changes</text><text x=\"210\" y=\"70\" fill=\"#cbd5e1\" font-size=\"18\" text-anchor=\"middle\">↓</text><rect x=\"25\" y=\"71\" width=\"370\" height=\"42\" rx=\"8\" fill=\"#1f2d4d\" stroke=\"#60a5fa\"/><text x=\"210\" y=\"97\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">Localise a slow response</text></svg>", "cap": "fMRI plan"}, {"svg": "<svg viewBox=\"0 0 420 126\" role=\"img\" aria-label=\"Study sequence: Record scalp electrical activity, Inspect time locked responses\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"126\" fill=\"#101a30\" rx=\"12\"/><rect x=\"25\" y=\"16\" width=\"370\" height=\"42\" rx=\"8\" fill=\"#1f2d4d\" stroke=\"#60a5fa\"/><text x=\"210\" y=\"42\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">Record scalp electrical activity</text><text x=\"210\" y=\"70\" fill=\"#cbd5e1\" font-size=\"18\" text-anchor=\"middle\">↓</text><rect x=\"25\" y=\"71\" width=\"370\" height=\"42\" rx=\"8\" fill=\"#1f2d4d\" stroke=\"#60a5fa\"/><text x=\"210\" y=\"97\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">Inspect time locked responses</text></svg>", "cap": "EEG plan"}], "a": 1}, {"type": "match", "q": "Match each recruitment audit finding to the sampling mechanism that produced it.", "explain": "Stratification combines subgroup structure with random selection within groups. Quotas set targets without necessarily randomising selection. Equal selection probability defines the simple random approach described in this module. These are recruitment mechanisms, not treatment allocation.", "source": "Week Four: slide 14", "hint": "Look for randomness within subgroups, targets without randomness, or equal population selection chances.", "i": "Select a card on the left, then its partner on the right.", "pairs": [{"l": "Random selection occurs separately within each prespecified population subgroup.", "r": "Stratified sampling"}, {"l": "Recruiters stop approaching volunteers once subgroup targets are filled.", "r": "Quota sampling"}, {"l": "Every member of the population has the same chance of being selected.", "r": "Simple random sampling"}]}, {"type": "mcq", "q": "An interface leaves a lasting learned strategy that cannot be washed out. The lab wants a comparison uncontaminated by prior exposure. Which redesign best serves that objective?", "explain": "A between subjects design prevents the same participant carrying an acquired strategy into another condition. Random allocation helps distribute individual differences. Counterbalancing cannot erase a lasting change in participants.", "source": "Week Four: slides 6 to 13", "hint": "Changing order can balance position, but it cannot undo irreversible learning.", "opts": ["Use different randomly allocated participants for each interface.", "Give everyone A then B and ignore prior exposure.", "Use a Latin square and assume lasting learning has disappeared."], "a": 0}]}, {"id": 10, "name": "Density Dock", "sub": "Probability areas", "wk": 4, "x": 850, "y": 300, "needs": [6], "blurb": "Probability as area. Three challenges, unlimited retries. Inspect the evidence before committing.", "ch": [{"type": "hotspot", "q": "A density model marks three probability areas. Select ALL regions that together contain the central 80 percent.", "explain": "The central region alone contains 80 percent; the two tails together contain 20 percent. Probabilities concern area, not the height of the density curve. The region labels specify areas rather than their drawn widths.", "source": "Week 10: slides 7 to 9", "hint": "Use the labelled area, rather than curve height or the region’s width.", "i": "Select the indicated region or regions, then check.", "svg": "<svg viewBox=\"0 0 420 220\" role=\"group\" aria-label=\"Normal density divided into labelled selectable regions\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"220\" fill=\"#101a30\" rx=\"12\"/><path d=\"M30 174 C85 174 90 40 210 40 C330 40 335 174 390 174\" fill=\"none\" stroke=\"#7dd3fc\" stroke-width=\"3\"/><g class=\"hs\" data-k=\"left\" role=\"button\" tabindex=\"0\" aria-label=\"10%\"><rect x=\"30\" y=\"35\" width=\"95\" height=\"142\"/></g><text x=\"77.5\" y=\"198\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">10%</text><g class=\"hs\" data-k=\"middle\" role=\"button\" tabindex=\"0\" aria-label=\"80%\"><rect x=\"125\" y=\"35\" width=\"170\" height=\"142\"/></g><text x=\"210.0\" y=\"198\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">80%</text><g class=\"hs\" data-k=\"right\" role=\"button\" tabindex=\"0\" aria-label=\"10%\"><rect x=\"295\" y=\"35\" width=\"95\" height=\"142\"/></g><text x=\"342.5\" y=\"198\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">10%</text></svg>", "a": ["middle"]}, {"type": "segments", "q": "An analyst describes a continuous density curve. Select the sentence that confuses density with probability.", "explain": "For a continuous model, probability is represented by area over an interval. Curve height is density, not the probability of an exact value. A single exact value has zero area under a continuous density.", "source": "Week 10: slides 7 to 9", "hint": "Ask whether the claim refers to height or area.", "i": "Select the claim requiring correction.", "segs": ["The total area under the density is one. ", "Probability over an interval is represented by area. ", "The height of the curve at a score is the probability of that exact score. ", "The median divides total area into equal halves."], "a": 2}, {"type": "pick", "q": "A normal model keeps the same mean but its SD doubles. Which conceptual display represents the change?", "explain": "The mean determines centre and SD determines spread. A larger SD produces a broader, lower normal density while preserving total area one. These are conceptual schematics rather than exact densities.", "source": "Week 10: slides 14 to 16", "hint": "Change spread while preserving centre and total probability.", "i": "Inspect the displays, then choose one.", "picks": [{"svg": "<svg viewBox=\"0 0 420 220\" role=\"img\" aria-label=\"Narrow curve with the same centre\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"220\" fill=\"#101a30\" rx=\"12\"/><path d=\"M40 180 C150 180 160 30 210 30 C260 30 270 180 380 180\" fill=\"none\" stroke=\"#60a5fa\" stroke-width=\"3\"/><text x=\"210\" y=\"205\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">Same centre, narrow spread</text></svg>", "cap": "A: narrower"}, {"svg": "<svg viewBox=\"0 0 420 220\" role=\"img\" aria-label=\"Broader and lower curve with the same centre\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"220\" fill=\"#101a30\" rx=\"12\"/><path d=\"M20 180 C65 175 110 92 210 92 C310 92 355 175 400 180\" fill=\"none\" stroke=\"#60a5fa\" stroke-width=\"3\"/><text x=\"210\" y=\"205\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">Same centre, broader spread</text></svg>", "cap": "B: broader"}, {"svg": "<svg viewBox=\"0 0 420 220\" role=\"img\" aria-label=\"Narrow curve shifted to a higher mean\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"220\" fill=\"#101a30\" rx=\"12\"/><path d=\"M120 180 C230 180 240 30 290 30 C340 30 350 180 400 180\" fill=\"none\" stroke=\"#60a5fa\" stroke-width=\"3\"/><text x=\"290\" y=\"205\" fill=\"#cbd5e1\" font-size=\"14\" text-anchor=\"middle\">Shifted centre</text></svg>", "cap": "C: shifted"}], "a": 1}]}, {"id": 11, "name": "Standard Space", "sub": "Reference scores", "wk": 4, "x": 850, "y": 490, "needs": [10], "blurb": "Reference scores and scale changes. Three challenges, unlimited retries. Inspect the evidence before committing.", "ch": [{"type": "match", "q": "A pipeline standardises observations. Match each diagnostic to its interpretation.", "explain": "A z score expresses deviation in SD units. Zero is the mean, not absence of the measured attribute. Standardisation shifts and rescales the model; it does not make skewed raw data normal.", "source": "Week 10: slides 17 to 24", "hint": "Standardisation changes the scale, not the underlying shape.", "i": "Select a card on the left, then its partner on the right.", "pairs": [{"l": "An observation has z = 0.", "r": "It is at the reference mean"}, {"l": "An observation has z = 1.5.", "r": "It is 1.5 reference SDs above the mean"}, {"l": "Every normal observation is standardised with its reference mean and SD.", "r": "The transformed normal model has mean 0 and SD 1"}]}, {"type": "sort", "q": "An analyst makes three changes to a dataset. Classify the effect on z scores when the reference mean and SD are recomputed consistently.", "explain": "A positive unit conversion rescales both deviations and SD by the same factor. A common offset changes the mean and values equally. Changing only one observation alters relative positions and may alter SD.", "source": "Week 10: slides 20 to 24", "hint": "Consider what happens to both the numerator and denominator, rather than the raw score alone.", "i": "Tap a card, then its destination. Every card must be placed.", "bins": ["Z scores unchanged", "Z scores change"], "items": [{"t": "Convert every duration from seconds to milliseconds.", "b": 0}, {"t": "Add the same calibration offset to every measurement.", "b": 0}, {"t": "Increase only the largest observation.", "b": 1}]}, {"type": "hotspot", "q": "A service defines unusually low outcomes as scores below a negative z threshold. Select the probability region relevant to that policy.", "explain": "A low score rule concerns the lower tail. If a cumulative probability to the cutoff is supplied, use that area directly. Subtracting it from one would describe the complementary high side. The figure is a conceptual region map.", "source": "Week 10: slides 25 to 29; Week 11: slides 12 to 14", "hint": "Locate outcomes below the specified threshold before applying any probability operation.", "i": "Select the indicated region or regions, then check.", "svg": "<svg viewBox=\"0 0 420 220\" role=\"group\" aria-label=\"Normal density divided into labelled selectable regions\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"220\" fill=\"#101a30\" rx=\"12\"/><path d=\"M30 174 C85 174 90 40 210 40 C330 40 335 174 390 174\" fill=\"none\" stroke=\"#7dd3fc\" stroke-width=\"3\"/><g class=\"hs\" data-k=\"left\" role=\"button\" tabindex=\"0\" aria-label=\"Below cutoff\"><rect x=\"30\" y=\"35\" width=\"85\" height=\"142\"/></g><text x=\"72.5\" y=\"198\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Below cutoff</text><g class=\"hs\" data-k=\"centre\" role=\"button\" tabindex=\"0\" aria-label=\"Central scores\"><rect x=\"115\" y=\"35\" width=\"170\" height=\"142\"/></g><text x=\"200.0\" y=\"198\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Central scores</text><g class=\"hs\" data-k=\"right\" role=\"button\" tabindex=\"0\" aria-label=\"High scores\"><rect x=\"285\" y=\"35\" width=\"105\" height=\"142\"/></g><text x=\"337.5\" y=\"198\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">High scores</text></svg>", "a": ["left"]}]}, {"id": 12, "name": "Inference Court", "sub": "Hypothesis tests", "wk": 4, "x": 1030, "y": 300, "needs": [10], "blurb": "Decisions under uncertainty. Three challenges, unlimited retries. Inspect the evidence before committing.", "ch": [{"type": "sort", "q": "An auditor knows both the decision and the population truth in simulated studies. Route each outcome.", "explain": "Type I is a false rejection; Type II is a failure to reject a false null. These labels depend on population truth, which is known in this simulation but generally not known in an individual real study.", "source": "Week 11: slides 15 to 17", "hint": "Cross the actual population state with the researcher’s decision.", "i": "Tap a card, then its destination. Every card must be placed.", "bins": ["Type I error", "Type II error", "Correct decision"], "items": [{"t": "Reject H0 when H0 is true.", "b": 0}, {"t": "Do not reject H0 when H0 is false.", "b": 1}, {"t": "Reject H0 when H0 is false.", "b": 2}, {"t": "Do not reject H0 when H0 is true.", "b": 2}]}, {"type": "segments", "q": "A report has p = .12 at a prespecified alpha of .05. Select the statement that exceeds the evidence.", "explain": "Failing to reject is not proof that the null is true. The test may lack sensitivity to a real effect. The p value is calculated under a null model and does not give the probability that H0 is true.", "source": "Week 11: slides 7 to 10 and 17", "hint": "Distinguish absence of sufficient evidence from evidence of exact absence.", "i": "Select the claim requiring correction.", "segs": ["The result does not cross the chosen rejection threshold. ", "The analysis does not provide sufficient evidence to reject H0. ", "The result establishes that the population effect is exactly zero. ", "The result should be considered alongside the study design and precision."], "a": 2}, {"type": "match", "q": "Match each review decision to the statistical principle it protects.", "explain": "Tail selection follows the prior scientific prediction. With other conditions fixed, a stricter threshold generally lowers Type I risk while increasing Type II risk. Alpha concerns false rejection under a true null, not the proportion of significant findings that are false.", "source": "Week 11: slides 10 and 15 to 20", "hint": "Identify whether the decision concerns prior prediction, a threshold tradeoff, or a conditional probability.", "i": "Select a card on the left, then its partner on the right.", "pairs": [{"l": "Specify a direction before inspecting the observations.", "r": "Hypothesis direction should follow the prior prediction"}, {"l": "Reduce alpha while keeping sample size and effect fixed.", "r": "Reduce false rejection risk but generally increase missed effect risk"}, {"l": "Interpret alpha as a repeated procedure risk under H0.", "r": "Avoid claiming that five percent of all significant findings are false"}]}]}];
+const EDGES=[[1, 2], [4, 5], [4, 6], [4, 7], [4, 8], [6, 10], [10, 11], [10, 12]];
+const BOSS=[{"type": "mcq", "q": "An improvement is significant after training, but no comparison group was measured. Which statement should survive review?", "explain": "A significant change does not remove design confounding. Practice, time and other coincident changes can remain alternative explanations.", "source": "Week Three: slides 9 to 11; Week Four: slide 13", "hint": "Statistical evidence cannot supply a missing comparison condition.", "opts": ["Significance proves that training caused the improvement.", "A comparison group is unnecessary when p is small.", "The within group change alone cannot exclude time related explanations."], "a": 2}, {"type": "pick", "q": "Which display better supports a strong positive linear association?", "explain": "Strength reflects how closely observations follow the linear pattern, rather than how steep the line is.", "source": "Week 9: slides 5 to 9", "hint": "Inspect scatter around the trend, not slope.", "i": "Inspect the displays, then choose one.", "picks": [{"svg": "<svg viewBox=\"0 0 420 220\" role=\"img\" aria-label=\"Widely scattered observations\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"220\" fill=\"#101a30\" rx=\"12\"/><path d=\"M40 20 V175 H390\" fill=\"none\" stroke=\"#93a4c4\"/><text x=\"210\" y=\"209\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Predictor X</text><text x=\"30\" y=\"15\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Y</text><circle cx=\"74\" cy=\"127\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"108\" cy=\"52\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"142\" cy=\"142\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"176\" cy=\"82\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"210\" cy=\"112\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"244\" cy=\"37\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"278\" cy=\"157\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"312\" cy=\"67\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"346\" cy=\"97\" r=\"5\" fill=\"#7dd3fc\"/></svg>", "cap": "A"}, {"svg": "<svg viewBox=\"0 0 420 220\" role=\"img\" aria-label=\"Points close to an increasing line\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"420\" height=\"220\" fill=\"#101a30\" rx=\"12\"/><path d=\"M40 20 V175 H390\" fill=\"none\" stroke=\"#93a4c4\"/><text x=\"210\" y=\"209\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Predictor X</text><text x=\"30\" y=\"15\" fill=\"#cbd5e1\" font-size=\"12\" text-anchor=\"middle\">Y</text><circle cx=\"74\" cy=\"157.0\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"108\" cy=\"131.5\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"142\" cy=\"137.5\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"176\" cy=\"112.0\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"210\" cy=\"86.5\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"244\" cy=\"92.5\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"278\" cy=\"67.0\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"312\" cy=\"41.5\" r=\"5\" fill=\"#7dd3fc\"/><circle cx=\"346\" cy=\"47.499999999999986\" r=\"5\" fill=\"#7dd3fc\"/></svg>", "cap": "B"}], "a": 1}, {"type": "sort", "q": "The methods desk separates recruitment from intervention assignment. Sort these actions.", "explain": "Sampling concerns who enters the study. Treatment allocation concerns which condition a recruited participant receives. Random allocation does not make a volunteer sample population representative.", "source": "Week Four: slides 8 and 14", "hint": "Ask whether the action selects people or allocates enrolled people.", "i": "Tap a card, then its destination. Every card must be placed.", "bins": ["Recruitment", "Treatment allocation"], "items": [{"t": "Draw a random sample from the population register.", "b": 0}, {"t": "Randomly assign recruited participants to conditions.", "b": 1}, {"t": "Recruit volunteers until subgroup quotas are met.", "b": 0}]}, {"type": "segments", "q": "A manuscript includes the following claims. Select the assertion that independence testing cannot establish.", "explain": "A chi square association does not establish causal direction or eliminate confounding. Expected and observed frequencies have distinct roles.", "source": "Week 9: slides 31 to 43; Week Two: slide 24", "hint": "Significance of an association does not change the study’s causal design.", "i": "Select the claim requiring correction.", "segs": ["Two categorical variables can be evaluated with a contingency table. ", "Expected counts describe the null model. ", "A significant chi square establishes that one category variable causes the other. ", "Observed counts describe recorded cases."], "a": 2}, {"type": "mcq", "q": "Two response measures disagree: participants respond faster but make more mistakes. What should the report do?", "explain": "Speed and accuracy may reflect different aspects of performance. Opposing changes can indicate a tradeoff, and selecting only a favourable measure conceals relevant information.", "source": "Week Three: slides 20 to 24", "hint": "More than one outcome can reveal information that a single score conceals.", "opts": ["Average the raw units and call that performance.", "Report both outcomes and consider a speed accuracy tradeoff.", "Choose only the measure supporting the desired conclusion."], "a": 1}];
 const GOOD=["Reviewer 2 approves.","Methodologically acceptable.","The data survive.","Clean.",
  "That variable knows its role.","Suspiciously competent.","Research methods instincts activated.",
  "Noted and accepted.","No revisions required.","Statistically satisfying."];
 const BAD=["Reviewer 2 has questions.","Inspect the design again.","Something in this study is misbehaving.",
- "Not quite — look at the evidence.","One variable is causing trouble.","The data would like another attempt.",
+ "Not quite : look at the evidence.","One variable is causing trouble.","The data would like another attempt.",
  "Close. Check it once more."];
 const SWEEP=["Three for three. Reviewer 2 is silent.","Flawless. Suspiciously prepared.",
- "Clean sweep — no revisions requested.","All first attempts. Methodologically immaculate.",
- "Perfect run. The null hypothesis has left the building."];
+ "Clean sweep : no revisions requested.","All first attempts. Methodologically immaculate.",
+ "Perfect run. The methods committee has no further questions."];
 
 /* ============================================================
    2. STATE + STORAGE
    ============================================================ */
-const KEYS=["statconquer_rma_v2","statconquer_rma_v1","statconquer_rma"];
+const KEYS=["statconquer_rma_reasoning_2026_v1"];
 let storeOK=true;
 let S={stars:{},revealed:false,boss:0,seenBadge:{}};
 let freeExplore=false;
 
 function tryStore(){
-  try{const k="__sc_test";localStorage.setItem(k,"1");localStorage.removeItem(k);return true;}
+  try{const k=KEYS[0]+"_test";localStorage.setItem(k,"1");localStorage.removeItem(k);return true;}
   catch(e){return false;}
 }
 function load(){
@@ -956,10 +448,10 @@ function load(){
         for(const id in src){
           const v=src[id];
           const n=(v&&typeof v==="object")?(v.stars|0):(v|0);
-          if(n>0&&n<=3)st[id]=n;
+          if(TERR.some(t=>String(t.id)===id)&&Number.isInteger(v)&&v>0&&v<=3)st[id]=v;
         }
         S.stars=st;
-        S.revealed=!!o.revealed;S.boss=o.boss|0;S.seenBadge=o.seenBadge||{};
+        S.revealed=o.revealed===true&&allDone();S.boss=Number.isInteger(o.boss)&&o.boss>=0&&o.boss<=5?o.boss:0;S.seenBadge={};for(const w of WEEKS)if(weekDone(w.id))S.seenBadge[w.id]=true;
         return;
       }
     }catch(e){}
@@ -987,44 +479,10 @@ const allDone=()=>TERR.every(t=>held(t.id));
    3. PROGRESS CODE
    ============================================================ */
 const AB="23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
-const VER=1;
-const PREFIX=["RHO","CHI","ALPHA","SIGMA","BETA"];
-function prefixFor(){
-  const i=Math.min(PREFIX.length-1,RANKS.filter(r=>totalStars()>=r[0]).length-1);
-  return PREFIX[Math.max(0,i)];
-}
-function makeCode(){
-  let bits=0;
-  for(let i=0;i<12;i++){bits=bits*4+(S.stars[i+1]|0);}       // 24 bits
-  let payload=VER*16777216+bits;                              // 4 + 24 bits
-  let sum=0,tmp=payload;
-  while(tmp>0){sum+=tmp%64;tmp=Math.floor(tmp/64);}
-  const chk=sum%64;
-  let val=payload*64+chk;                                     // 34 bits
-  let out="";
-  for(let i=0;i<7;i++){out=AB[val%32]+out;val=Math.floor(val/32);}
-  return prefixFor()+"-"+out.slice(0,4)+"-"+out.slice(4);
-}
-function readCode(str){
-  const parts=String(str).toUpperCase().replace(/\s+/g,"").split("-").filter(Boolean);
-  if(parts.length<2)return{err:"That does not look like a progress code."};
-  const body=parts.slice(1).join("");
-  if(body.length!==7)return{err:"A progress code has 7 characters after the prefix."};
-  let val=0;
-  for(const c of body){const i=AB.indexOf(c);
-    if(i<0)return{err:"Unrecognised character \u201c"+c+"\u201d in the code."};
-    val=val*32+i;}
-  const chk=val%64,payload=Math.floor(val/64);
-  let sum=0,tmp=payload;
-  while(tmp>0){sum+=tmp%64;tmp=Math.floor(tmp/64);}
-  if(sum%64!==chk)return{err:"That code failed its check — a character may have been mistyped."};
-  const ver=Math.floor(payload/16777216);
-  if(ver!==VER)return{err:"That code is from a different version of the game."};
-  let bits=payload%16777216;
-  const stars={};
-  for(let i=11;i>=0;i--){const v=bits%4;bits=Math.floor(bits/4);if(v>0)stars[i+1]=v;}
-  return{stars};
-}
+const VER=1, GAME_PREFIX="RMA26", CODE_WIDTH=Math.ceil((TERR.length*2+1)/5);
+function checksum(s){let n=17;for(const c of s)n=(n*31+c.charCodeAt(0))%1021;return AB[Math.floor(n/32)]+AB[n%32];}
+function makeCode(){let bits=S.revealed?1n:0n;for(const t of TERR)bits=bits*4n+BigInt(S.stars[t.id]||0);let body="";for(let i=0;i<CODE_WIDTH;i++){body=AB[Number(bits%32n)]+body;bits/=32n;}const raw=AB[VER]+body;return GAME_PREFIX+" "+raw+checksum(GAME_PREFIX+raw);}
+function readCode(str){const compact=String(str).toUpperCase().replace(/[\s-]/g,"");if(!compact.startsWith(GAME_PREFIX))return{err:"This code belongs to another game."};const raw=compact.slice(GAME_PREFIX.length);if(raw.length!==CODE_WIDTH+3||[...raw].some(c=>!AB.includes(c)))return{err:"Invalid progress code format."};const payload=raw.slice(0,-2);if(raw.slice(-2)!==checksum(GAME_PREFIX+payload))return{err:"The code failed its checksum. Check the characters."};if(AB.indexOf(payload[0])!==VER)return{err:"Unsupported progress code version."};let bits=0n;for(const c of payload.slice(1))bits=bits*32n+BigInt(AB.indexOf(c));const stars={};for(let i=TERR.length-1;i>=0;i--){const v=Number(bits%4n);bits/=4n;if(v)stars[TERR[i].id]=v;}if(bits>1n)return{err:"Invalid progress metadata."};const revealed=bits===1n;if(revealed&&!TERR.every(t=>stars[t.id]>0))return{err:"Invalid completion metadata."};return{stars,revealed};}
 
 /* ============================================================
    4. MAP
@@ -1428,9 +886,9 @@ const ENGINES={
         selL.classList.add("done");b.classList.add("done");
         selL.disabled=true;b.disabled=true;selL=null;
       }else{
-        st.miss=true;
-        b.classList.add("sel");
-        setTimeout(()=>{b.classList.remove("sel");
+        st.miss=true;toast(c.hint||"Inspect both concepts before matching.");
+        b.classList.add("wrong");
+        setTimeout(()=>{b.classList.remove("wrong");
           if(selL)selL.classList.remove("sel");selL=null;},280);
       }
     };
@@ -1672,16 +1130,16 @@ function openIntro(id){
     go.style.display="none";
   }else{
     let msg="";
-    if(!open&&freeExplore)
+    if(freeExplore)
       msg=`<div class="fb show" style="background:#1e1b4b;border:1px solid #6366f1;margin-top:0">
         <span class="quip" style="color:#c7d2fe">Practice run</span>
-        <span class="why">This territory is not open in your campaign yet, so nothing here will change your
-        stars or unlock anything. Feedback still works — practise away.</span></div>`;
+        <span class="why">This is a practice run, so nothing here will change your
+        stars or unlock anything. Feedback still works : practise away.</span></div>`;
     else if(s>0)
       msg=`<div class="exp">Already conquered with <b style="color:var(--gold)">${"★".repeat(s)}</b>.
         Replaying can only improve your saved score, never reduce it.</div>`;
     else
-      msg=`<div class="exp">3 challenges. Stars are awarded for correct <b>first attempts</b> —
+      msg=`<div class="exp">3 challenges. Stars are awarded for correct <b>first attempts</b> :
         but you can retry a question as many times as you need.</div>`;
     lk.innerHTML=msg;
     go.style.display="";
@@ -1698,7 +1156,7 @@ document.getElementById("iGo").onclick=()=>{
 function startRun(id){
   const t=T(id);
   run={id,i:0,firsts:0,chs:t.ch,title:t.name,
-       awardable:campaignOpen(id),boss:false};
+       awardable:!freeExplore&&campaignOpen(id),boss:false};
   showChallenge();
 }
 function startBoss(){
@@ -1708,7 +1166,7 @@ function startBoss(){
 function showChallenge(){
   const c=run.chs[run.i];
   document.getElementById("cTitle").textContent=
-    run.title+(run.awardable||run.boss?"":" — practice");
+    run.title+(run.awardable||run.boss?"":" : practice");
   document.getElementById("cProg").textContent=(run.i+1)+" / "+run.chs.length;
   document.getElementById("cQ").innerHTML=c.q;
   const ie=document.getElementById("cI");
@@ -1736,7 +1194,7 @@ document.getElementById("cCheck").onclick=()=>{
     if(run.tries===1&&!r.noFirst)run.firsts++;
     fb.className="fb good show";
     quip.textContent=pickOne(GOOD);
-    why.innerHTML=(c.explain||"")+(c.note?`<div class="modnote">${c.note}</div>`:"");
+    why.innerHTML=(c.explain||"")+`<div class="modnote">Source: ${esc(c.source||"Attached lectures")}</div>`+(c.note?`<div class="modnote">${c.note}</div>`:"");
     document.getElementById("cCheck").style.display="none";
     const n=document.getElementById("cNext");
     n.style.display="";
@@ -1745,7 +1203,7 @@ document.getElementById("cCheck").onclick=()=>{
   }else{
     fb.className="fb bad show";
     quip.textContent=pickOne(BAD);
-    why.textContent=r.note||"Not that one. Have another go — you can retry as many times as you like.";
+    why.textContent=(r.note?r.note+" ":"")+(c.hint||"Inspect the evidence and retry.");
   }
 };
 document.getElementById("cNext").onclick=()=>{
@@ -1766,7 +1224,7 @@ function finishRun(){
       `<div class="stats"><div class="stat"><b>${n}/5</b><small>first attempts</small></div>
        <div class="stat"><b>${S.boss}/5</b><small>your best</small></div></div>
        <p class="exp"><b>Verdict:</b> ${verdict}</p>
-       <p class="exp">This was bonus revision — it does not affect your campaign stars or your rank.</p>`;
+       <p class="exp">This was bonus revision : it does not affect your campaign stars or your rank.</p>`;
     dRes.showModal();run=null;return;
   }
   const t=T(run.id);
@@ -1786,7 +1244,7 @@ function finishRun(){
     save();
   }
   document.getElementById("rTitle").textContent=
-    run.awardable?t.name+" conquered":t.name+" — practice complete";
+    run.awardable?t.name+" conquered":t.name+" : practice complete";
   let html="";
   if(sweep)html+=`<div class="sweep">★★★ CLEAN SWEEP<br><span style="font-weight:400;font-size:.84rem">${pickOne(SWEEP)}</span></div>`;
   html+=`<div class="stats">
@@ -1795,32 +1253,24 @@ function finishRun(){
     <div class="stat"><b>${totalStars()}</b><small>total stars</small></div></div>`;
   if(!run.awardable){
     html+=`<p class="exp">This was a Free Explore practice run, so your campaign progress is unchanged.
-      Conquer <b>${t.needs.map(n=>T(n).name).join("</b> or <b>")}</b> in Campaign Mode to claim these stars for real.</p>`;
+      Switch to Campaign Mode and complete an accessible territory to earn stars.</p>`;
   }else if(!gained){
-    html+=`<p class="exp">Your saved best of <b>${"★".repeat(S.stars[t.id]|0)}</b> stands — a replay only ever improves it.</p>`;
+    html+=`<p class="exp">Your saved best of <b>${"★".repeat(S.stars[t.id]|0)}</b> stands : a replay only ever improves it.</p>`;
   }
   if(newBadges.length)
     html+=`<div class="badges">${newBadges.map(b=>`<span class="badge">${b}</span>`).join("")}</div>
-      <p class="exp">Topic block complete. Badges are for fun — they do not affect your stars or your rank.</p>`;
+      <p class="exp">Topic block complete. Badges are for fun : they do not affect your stars or your rank.</p>`;
   document.getElementById("rBody").innerHTML=html;
   dRes.showModal();
   refresh();
   if(run.awardable){
     animateTake(t.id,opened);
-    if(allDone()&&!S.revealed){
-      S.revealed=true;save();
-      setTimeout(()=>{if(!dRes.open)showBrain();},600);
-    }
+    if(allDone()&&!S.revealed) dRes.dataset.reveal="1";
   }
   run=null;
 }
-document.getElementById("rClose").onclick=()=>{
-  dRes.close();
-  if(allDone()&&S.revealed&&!dBrain.open&&document.getElementById("bBrain").dataset.shown!=="1"){
-    document.getElementById("bBrain").dataset.shown="1";
-    setTimeout(showBrain,350);
-  }
-};
+document.getElementById("rClose").onclick=()=>dRes.close();
+dRes.addEventListener("close",()=>{if(dRes.dataset.reveal==="1"){delete dRes.dataset.reveal;if(allDone()&&!S.revealed)setTimeout(showBrain,100);}});
 
 function animateTake(id,opened){
   const reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -1848,10 +1298,11 @@ function animateTake(id,opened){
    7. COMPLETION
    ============================================================ */
 function showBrain(){
+  if(!allDone())return;S.revealed=true;save();
   const s=totalStars();
   const badges=WEEKS.filter(w=>weekDone(w.id)).map(w=>w.badge);
-  let html=`<p class="task" style="color:var(--gold)">First-year methods cortex activated.</p>
-   <p class="instr">Research Methods A network complete. Every territory from Week 3 to Week 10 is held,
+  let html=`<p class="task" style="color:var(--gold)">University methods cortex activated.</p>
+   <p class="instr">Research Methods A network complete. Every topic territory is held,
    and the routes between them are lit.</p>
    <div class="stats">
      <div class="stat"><b>${totalHeld()}/12</b><small>territories</small></div>
@@ -1859,8 +1310,8 @@ function showBrain(){
      <div class="stat"><b style="font-size:1rem;line-height:2">${rankOf(s)}</b><small>final rank</small></div>
    </div>
    <div class="badges">${badges.map(b=>`<span class="badge">${b}</span>`).join("")}</div>`;
-  if(s===36)html+=`<div class="bonus">Maximum stars — Reviewer 2 has been temporarily silenced.</div>`;
-  html+=`<p class="exp" style="margin-top:14px">Reviewer #2 is now available from the header —
+  if(s===36)html+=`<div class="bonus">Maximum stars : Reviewer 2 has been temporarily silenced.</div>`;
+  html+=`<p class="exp" style="margin-top:14px">Reviewer #2 is now available from the header :
    five mixed challenges drawn across the whole module. Entirely optional, and it does not affect your campaign.</p>`;
   document.getElementById("brainBody").innerHTML=html;
   dBrain.showModal();
@@ -1900,7 +1351,7 @@ bFull.onclick=async()=>{
     else throw new Error("no fs");
   }catch(e){
     focusMode=true;document.body.classList.add("focus");
-    toast("Focus mode — full browser fullscreen is unavailable here");
+    toast("Focus mode : full browser fullscreen is unavailable here");
   }
   syncFull();
 };
@@ -1939,7 +1390,7 @@ document.getElementById("bCopy").onclick=async()=>{
     ta.select();try{ok=document.execCommand("copy");}catch(e){}
     document.body.removeChild(ta);
   }
-  toast(ok?"Code copied":"Copy failed — select the code and copy it manually");
+  toast(ok?"Code copied":"Copy failed : select the code and copy it manually");
 };
 document.getElementById("bLoad").onclick=()=>{
   const v=document.getElementById("codeIn").value.trim();
@@ -1948,12 +1399,12 @@ document.getElementById("bLoad").onclick=()=>{
   const r=readCode(v);
   if(r.err){msg.style.color="var(--bad)";msg.textContent=r.err;return;}
   S.stars=r.stars;
-  S.revealed=allDone();
+  S.revealed=r.revealed;
   S.seenBadge={};
   for(const w of WEEKS)if(weekDone(w.id))S.seenBadge[w.id]=true;
   save();refresh();
   msg.style.color="var(--ok)";
-  msg.textContent="Loaded — "+totalHeld()+" territories, "+totalStars()+" stars.";
+  msg.textContent="Loaded : "+totalHeld()+" territories, "+totalStars()+" stars.";
   document.getElementById("codeOut").textContent=makeCode();
   toast("Progress restored");
 };
@@ -1968,6 +1419,7 @@ document.getElementById("bReset").onclick=()=>{
   setFree(false);refresh();fitAll();toast("Progress reset");
 };
 
+for(const dialog of [dIntro,dCh,dRes,dCodeD,dBrain]){dialog.addEventListener("close",()=>{if(!document.querySelector("dialog[open]"))document.getElementById("bNext").focus();});}
 /* close dialogs on backdrop click */
 for(const d of [dIntro,dRes,dCodeD,dBrain]){
   d.addEventListener("click",e=>{if(e.target===d)d.close();});
@@ -1983,6 +1435,7 @@ if(window.matchMedia("(max-width: 700px)").matches){
 }else fitAll();
 syncFull();
 if(allDone())svg.classList.add("brain");
+if(allDone()&&!S.revealed)setTimeout(showBrain,100);
 </script>
 </body>
 </html>
