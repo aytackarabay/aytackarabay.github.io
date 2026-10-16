@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#163f32">
+<title>Build the discussion</title>
+<style>
+:root{--green:#176549;--dark:#163f32;--ink:#193a2c;--muted:#5c6c62;--cream:#f4f5ef;--line:#d4dfd3;--light:#e9f1e7;--orange:#a35410;--red:#a33633}*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.55 Arial,Helvetica,sans-serif}button,input{font:inherit}button{cursor:pointer;touch-action:manipulation}button:disabled{cursor:not-allowed}button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid #e2aa38;outline-offset:4px}header{background:var(--dark);color:#fff;padding:16px 20px;position:sticky;top:0;z-index:5;box-shadow:0 2px 10px #142e1f15}.topbar{max-width:820px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-size:16px;font-weight:700;letter-spacing:.1px}.brand small{display:block;font-size:11px;font-weight:400;letter-spacing:1.1px;text-transform:uppercase;color:#cbdfcc}.clock-area{display:flex;align-items:center;gap:10px;flex:none}.clock{font-size:25px;line-height:1.1;font-variant-numeric:tabular-nums;min-width:66px;text-align:right;font-weight:bold}.clock.warning{color:#ffd174}.clock.urgent{color:#ffc1ac}.pause{background:transparent;border:1px solid #729380;border-radius:5px;color:#fff;min-height:40px;padding:5px 10px;font-size:12px}.hidden,[hidden]{display:none!important}main{max-width:820px;margin:auto;padding:25px 20px 45px}.kicker{text-transform:uppercase;letter-spacing:1.4px;font-weight:bold;font-size:12px;color:#55745f;margin:0 0 9px}h1{font-size:clamp(30px,7vw,46px);line-height:1.13;letter-spacing:-1px;margin:0 0 17px}h2{font-size:25px;line-height:1.25;letter-spacing:-.3px;margin:0 0 14px}h3{font-size:16px;margin:0 0 6px}p{margin:0 0 15px}.intro{font-size:18px;color:#506558;max-width:620px}.brief{background:#fff;border:1px solid var(--line);border-radius:13px;padding:20px;margin:22px 0}.brief h2{font-size:18px;margin-bottom:12px}.brief p{font-size:14px;margin-bottom:9px}.benefits{display:flex;gap:8px;margin:13px 0}.benefit{flex:1;padding:12px 7px;background:#f0f4ee;text-align:center;border-radius:7px;font-size:12px}.benefit strong{display:block;font-size:24px;line-height:1.3;color:var(--green)}.brief .small{font-size:12px;color:var(--muted);margin:9px 0 0}.check{display:flex;align-items:center;gap:10px;margin:15px 0;font-size:14px}.check input{accent-color:var(--green);width:18px;height:18px}.primary{background:var(--green);color:white;border:1px solid var(--green);border-radius:8px;font-weight:bold;padding:13px 20px;min-height:49px}.primary:hover{background:#105438}.primary:disabled{background:#cedbcf;border-color:#cedbcf;color:#5e7162}.secondary{background:white;border:1px solid #bdcdbc;border-radius:7px;color:var(--green);font-weight:bold;padding:11px 16px;min-height:46px}.quiet{background:transparent;border:0;color:var(--green);text-decoration:underline;padding:10px 2px;min-height:44px}.start-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.small{font-size:12px;color:var(--muted)}.progress{display:flex;gap:5px;margin:0 0 17px}.progress span{height:5px;flex:1;background:#d6e0d3;border-radius:9px}.progress span.done{background:var(--green)}.progress span.active{background:#8db29a}.round-meta{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted);margin-bottom:11px}.rubric-label{font-size:11px;line-height:1.3;color:#3e684d;background:#e7efe4;padding:6px 8px;border-radius:5px;display:inline-block;margin:0 0 14px}#prompt{font-size:16px;color:#4f6557;margin-bottom:19px}.options{display:grid;gap:10px;margin-bottom:18px;border:0;padding:0}.options legend{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden}.option{display:flex;align-items:flex-start;gap:12px;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:17px 16px;cursor:pointer;min-height:68px;transition:border-color .12s,background .12s}.option:has(input:checked){border-color:var(--green);background:#ebf4e9}.option:focus-within{outline:3px solid #e2aa38;outline-offset:2px}.option input{margin:5px 0 0;width:18px;height:18px;accent-color:var(--green);flex:none}.option .line{font-size:16px;line-height:1.5}.option.locked{cursor:default}.option.chosen.strong{border-color:#418860;background:#e9f4e8}.option.chosen.partial{border-color:#b8863c;background:#fff4e2}.option.chosen.weak{border-color:#b3675d;background:#fbefeb}.action-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.feedback{padding:17px 18px;background:#e8f2e6;border-left:4px solid #44885e;border-radius:0 8px 8px 0;margin:17px 0}.feedback.partial{background:#fff3df;border-color:#b27b24}.feedback.weak{background:#faeeea;border-color:#b25b4b}.feedback h3{font-size:16px}.feedback p{font-size:14px;margin:0}.points{font-size:12px;font-weight:bold;margin-left:8px;white-space:nowrap}.study-toggle{border-top:1px solid #d9e1d5;margin:24px 0 0;padding-top:12px;font-size:13px;color:#48634e}.study-toggle summary{cursor:pointer;min-height:40px;padding:7px 0;font-weight:bold}.study-toggle p{margin:5px 0 8px}.result-banner{display:flex;align-items:center;gap:24px;background:var(--dark);color:white;border-radius:13px;padding:23px;margin-bottom:22px}.result-score{font-size:48px;line-height:1;font-weight:bold;white-space:nowrap}.result-score small{font-size:20px;font-weight:normal;color:#c7dccc}.result-banner h2{font-size:21px;margin:0 0 6px}.result-banner p{color:#dbe9dc;margin:0;font-size:13px}.category-scores{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}.category{background:#fff;border:1px solid var(--line);border-radius:8px;padding:15px;font-size:13px}.category b{display:block;font-size:22px;color:var(--green);margin-top:6px}.script{background:#fff;border:1px solid var(--line);border-radius:12px;padding:21px;margin:18px 0}.script p{font-size:16px;line-height:1.75}.script p:last-child{margin-bottom:0}.review-list{display:grid;gap:9px;margin:16px 0 24px}.review-item{background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px 15px;font-size:13px}.review-item strong{display:block;font-size:14px;margin:0 0 4px}.review-item p{margin:0;color:#52695a}.review-item .selected-line{font-style:italic;margin:6px 0}.result-actions{display:flex;gap:9px;flex-wrap:wrap;margin:20px 0}.overlay{position:fixed;inset:0;background:#173c32ee;z-index:20;display:flex;align-items:center;justify-content:center;padding:22px}.pause-card{max-width:380px;background:white;border-radius:14px;padding:30px;text-align:center}.pause-card p{color:var(--muted)}.end-note{font-size:12px;color:var(--muted);margin:22px 0}.notice{border-left:3px solid #9c7b3d;padding:10px 14px;background:#fff3dd;font-size:14px;margin:0 0 18px}.references{font-size:12px;margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted)}.references a{color:var(--green)}.references p{margin:9px 0}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.toast{font-size:12px;color:var(--green);min-height:18px}
+@media(max-width:480px){header{padding:12px 15px}main{padding:22px 15px 32px}.brand{font-size:14px}.brand small{font-size:10px}.clock{font-size:23px;min-width:59px}.pause{min-height:38px;padding:5px 8px}h2{font-size:23px}.option{padding:15px 13px;gap:10px}.option .line{font-size:15px}.brief{padding:17px}.benefit strong{font-size:21px}.result-banner{gap:16px;padding:20px 17px}.result-score{font-size:40px}.result-banner h2{font-size:18px}.category{padding:12px;font-size:12px}.script{padding:18px}.script p{font-size:15px}.action-row .primary{flex:1}.result-actions .primary,.result-actions .secondary{flex:1;min-width:130px}.intro{font-size:17px}.start-row .primary{width:100%}}@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}@media print{header,#intro,#play,.result-actions,.end-note,.references,.toast{display:none!important}body{background:white}main{padding:0;max-width:none}.script,.review-item{break-inside:avoid}}
+.slide-frame{background:white;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:15px 0}.slide-frame svg{width:100%;height:auto;display:block}.slide-actions{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}.slide-text{font-size:15px;line-height:1.7;padding-left:23px}.slide-text li{margin:9px 0}.slide-note{font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<header><div class="topbar"><div class="brand"><small>Presentation practice</small>Build the discussion</div><div class="clock-area"><span id="clock" class="clock" aria-label="Time remaining">3:00</span><button id="pause" class="pause" hidden>Pause</button></div></div></header>
+<main>
+<section id="intro" aria-labelledby="intro-title">
+  <p class="kicker">Seven decisions · three minutes</p>
+  <h1 id="intro-title">What would you<br>say next?</h1>
+  <p class="intro">Build a clear spoken discussion for a research presentation. Choose the line that best advances the argument.</p>
+  <div class="brief"><h2>Your study</h2><p>A simulated study tested 90 participants. Each used a laptop, tablet or pen and paper, and completed tests on two matched topics: one reviewed and one not reviewed.</p><p>Review improved scores in all three media. Its average benefit was:</p><div class="benefits"><div class="benefit">Laptop<strong>5.18</strong>points</div><div class="benefit">Tablet<strong>15.58</strong>points</div><div class="benefit">Paper<strong>15.90</strong>points</div></div><p>Tablet and paper did not differ significantly. Tablet notes were handwritten with a stylus. The study measured test scores, but not note quality or depth of processing.</p><p><strong>Research context:</strong> Mueller and Oppenheimer (2014) reported an interaction involving note medium and review. Morehead and colleagues (2019) found less consistent differences between media.</p><p class="small">These are fabricated teaching data. The pattern illustrates an interaction.</p></div>
+  <p class="small">Start with the research question, then summarise and interpret the findings. Evaluate them against the literature before choosing a limitation, a future study and a closing line. Your answers become a presentation slide with your percentage score.</p>
+  <label class="check"><input id="timed" type="checkbox" checked>Use the three minute timer</label>
+  <div class="start-row"><button id="start" class="primary">Start building</button><span class="small">No speed bonus. Aim to leave 15 seconds for feedback.</span></div>
+  <p class="end-note">Practice points reflect the discussion rubric. They are not an assignment grade. This game works offline and does not send or store your responses.</p>
+</section>
+<section id="play" hidden aria-labelledby="round-title">
+  <div id="progress" class="progress" aria-hidden="true"></div>
+  <div class="round-meta"><span id="round-count"></span><span id="score-so-far"></span></div>
+  <div id="rubric-label" class="rubric-label"></div>
+  <h2 id="round-title" tabindex="-1"></h2><p id="prompt"></p>
+  <fieldset id="options" class="options"><legend>Choose one narration line</legend></fieldset>
+  <div id="feedback" class="feedback" hidden aria-live="polite"></div>
+  <div class="action-row"><span id="selection-help" class="small">Select the line you would say aloud.</span><button id="confirm" class="primary" disabled>Use this line</button><button id="next" class="primary" hidden>Next decision</button></div>
+  <details class="study-toggle"><summary>Remind me of the study</summary><p>Review benefits: Laptop 5.18 points; Tablet 15.58; Paper 15.90. The tablet versus paper difference was nonsignificant. Two matched topics were tested. Note quality and depth of processing were not measured.</p></details>
+</section>
+<section id="results" hidden aria-labelledby="result-title"></section>
+<div id="live" class="sr-only" aria-live="polite"></div>
+</main>
+<div id="paused" class="overlay" hidden role="dialog" aria-modal="true" aria-labelledby="pause-title"><div class="pause-card"><h2 id="pause-title">Take a moment</h2><p>The timer is paused. Your current choices are preserved.</p><button id="resume" class="primary">Resume game</button></div></div>
+<script>
+'use strict';
+const RUBRIC={summary:'Summary, interpretation and conclusions',limitations:'Limitations and suggestions'};
+const choice=(id,text,points,feedback)=>({id,text,points,feedback});
+const BASE=[
+ {id:'question',title:'Remind the audience of the research question',prompt:'Before summarising the findings, briefly remind the audience what the study asked.',category:'summary',options:[
+  choice('rq','We asked whether study medium and review influence test performance, and whether the review benefit depends on the medium.',2,'This sets the scene by identifying the outcome, both factors and the interaction question.'),
+  choice('broad','We investigated whether the devices students use are related to learning.',1,'This introduces the topic, but omits review and the specific question about how its benefit varies across media.'),
+  choice('method','We recruited 90 participants and divided them into three study medium groups.',0,'This describes the method rather than reminding the audience of the research question.')
+ ]},
+ {id:'summary',title:'Open with the central finding',prompt:'Your results section has just ended. What should the audience hear first?',category:'summary',options:[
+  choice('pattern','Review improved scores in all media, with a greater benefit for handwritten tablet and paper notes than for laptop notes.',2,'This answers the research question and captures the interaction in language an audience can follow.'),
+  choice('main','Tablet and paper participants scored higher than laptop participants, and review increased scores overall.',1,'Accurate, but it leaves out the interaction: the review benefit differed across media.'),
+  choice('statistics','The interaction had an F value of 43.98 and a partial eta squared of .503, with significant main effects.',0,'The statistics are accurate, but the audience still needs the direction and meaning of the findings. This repeats the results section.')
+ ]},
+ {id:'interpretation',title:'Interpret without overstating',prompt:'How could you explain the interaction and connect it to the literature?',category:'summary',options:[
+  choice('cautious','Handwritten notes may be organised differently, making them more useful during review. We did not measure this possible mechanism.',2,'This offers a possible explanation and explicitly distinguishes it from a measured mechanism.'),
+  choice('general','The findings support handwriting over typing. Reviewing notes improves learning, so students should consider handwriting when studying.',1,'This gives a broad implication, but does not explain the interaction or acknowledge the mixed literature.'),
+  choice('proof','The findings confirm that handwriting produces deeper processing. Laptop users learn less because typing prevents meaningful engagement.',0,'Test scores do not establish depth of processing. This claims a mechanism that was not measured and generalises beyond the study.')
+ ]},
+ {id:'evaluation',title:'Evaluate the findings against the literature',prompt:'What do these results mean given the mixed findings in previous research?',category:'summary',options:[
+  choice('balanced','The pattern resembles earlier review findings, but inconsistent replications suggest the advantage may depend on materials or procedures.',2,'This weighs supporting and conflicting evidence. It identifies conditions that could explain differences without assuming earlier studies were wrong.'),
+  choice('agreement','Our findings agree with Mueller and Oppenheimer, adding support for an advantage of handwriting over typing.',1,'This recognises supporting evidence but leaves the conflicting literature unaddressed. A critical evaluation considers both.'),
+  choice('dismiss','Our significant interaction shows that earlier studies without medium differences must have used flawed methods.',0,'A significant result does not invalidate another study. Differences may reflect design, sampling or uncertainty and require evidence to explain.')
+ ]},
+ {id:'limitation',title:'Choose a meaningful limitation',prompt:'Which evaluation would help the audience judge what the study can establish?',category:'limitations',options:[
+  choice('notes','We did not measure note quality. Differences in organisation or paraphrasing could help explain why review benefited some media more.',2,'This identifies a specific measurement gap and explains its consequence for the proposed mechanism.'),
+  choice('topics','We used only two topics. The pattern may depend on what students are learning, limiting generalisation to other material.',2,'This is also a strong choice: it links a specific design feature to the scope of the conclusion.'),
+  choice('precision','There were 90 participants. A larger study could estimate the differences between media more precisely.',1,'Precision is relevant, but this needs a specific precision target or uncertain comparison. Sample size alone does not establish a weakness.')
+ ]},
+ {id:'future',title:'Make the next study follow logically',prompt:'Your suggestion should address the limitation you just chose.',category:'limitations',options:[]},
+ {id:'conclusion',title:'Leave one clear message',prompt:'Choose a closing line that gives a proportionate answer to the research question.',category:'summary',options:[
+  choice('bounded','Review was beneficial across media, but its benefit was larger for handwritten notes in this simulated study.',2,'This is concise, states the central finding and keeps the conclusion within the evidence.'),
+  choice('vague','The findings suggest students should consider how they take and review notes when preparing for a test.',1,'Reasonable, but the audience leaves without the specific finding about the different review benefits.'),
+  choice('universal','Students should stop using laptops because paper and tablet notes are always more effective for learning.',0,'The study does not justify a universal recommendation about devices, learners or all forms of learning.')
+ ]}
+];
+const MAX_POINTS=BASE.length*2;
+function futureOptions(limitation){
+ if(limitation==='topics')return [
+  choice('matched','Test a wider range of matched topics, counterbalanced across review conditions, to examine whether the interaction generalises.',2,'The suggestion addresses the material limitation and makes the question for the next study explicit.'),
+  choice('larger','Recruit more participants but use the same two topics and procedures to estimate the interaction more precisely.',1,'This could improve precision, but it leaves the question about different learning materials unresolved.'),
+  choice('longitudinal','A longitudinal study is needed.',0,'This names a design without specifying what should change over time. It also does not explain how following participants would address the limited range of topics.')
+ ];
+ if(limitation==='precision')return [
+  choice('matched','Plan a larger replication around a specified precision target, including the tablet versus paper comparison and differences in review benefits.',2,'This turns a general sample size concern into a targeted plan. Define the desired confidence interval width before collecting data.'),
+  choice('larger','Recruit more participants and repeat the experiment, because larger samples are always more informative.',1,'More data may help, but the proposal needs a target estimate or meaningful effect. Size alone is not a research rationale.'),
+  choice('longitudinal','A longitudinal study is needed.',0,'A design label does not specify the estimate, precision target or repeated measurements needed to address this concern.')
+ ];
+ return [
+  choice('matched','Code note organisation and paraphrasing, then test whether these features help explain the different review benefits across media.',2,'The new measurements address the mechanism left unresolved by the current study. They would inform, rather than prove, a causal explanation.'),
+  choice('larger','Recruit more participants but collect the same test scores, so the differences between devices can be estimated more precisely.',1,'This could improve precision, but it would still leave note quality and processing unmeasured.'),
+  choice('longitudinal','A longitudinal study is needed.',0,'Following participants over time would not by itself measure note quality. Specify the question, measurements and how they address the identified gap.')
+ ];
+}
+const MODELS={
+ question:BASE.find(r=>r.id==='question').options[0].text,
+ summary:BASE.find(r=>r.id==='summary').options[0].text,
+ interpretation:'One possibility is that organised handwritten notes support later review. However, note quality was not measured, so this mechanism remains uncertain.',
+ evaluation:'The pattern resembles Mueller and Oppenheimer’s review finding, but inconsistent later findings suggest that any medium advantage may depend on materials or procedures.',
+ notes:'However, we did not measure note quality, so we cannot establish whether organisation or paraphrasing explains this pattern.',
+ topics:'However, the study used only two topics, so we cannot establish whether this pattern generalises across different learning materials.',
+ precision:'Further evidence is needed to estimate the size of the medium differences precisely, including the tablet versus paper comparison.',
+ future_notes:'Future research could code note organisation and paraphrasing to examine their relationship with review benefits.',
+ future_topics:'Future research could test a wider range of matched topics, counterbalanced across review conditions.',
+ future_precision:'A larger replication could use a prespecified precision target for medium comparisons and differences in review benefits.',
+ conclusion:BASE.find(r=>r.id==='conclusion').options[0].text
+};
+const $=id=>document.getElementById(id);
+const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shuffle=arr=>{const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+let game=null,ticker=null,previousFocus=null;
+function createGame(timed,now=Date.now()){
+ return {timed,started:now,deadline:now+180000,phase:'playing',index:0,selection:null,answers:[],order:{},pausedAt:null,pauseTotal:0,ended:null,reason:null};
+}
+function getRound(g){const r={...BASE[g.index]};if(r.id==='future')r.options=futureOptions(g.answers.find(a=>a.round==='limitation')?.choice.id||'notes');return r;}
+function score(g){const sums={summary:0,limitations:0,total:0};for(const a of g.answers){sums[a.category]+=a.choice.points;sums.total+=a.choice.points;}return sums;}
+function remaining(g,now=Date.now()){return !g.timed?null:Math.max(0,Math.ceil((g.deadline-(g.pausedAt||g.ended||now))/1000));}
+function commit(g,choiceId){
+ if(g.phase!=='playing'||g.answers.length>g.index)return false;
+ const round=getRound(g),picked=round.options.find(o=>o.id===choiceId);if(!picked)return false;
+ g.answers.push({round:round.id,title:round.title,category:round.category,choice:{...picked}});g.phase='feedback';return true;
+}
+function nextRound(g){if(g.phase!=='feedback')return false;if(g.index===BASE.length-1)return 'complete';g.index++;g.selection=null;g.phase='playing';return true;}
+function elapsed(g){return Math.max(0,Math.floor(((g.ended||Date.now())-g.started-g.pauseTotal)/1000));}
+function timeLabel(seconds){return `${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;}
+function announce(text){$('live').textContent=text;}
+function updateClock(){
+ if(!game)return;
+ const left=remaining(game);$('clock').textContent=left===null?'Practice':timeLabel(left);
+ $('clock').className='clock'+(left!==null&&left<=15?' urgent':left!==null&&left<=45?' warning':'');
+ $('clock').setAttribute('aria-label',left===null?'Untimed practice':`${left} seconds remaining`);
+ if(left===30&&game.phase!=='results')announce('Thirty seconds remaining.');
+ if(game.timed&&left===0&&!game.pausedAt&&game.phase!=='results')finish('timeout');
+}
+function start(timed=$('timed').checked){
+ if(ticker)clearInterval(ticker);game=createGame(timed);
+ $('intro').hidden=true;$('results').hidden=true;$('play').hidden=false;$('pause').hidden=false;$('paused').hidden=true;
+ ticker=setInterval(updateClock,250);renderRound();updateClock();window.scrollTo(0,0);
+}
+function renderRound(){
+ const r=getRound(game),locked=game.phase==='feedback',s=score(game);
+ $('progress').innerHTML=BASE.map((_,i)=>`<span class="${i<game.index?'done':i===game.index?'active':''}"></span>`).join('');
+ $('round-count').textContent=`Decision ${game.index+1} of ${BASE.length}`;
+ $('score-so-far').textContent=`${s.total} / ${MAX_POINTS} practice points`;
+ $('rubric-label').textContent=RUBRIC[r.category];$('round-title').textContent=r.title;
+ let prompt=r.prompt;
+ if(r.id==='future'){const chosen=game.answers.find(a=>a.round==='limitation').choice.id;prompt=chosen==='topics'?'You identified the limited range of topics. Which next study addresses that question?':chosen==='precision'?'You identified a precision concern. Which next study makes that concern testable?':'You identified missing measures of note quality. Which next study addresses that gap?';}
+ $('prompt').textContent=prompt;
+ if(!game.order[r.id])game.order[r.id]=shuffle(r.options.map(o=>o.id));
+ const options=game.order[r.id].map(id=>r.options.find(o=>o.id===id));
+ const answer=game.answers.find(a=>a.round===r.id);
+ $('options').innerHTML='<legend>Choose one narration line</legend>'+options.map(o=>{
+   const checked=locked?answer?.choice.id===o.id:game.selection===o.id;
+   const quality=o.points===2?'strong':o.points===1?'partial':'weak';
+   return `<label class="option ${locked?'locked':''} ${locked&&checked?'chosen '+quality:''}"><input type="radio" name="line" value="${o.id}" ${checked?'checked':''} ${locked?'disabled':''}><span class="line">${escape(o.text)}</span></label>`;
+ }).join('');
+ $('confirm').hidden=locked;$('confirm').disabled=!game.selection;$('next').hidden=!locked;
+ $('next').textContent=game.index===BASE.length-1?'Build my slide':'Next decision';
+ $('selection-help').textContent=locked?'Read the feedback, then continue.':'Select the line you would say aloud.';
+ $('feedback').hidden=!locked;
+ if(locked){const a=answer.choice,quality=a.points===2?'':a.points===1?' partial':' weak';$('feedback').className='feedback'+quality;$('feedback').innerHTML=`<h3>${a.points===2?'Strong choice':a.points===1?'Useful, but incomplete':'Revise this line'}<span class="points">${a.points} / 2 points</span></h3><p>${escape(a.feedback)}</p>`;}
+ if(!locked)$('round-title').focus({preventScroll:true});
+}
+function finish(reason='complete'){
+ if(!game||game.phase==='results')return;
+ game.ended=Date.now();game.reason=reason;game.phase='results';clearInterval(ticker);ticker=null;
+ $('play').hidden=true;$('pause').hidden=true;$('paused').hidden=true;$('results').hidden=false;
+ renderResults();updateClock();window.scrollTo(0,0);$('result-title').focus({preventScroll:true});
+}
+function modelScript(g){const lim=g.answers.find(a=>a.round==='limitation')?.choice.id||'notes';return [MODELS.question,MODELS.summary,MODELS.interpretation,MODELS.evaluation,MODELS[lim],MODELS['future_'+lim],MODELS.conclusion];}
+function slideRows(g){
+ const labels={question:'Question',summary:'Finding',interpretation:'Interpretation',evaluation:'Literature',limitation:'Limitation',future:'Next study',conclusion:'Conclusion'};
+ const lines={
+  question:{rq:'Do medium and review influence scores, and does the review benefit vary by medium?',broad:'Are the devices students use related to learning?',method:'90 participants completed the study in three medium groups.'},
+  summary:{pattern:'Review helped all media, with larger benefits for handwritten tablet and paper notes.',main:'Tablet and paper outperformed laptop; review improved scores overall.',statistics:'Interaction F = 43.98, partial eta squared = .503; both main effects were significant.'},
+  interpretation:{cautious:'Organised handwritten notes may support review; this mechanism was not measured.',general:'Handwriting is favoured over typing; students should consider handwriting.',proof:'Handwriting produces deeper processing; typing prevents meaningful engagement.'},
+  evaluation:{balanced:'Mixed replications suggest the advantage may depend on materials or procedures.',agreement:'Agreement with Mueller and Oppenheimer supports handwriting over typing.',dismiss:'Earlier studies without medium differences must have used flawed methods.'},
+  limitation:{notes:'Note quality was not measured, leaving the explanation for the interaction unresolved.',topics:'Only two topics were tested, limiting generalisation to other learning materials.',precision:'A larger study could estimate differences between media more precisely.'},
+  conclusion:{bounded:'Review helped all media, but helped handwritten notes more in this simulated study.',vague:'Students should consider how they take and review notes before a test.',universal:'Students should stop using laptops; paper and tablet are always more effective.'}
+ };
+ const lim=g.answers.find(a=>a.round==='limitation')?.choice.id||'notes';
+ return BASE.map(r=>{
+  const a=g.answers.find(x=>x.round===r.id);let text='Not selected';
+  if(a&&r.id==='future'){
+   if(a.choice.id==='matched')text=lim==='topics'?'Test a wider range of matched, counterbalanced topics.':lim==='precision'?'Plan a replication with a specified precision target.':'Measure note organisation and paraphrasing to examine possible explanations.';
+   else if(a.choice.id==='larger')text=lim==='precision'?'Recruit more participants because larger samples are always more informative.':'Increase sample size while retaining the current topics and measures.';
+   else text='A longitudinal study is needed.';
+  }else if(a)text=lines[r.id][a.choice.id];
+  return {label:labels[r.id],text};
+ });
+}
+function slideSVG(g){
+ const wrap=(text,width=88)=>{const words=text.split(/\s+/),lines=[];let line='';for(const w of words){if((line+' '+w).trim().length>width&&line){lines.push(line);line=w;}else line=(line+' '+w).trim();}if(line)lines.push(line);return lines;};
+ const rows=slideRows(g);let y=154;
+ const content=rows.map(r=>{const lines=wrap(r.label+': '+r.text);const text=lines.map((line,i)=>`<text x="111" y="${y+i*29}" font-size="24">${escape(line)}</text>`).join('');const out=`<circle cx="85" cy="${y-8}" r="4.3" fill="#176549"/>${text}`;y+=lines.length*29+9;return out;}).join('');
+ const percentage=Math.round(score(g).total/MAX_POINTS*100);
+ return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="slide-title"><title id="slide-title">Discussion slide based on your answers</title><rect width="1200" height="675" fill="white"/><g font-family="Arial,Helvetica,sans-serif" fill="#193a2c"><text x="77" y="69" font-size="43" font-weight="700">Discussion</text><text x="1121" y="69" text-anchor="end" font-size="43" font-weight="700">${percentage}%</text><text x="79" y="110" font-size="23" fill="#5c6c62">Study medium and review</text>${content}<text x="79" y="649" font-size="17" fill="#5c6c62">Fabricated teaching data</text></g></svg>`;
+}
+function saveFile(name,content,type){const url=URL.createObjectURL(new Blob([content],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
+function fullResultsText(g){const s=score(g);return ['BUILD THE DISCUSSION',`Practice score: ${s.total}/${MAX_POINTS} (${Math.round(s.total/MAX_POINTS*100)}%)`,`${g.answers.length}/${BASE.length} decisions submitted`,'','YOUR PRESENTATION SLIDE',...slideRows(g).map(r=>r.label+': '+r.text),'','YOUR CHOSEN NARRATION',...g.answers.map(a=>a.choice.text),'','SUGGESTED NARRATION',...modelScript(g),'','RUBRIC FEEDBACK',...g.answers.map(a=>`${a.title}: ${a.choice.points}/2. ${a.choice.feedback}`),'','These are fabricated teaching data. Practice points are not an assignment grade.'].join('\n\n');}
+function renderResults(){
+ const s=score(game),complete=game.answers.length===BASE.length;
+ const title=!complete?'Your draft is unfinished':s.total/MAX_POINTS>=.9?'A clear, connected discussion':s.total/MAX_POINTS>=.5?'A useful draft to refine':'A draft worth revising';
+ const notice=game.reason==='timeout'?`<p class="notice">Time is up. You submitted ${game.answers.length} of ${BASE.length} decisions. Your slide marks any missing content as not selected.</p>`:'';
+ const selected=game.answers.length?game.answers.map(a=>`<p>${escape(a.choice.text)}</p>`).join(''):'<p>No lines were submitted. The suggested narration below shows one coherent approach.</p>';
+ const model=modelScript(game);
+ const words=model.join(' ').trim().split(/\s+/).length;
+ $('results').innerHTML=`${notice}<div class="result-banner"><div class="result-score">${s.total}<small> / ${MAX_POINTS}</small></div><div><h2 id="result-title" tabindex="-1">${title}</h2><p>${game.answers.length} of ${BASE.length} decisions submitted · ${timeLabel(elapsed(game))} elapsed${game.timed?'':' in untimed practice'}<br>Practice points, not an assignment grade.</p></div></div>
+ <div class="category-scores"><div class="category">Summary, interpretation and conclusions<b>${s.summary} / 10</b></div><div class="category">Limitations and suggestions<b>${s.limitations} / 4</b></div></div>
+ <h2>Your discussion slide</h2><p class="slide-note">These bullet points reflect your choices, including any content that needs revision. Check the rubric feedback before using the slide.</p><div class="slide-frame">${slideSVG(game)}</div>
+ <div class="slide-actions"><button id="save-slide-png" class="secondary">Save slide PNG</button><button id="save-slide-svg" class="secondary">Save slide SVG</button></div><p id="slide-status" class="toast" role="status"></p>
+ <details class="study-toggle"><summary>Read the slide text</summary><ul class="slide-text">${slideRows(game).map(r=>`<li><strong>${r.label}:</strong> ${escape(r.text)}</li>`).join('')}</ul></details>
+ <h2>What to improve</h2><div class="review-list">${BASE.map(r=>{const a=game.answers.find(x=>x.round===r.id);return `<div class="review-item"><strong>${escape(r.title)} · ${a?a.choice.points+' / 2':'Not submitted'}</strong><p>${a?escape(a.choice.feedback):'This part is missing from your draft. See the suggested narration.'}</p></div>`;}).join('')}</div>
+ <details class="study-toggle"><summary>Suggested spoken discussion</summary><p class="small">One coherent example, matched to your selected limitation. About ${words} words.</p><div class="script" id="model-script">${model.map(p=>`<p>${escape(p)}</p>`).join('')}</div></details>
+ <details class="study-toggle"><summary>Compare with your chosen narration${complete?'':' (incomplete)'}</summary><div class="script">${selected}</div><p class="small">This preserves your choices, including any lines that need revision. Use the rubric feedback above when comparing.</p></details>
+ <div class="result-actions"><button id="replay" class="primary">Try again</button><button id="practice" class="secondary">Untimed practice</button><button id="download" class="secondary">Save feedback</button></div><p id="saved" class="toast" role="status"></p>
+ <details class="study-toggle"><summary>Why these choices fit the rubric</summary><p><strong>Summary and interpretation:</strong> answer the research question, explain the interaction, relate it to existing literature and keep the conclusion within the evidence.</p><p><strong>Limitations and suggestions:</strong> identify a specific gap, explain its consequence and propose a next study that addresses the same gap.</p><p>More than one limitation can be well justified. This game rewards the reasoning, not a particular device preference or a single approved limitation. Literature supports the framing, but the simulated results are not empirical evidence.</p></details>
+ <details class="references"><summary>Research context</summary><p>Mueller and Oppenheimer (2014, Study 3) reported an interaction involving note medium and review. Morehead, Dunlosky and Rawson (2019) found inconsistent differences between media. These studies differ from the simulated mixed design used here.</p><p><a href="https://doi.org/10.1177/0956797614524581" target="_blank" rel="noopener">Mueller and Oppenheimer, 2014</a><br><a href="https://doi.org/10.1007/s10648-019-09468-2" target="_blank" rel="noopener">Morehead and colleagues, 2019</a></p></details>`;
+ $('replay').addEventListener('click',()=>start(game.timed));$('practice').addEventListener('click',()=>start(false));
+ $('save-slide-svg').addEventListener('click',()=>saveFile('Discussion_slide.svg',slideSVG(game),'image/svg+xml;charset=utf-8'));
+ $('save-slide-png').addEventListener('click',()=>{
+  const url=URL.createObjectURL(new Blob([slideSVG(game)],{type:'image/svg+xml;charset=utf-8'})),image=new Image();$('slide-status').textContent='Preparing slide…';
+  image.onload=()=>{try{const c=document.createElement('canvas');c.width=2400;c.height=1350;const ctx=c.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(image,0,0,c.width,c.height);c.toBlob(blob=>{if(blob){saveFile('Discussion_slide.png',blob,'image/png');$('slide-status').textContent='Slide image prepared.';}else $('slide-status').textContent='Please use Save slide SVG in this browser.';URL.revokeObjectURL(url);},'image/png');}catch(e){URL.revokeObjectURL(url);$('slide-status').textContent='Please use Save slide SVG in this browser.';}};
+  image.onerror=()=>{URL.revokeObjectURL(url);$('slide-status').textContent='Please use Save slide SVG in this browser.';};image.src=url;
+ });
+ $('download').addEventListener('click',()=>{
+   const blob=new Blob([fullResultsText(game)],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Discussion_feedback.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);$('saved').textContent='Feedback file prepared.';
+ });
+}
+$('start').addEventListener('click',()=>start());
+$('options').addEventListener('change',e=>{if(game?.phase==='playing'&&e.target.name==='line'){game.selection=e.target.value;$('confirm').disabled=false;}});
+$('confirm').addEventListener('click',()=>{if(!game||game.pausedAt)return;updateClock();if(game.phase!=='playing')return;if(commit(game,game.selection)){renderRound();announce('Choice submitted. '+game.answers.at(-1).choice.feedback);$('next').focus();}});
+$('next').addEventListener('click',()=>{if(!game||game.pausedAt)return;updateClock();if(game.phase==='results')return;const action=nextRound(game);if(action==='complete')finish();else if(action){renderRound();window.scrollTo(0,0);}});
+$('pause').addEventListener('click',()=>{if(!game||game.phase==='results')return;updateClock();if(game.phase==='results')return;game.pausedAt=Date.now();previousFocus=document.activeElement;$('paused').hidden=false;$('resume').focus();});
+$('resume').addEventListener('click',()=>{if(!game?.pausedAt)return;const delta=Date.now()-game.pausedAt;game.deadline+=delta;game.pauseTotal+=delta;game.pausedAt=null;$('paused').hidden=true;(previousFocus||$('pause')).focus();updateClock();});
+document.addEventListener('keydown',e=>{if(!$('paused').hidden){if(e.key==='Tab'){e.preventDefault();$('resume').focus();}if(e.key==='Escape')$('resume').click();}});
+document.addEventListener('visibilitychange',()=>{if(game&&!game.pausedAt)updateClock();});
+// Pure game functions permit verification of every possible choice sequence.
+window.DiscussionGame={BASE,futureOptions,createGame,getRound,commit,nextRound,score,remaining,modelScript,slideRows,slideSVG,fullResultsText,getState:()=>game};
+</script>
+</body>
+</html>
