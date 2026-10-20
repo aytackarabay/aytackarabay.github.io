@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#173f34">
+<title>Psychology Figure Studio</title>
+<style>
+:root{--bg:#f3f5f0;--surface:#fff;--ink:#19382e;--muted:#5d7065;--line:#d8e1d6;--accent:#17664d;--soft:#eaf2e8;--warn:#805215;--shadow:0 5px 24px #19382e08;color-scheme:light}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Arial,Helvetica,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;touch-action:manipulation}button:disabled{cursor:not-allowed;opacity:.45}input:disabled,select:disabled{opacity:.5;cursor:not-allowed}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid #d8a33c;outline-offset:3px}header{background:#173f34;color:#fff;padding:22px 28px}.header-inner{max-width:1650px;margin:auto;display:flex;justify-content:space-between;gap:25px;align-items:center}header h1{margin:2px 0 5px;font-size:29px;line-height:1.2;letter-spacing:-.6px}header p{margin:0;color:#d1e3d5;font-size:13px}.eyebrow{font-size:10px;letter-spacing:1.7px;text-transform:uppercase;color:#bbd3c3}.private{font-size:12px;color:#d1e3d5;text-align:right}.private strong{display:block;font-size:14px;color:#fff}main{max-width:1700px;margin:auto;padding:22px;display:grid;grid-template-columns:320px minmax(0,1fr);gap:22px;align-items:start}.sidebar{min-width:0;display:grid;gap:12px}.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);overflow:hidden}.panel>summary{padding:16px 18px;cursor:pointer;font-weight:bold;font-size:14px;list-style:none;display:flex;justify-content:space-between;align-items:center}.panel>summary::-webkit-details-marker{display:none}.panel>summary::after{content:'+';font-size:19px;color:var(--muted);font-weight:normal}.panel[open]>summary::after{content:'−'}.panel-body{padding:0 18px 18px}.step-number{display:inline-grid;place-items:center;border:1px solid #bdcfc0;border-radius:50%;width:23px;height:23px;font-size:11px;margin-right:8px;color:var(--accent)}.field{display:block;margin:0 0 13px}.field>span,.field-title{font-size:11px;text-transform:uppercase;letter-spacing:.7px;font-weight:bold;display:block;margin:0 0 6px}select,input[type=text],input[type=number],textarea{width:100%;border:1px solid #c3d0c2;background:var(--surface);color:var(--ink);padding:9px 10px;border-radius:5px;min-height:38px}textarea{resize:vertical;min-height:70px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.hint{font-size:11px;color:var(--muted);line-height:1.55;margin:5px 0 12px}.check{display:flex;align-items:center;gap:9px;font-size:13px;padding:7px 0;min-height:34px}.check input{margin:0;width:16px;height:16px;accent-color:var(--accent);flex:none}.check:has(input:disabled){opacity:.48}.check span{flex:1}.upload{border:1.5px dashed #9fb69e;border-radius:8px;padding:18px 12px;text-align:center;background:#f7faf5;position:relative}.upload.drag{background:#dfeddd;border-color:#17664d}.upload input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}.upload:focus-within{outline:3px solid #d8a33c;outline-offset:3px}.upload b{display:block;font-size:15px;color:#275d44}.upload small{display:block;color:#67796a;margin-top:4px}.button{border:1px solid #b8cbb8;color:var(--accent);background:var(--surface);padding:9px 12px;border-radius:6px;font-weight:bold;font-size:12px;min-height:38px}.button:hover{background:var(--soft)}.button.primary{background:var(--accent);color:white;border-color:var(--accent)}.button.primary:hover{background:#10533e}.wide{width:100%}.import-name{word-break:break-word;margin:11px 0 3px;font-weight:bold;font-size:12px}.error{background:#fff0eb;color:#923d29;border:1px solid #e6b6a7;border-radius:7px;padding:12px 14px;font-size:13px;margin:12px 0}.error:empty{display:none}.workspace{min-width:0}.workspace-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:12px}.workspace-top h2{font-size:17px;margin:0}.status{font-size:12px;color:var(--muted)}.figure-card{background:var(--surface);border:1px solid var(--line);border-radius:11px;box-shadow:var(--shadow);overflow:hidden}.toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;padding:13px 16px;border-bottom:1px solid var(--line)}.toolbar .view{display:flex;align-items:center;gap:8px}.toolbar label{font-size:12px;color:var(--muted)}.toolbar select{font-size:12px;min-height:34px;padding:6px 9px;max-width:320px}.export-actions{display:flex;gap:6px;flex-wrap:wrap}.export-actions .button{font-size:11px;padding:7px 9px;min-height:33px}.plot-scroll{width:100%;overflow:auto;padding:8px;background:var(--surface)}#plot svg{display:block;width:100%;height:auto}.empty{padding:80px 25px;text-align:center;max-width:650px;margin:auto}.empty h2{font-size:30px;line-height:1.25;letter-spacing:-.6px;margin:0 0 15px}.empty p{color:var(--muted);margin:0 0 20px;font-size:15px}.empty .illustration{margin:15px auto 30px;height:110px;width:230px;display:flex;justify-content:center;align-items:flex-end;gap:18px}.empty .illustration span{display:block;width:36px;background:#cee0d1;border-radius:4px 4px 0 0}.empty .illustration span:nth-child(1){height:54px;background:#338ab2}.empty .illustration span:nth-child(2){height:88px;background:#d97c35}.empty .illustration span:nth-child(3){height:69px;background:#368568}.figure-footer{padding:11px 18px 13px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}.message{font-size:12px;color:var(--accent);min-height:20px;margin:8px 0}.info{background:#e9f0e5;border-left:3px solid #518461;padding:12px 15px;font-size:12px;border-radius:0 6px 6px 0;margin:14px 0;color:#3b5944}.metadata{display:flex;gap:9px;flex-wrap:wrap;margin:13px 0}.metadata span{font-size:11px;border:1px solid var(--line);border-radius:5px;padding:5px 8px;background:var(--surface);color:var(--muted)}.table-scroll{overflow:auto;max-height:300px}table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line)}th{font-size:11px;background:var(--soft);position:sticky;top:0}.data-details{margin-top:14px}.data-details>summary{padding:13px 17px;font-size:13px}.data-details .panel-body{padding-top:0}.columns{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 12px}.column-chip{padding:4px 7px;font-size:10px;background:var(--soft);color:var(--muted);border-radius:4px}.slider{width:100%;accent-color:var(--accent)}.slider-label{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-top:10px}.slider-label output{color:var(--muted);font-size:11px}.colours{display:grid;gap:7px;margin:10px 0}.colour-row{display:flex;align-items:center;gap:9px;font-size:12px;min-width:0}.colour-row span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.colour-row input{flex:none;width:33px;height:29px;padding:1px;border:1px solid #c2d0c2;border-radius:4px;background:transparent}.sample-link{background:transparent;border:0;color:var(--accent);font-size:12px;text-decoration:underline;padding:8px 0;min-height:36px}.help{margin-top:14px}.help p{font-size:12px;color:var(--muted);margin:0 0 10px}.help strong{color:var(--ink)}dialog{border:1px solid var(--line);border-radius:12px;padding:15px;max-width:96vw;width:1450px;max-height:94vh;background:var(--surface);color:var(--ink)}dialog::backdrop{background:#143829c9}dialog .close-row{display:flex;justify-content:flex-end;margin-bottom:8px}#large-plot{overflow:auto;max-height:80vh}#large-plot svg{width:100%;height:auto;min-width:750px}.footer{max-width:1656px;margin:0 auto;padding:0 23px 25px;color:var(--muted);font-size:11px}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}body.dark{--bg:#16231f;--surface:#1e3029;--ink:#e6eee7;--muted:#aec3b3;--line:#3b5043;--accent:#83c6a1;--soft:#2a4133;color-scheme:dark}body.dark .upload{background:#233a2b;border-color:#5f846b}body.dark .upload b{color:#b0ddbe}body.dark .upload small{color:#a7b9a8}body.dark .info{background:#294330;color:#c6d9c8}body.dark .error{background:#502d25;color:#ffd3c5;border-color:#8e5a47}body.dark .button.primary{color:#183b2a;background:#83c6a1}
+@media(max-width:1100px){main{grid-template-columns:285px minmax(0,1fr);gap:15px;padding:16px}.toolbar{padding:10px;gap:8px}.private{display:none}.export-actions .button{padding:6px 8px}.panel-body{padding:0 14px 15px}.panel>summary{padding:14px}.toolbar .view{width:100%}.toolbar select{flex:1;max-width:none}}@media(max-width:760px){header{padding:19px 16px}header h1{font-size:25px}main{display:flex;flex-direction:column;padding:12px;gap:15px}.sidebar,.workspace{width:100%}.sidebar{grid-template-columns:1fr}.panel>summary{min-height:48px}.sidebar .panel-body{padding:0 16px 18px}.workspace-top{margin-bottom:10px}#plot svg{min-width:640px}.toolbar .view label{white-space:nowrap}.export-actions{width:100%}.export-actions .button{flex:1;min-width:78px;min-height:38px}.empty{padding:45px 20px}.empty h2{font-size:26px}.footer{padding:0 16px 20px}.field{margin-bottom:11px}.check{min-height:39px;font-size:14px}.row select{font-size:13px}}@media print{header,.sidebar,.toolbar,.data-details,.help,.footer,.message,.workspace-top,.metadata,.info{display:none!important}main{display:block;padding:0}.figure-card{border:0;box-shadow:none}.plot-scroll{overflow:visible;padding:0}#plot svg{min-width:0}.figure-footer{display:none}body{background:white}}
+fieldset{border:0;padding:0;margin:0;min-width:0}.view-tabs{display:flex;gap:5px;padding:12px 16px 0;flex-wrap:wrap}.view-tabs:empty{display:none}.view-tabs button{padding:10px 14px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--muted);font:inherit;font-size:12px;min-height:40px}.view-tabs button[aria-selected=true]{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:bold}.view-description{margin:12px 18px 4px;color:var(--muted);font-size:12px}.view-description:empty{display:none}.toolbar .view[hidden]{display:none}.annotation{cursor:ns-resize;touch-action:none}.annotation:focus{outline:2px solid #d8a33c}#participant-controls{border-top:1px solid var(--line);padding-top:12px;margin-top:10px}#annotation-message{margin-top:12px}fieldset:disabled{opacity:.5}.toolbar{justify-content:flex-end}@media(max-width:760px){.view-tabs{padding:10px 10px 0}.view-tabs button{flex:1;min-width:100px}.export-actions .button{min-width:92px}}
+.annotation-items{display:grid;gap:8px}.annotation-item{padding:9px;border:1px solid var(--line);border-radius:6px}.annotation-item p{margin:0 0 8px;font-size:12px;overflow-wrap:anywhere}.annotation-item .row{grid-template-columns:1fr 1fr}.annotation-item[aria-current=true]{border-color:var(--accent);background:var(--soft)}
+</style>
+</head>
+<body>
+<header><div class="header-inner"><div><div class="eyebrow">Psychology · research methods</div><h1>Figure Studio</h1><p>From a CSV to a clear, carefully styled figure.</p></div><div class="private"><strong>Your data stay in your browser</strong>No account, server or installation required.</div></div></header>
+<main>
+<aside class="sidebar" aria-label="Figure controls">
+<details class="panel" open><summary><span><span class="step-number">1</span>Import data</span></summary><div class="panel-body">
+ <div id="dropzone" class="upload"><b>Choose a CSV file</b><small>or drop it here</small><input id="file" type="file" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values" aria-label="Upload CSV file"></div>
+ <div id="filename" class="import-name">No file selected</div><div id="import-info" class="hint">Export your data from JAMOVI as a CSV.</div>
+ <div class="row"><label class="field"><span>Delimiter</span><select id="delimiter"><option value="auto">Detect automatically</option><option value=",">Comma</option><option value=";">Semicolon</option><option value="tab">Tab</option></select></label><label class="field"><span>Decimal symbol</span><select id="decimal"><option value=".">Point: 12.5</option><option value=",">Comma: 12,5</option></select></label></div>
+ <button id="demo" class="sample-link" type="button">Try an example dataset</button><div id="import-error" class="error" role="alert"></div>
+</div></details>
+<details class="panel" id="variables-panel" open><summary><span><span class="step-number">2</span>Variable assignment</span></summary><div class="panel-body">
+ <p class="hint">Assign your variables and factor roles explicitly. Importing a file does not assign an experimental design. Use long format: one row per participant per condition, or per trial.</p>
+ <label class="field"><span>Participant ID · optional</span><select id="id"></select></label>
+ <label class="field"><span>Dependent variable · required</span><select id="dv"></select></label>
+ <label class="field"><span>Factor 1 · optional</span><select id="f1"></select></label>
+ <label class="field"><span>Factor 1 role</span><select id="role1"><option value="">Assign a role</option><option value="between">Between subjects</option><option value="within">Within subjects</option></select></label>
+ <label class="field"><span>Factor 2 · optional</span><select id="f2"></select></label>
+ <label class="field"><span>Factor 2 role</span><select id="role2"><option value="">Assign a role</option><option value="between">Between subjects</option><option value="within">Within subjects</option></select></label>
+ <p class="hint" id="unit-hint"></p>
+</div></details>
+<details class="panel" open><summary><span><span class="step-number">3</span>Figure and layers</span></summary><div class="panel-body">
+ <label class="field"><span>Figure type</span><select id="type"><option value="bar">Bar plot</option><option value="dot" selected>Dot plot</option><option value="box">Box plot</option><option value="violin">Violin plot</option><option value="raincloud">Raincloud plot</option><option value="interaction">Interaction plot</option></select></label>
+ <label class="check"><input id="mean" type="checkbox" checked><span>Show mean</span></label>
+ <label class="check" title="Adds a separate median marker. Boxes always show their median."><input id="median" type="checkbox"><span>Show median</span></label>
+ <label class="check"><input id="ci" type="checkbox" checked><span>Show error bars</span></label>
+ <label class="field"><span>Error bar measure</span><select id="errorType"><option value="ci">95% confidence interval · 1.96 × SE</option><option value="sd">Standard deviation · SD</option><option value="se">Standard error · SE</option><option value="t">95% confidence interval · Student t</option></select></label>
+ <p class="hint">Bars extend above and below the mean. SD describes variation within each displayed condition; SE = SD / √n. Repeated observations use participant averages as the observation units.</p>
+ <label class="check"><input id="boxes" type="checkbox"><span>Boxplot overlay</span></label>
+ <label class="check"><input id="observations" type="checkbox"><span>Show individual observations</span></label>
+ <label class="check"><input id="jitter" type="checkbox" checked><span>Show jitter</span></label>
+ <label class="check"><input id="violin" type="checkbox"><span>Violin overlay</span></label>
+ <label class="check"><input id="rain" type="checkbox"><span>Raincloud overlay</span></label>
+ <label class="check"><input id="beeswarm" type="checkbox"><span>Beeswarm</span></label>
+ <div id="participant-controls"><div class="field-title">Participant display</div><label class="check"><input id="connections" type="checkbox"><span>Connect individual participants</span></label><label class="check"><input id="trajectories" type="checkbox"><span>Show participant trajectories</span></label><label class="check"><input id="participantPoints" type="checkbox"><span>Show participant points</span></label><label class="field" id="trajectory-factor-field"><span>Connect across</span><select id="trajectoryFactor" aria-label="Factor for participant connections"></select></label><p class="hint" id="participant-hint"></p></div>
+ <label class="check"><input id="labels" type="checkbox"><span>Show data labels</span></label>
+ <label class="check"><input id="legend" type="checkbox" checked><span>Show legend</span></label>
+ <label class="check"><input id="grid" type="checkbox" checked><span>Show gridlines</span></label>
+ <label class="field"><span>Data labels</span><select id="labelMode"><option value="mean">Mean</option><option value="median">Median</option><option value="n">Number of observations</option><option value="both">Mean and sample size</option></select></label>
+ <div class="row"><label class="field"><span>Label decimals</span><input id="digits" type="number" min="0" max="5" step="1" value="2"></label><label class="field"><span>Level order</span><select id="sort"><option value="file">CSV order</option><option value="alpha">Alphabetical</option></select></label></div>
+ <p id="layer-hint" class="hint">Choose a figure, then add compatible layers.</p>
+</div></details>
+<details class="panel"><summary>Colour and appearance</summary><div class="panel-body">
+ <label class="field"><span>Theme</span><select id="theme"><option value="apa">APA Style</option><option value="journal" selected>Journal Style</option><option value="poster">Conference Poster</option><option value="presentation">Presentation Style</option><option value="dark">Dark Mode</option></select></label>
+ <label class="field"><span>Palette</span><select id="palette"><option value="safe">Colour blind safe</option><option value="apa">APA palette</option><option value="grey">Greyscale</option><option value="custom">Custom palette</option></select></label>
+ <div id="colours" class="colours"></div>
+ <label class="field"><span>Font</span><select id="font"><option value="Arial">Arial</option><option value="Helvetica">Helvetica</option><option value="Times New Roman">Times New Roman</option><option value="Georgia">Georgia</option></select></label>
+ <div class="row"><label class="field"><span>Font size</span><input id="fontSize" type="number" min="12" max="40" value="18"></label><label class="field"><span>Figure width</span><select id="width"><option value="900">900 px</option><option value="1100" selected>1100 px</option><option value="1280">1280 px</option><option value="1600">1600 px</option></select></label></div>
+ <label class="slider-label" for="opacity">Transparency <output id="opacity-out">70%</output></label><input class="slider" id="opacity" type="range" min="10" max="100" step="5" value="70">
+ <label class="slider-label" for="pointSize">Point size <output id="pointSize-out">4</output></label><input class="slider" id="pointSize" type="range" min="1" max="10" step=".5" value="4">
+ <label class="slider-label" for="lineWidth">Line thickness <output id="lineWidth-out">1.5</output></label><input class="slider" id="lineWidth" type="range" min=".5" max="4" step=".25" value="1.5">
+ <label class="slider-label" for="smoothing">Density smoothing <output id="smoothing-out">1.0</output></label><input class="slider" id="smoothing" type="range" min=".4" max="2" step=".1" value="1">
+</div></details>
+<details class="panel"><summary>Titles and axes</summary><div class="panel-body">
+ <label class="field"><span>Figure title</span><input id="title" type="text" maxlength="220" placeholder="Title"></label>
+ <label class="field"><span>Subtitle</span><input id="subtitle" type="text" maxlength="300" placeholder="Optional subtitle"></label>
+ <label class="field"><span>X axis title</span><input id="xTitle" type="text" maxlength="120" placeholder="Use factor name"></label>
+ <label class="field"><span>Y axis title</span><input id="yTitle" type="text" maxlength="120" placeholder="Use outcome name"></label>
+ <div class="row"><label class="field"><span>First X category</span><input id="xMin" type="number" min="1" step="1" placeholder="First"></label><label class="field"><span>Last X category</span><input id="xMax" type="number" min="1" step="1" placeholder="Last"></label></div>
+ <div class="row"><label class="field"><span>X tick interval</span><input id="xStep" type="number" min="1" step="1" value="1"></label><label class="field"><span>X label angle</span><select id="angle"><option value="0">0°</option><option value="30">30°</option><option value="45">45°</option><option value="90">90°</option></select></label></div>
+ <label class="field"><span>Figure note</span><textarea id="note" maxlength="450" placeholder="Optional caption or note"></textarea></label>
+ <button id="autoAxes" class="button wide" type="button">Reset axes to automatic</button>
+</div></details>
+<details class="panel" open><summary>Y axis</summary><div class="panel-body">
+ <label class="field"><span>Scaling</span><select id="yScale"><option value="auto">Automatic scaling</option><option value="manual">Manual scale</option></select></label>
+ <div class="row"><label class="field"><span>Minimum Y value</span><input id="yMin" type="text" inputmode="decimal" spellcheck="false" placeholder="Automatic"></label><label class="field"><span>Maximum Y value</span><input id="yMax" type="text" inputmode="decimal" spellcheck="false" placeholder="Automatic"></label></div>
+ <label class="field"><span>Tick interval</span><input id="yStep" type="text" inputmode="decimal" spellcheck="false" placeholder="Automatic"></label>
+ <div class="row"><label class="field"><span>Decimal places</span><select id="yDigits"><option value="auto">Automatic</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label><label class="field"><span>Gridline density</span><select id="gridDensity"><option value="1">Every tick</option><option value="2">Every second tick</option><option value="3">Every third tick</option><option value="4">Every fourth tick</option></select></label></div>
+ <p class="hint">Manual bounds may omit observations. Bars require zero in their scale. Use decimal points or commas, for example 0.25 or 0,25. Settings apply to all figure views and exports.</p>
+</div></details>
+<details class="panel"><summary>Manual statistical annotations</summary><div class="panel-body">
+ <label class="check"><input id="annotationEnabled" type="checkbox"><span>Add statistical annotation</span></label>
+ <p class="hint">Enter results from your own analysis. This application does not calculate tests or significance. Drag a bracket vertically, or set its height below. Endpoints stay attached to the selected groups.</p>
+ <fieldset id="annotation-fields"><legend class="sr-only">Annotation editor</legend>
+ <label class="field"><span>Annotation</span><select id="annotation-list"><option value="">New annotation</option></select></label>
+ <label class="field"><span>First plotted group</span><select id="annotation-a"></select></label><label class="field"><span>Second plotted group</span><select id="annotation-b"></select></label>
+ <label class="field"><span>Label</span><select id="annotation-label"><option>*</option><option>**</option><option>***</option><option>****</option><option>ns</option><option>p &lt; .05</option><option>p &lt; .01</option><option>p &lt; .001</option><option value="custom">Custom text</option></select></label>
+ <label class="field"><span>Custom text</span><input id="annotation-custom" type="text" maxlength="100"></label>
+ <label class="field"><span>Bracket height · Y units</span><input id="annotation-y" type="number" step="any" placeholder="Above observations"></label>
+ <div class="row"><button class="button primary" id="annotation-save" type="button">Add bracket</button><button class="button" id="annotation-delete" type="button">Delete bracket</button></div>
+ <button class="button wide" id="annotation-new" type="button" style="margin-top:10px">Add another annotation</button><div class="field-title" style="margin-top:16px">Saved annotations</div><div id="annotation-items" class="annotation-items"></div><div id="annotation-message" class="hint" role="status"></div>
+ </fieldset>
+</div></details>
+<details class="panel"><summary>Export settings</summary><div class="panel-body">
+ <label class="field"><span>PNG width</span><select id="resolution"><option value="2200">2200 pixels</option><option value="3300" selected>3300 pixels</option><option value="4400">4400 pixels</option><option value="6600">6600 pixels</option></select></label>
+ <label class="check"><input id="includeData" type="checkbox" checked><span>Include data in saved HTML</span></label><p class="hint">A standalone HTML can retain your data and settings. SVG exports are entirely vector based and suitable for PDF preparation.</p>
+ <button id="resetStyle" class="button wide" type="button">Reset figure styling</button>
+</div></details>
+</aside>
+<section class="workspace" aria-label="Figure workspace">
+ <div class="workspace-top"><h2>Your figure</h2><span id="status" class="status">Ready to import</span></div>
+ <div class="figure-card"><div class="toolbar"><div class="view" hidden><label for="view">Display</label><select id="view"><option value="f1">Factor 1</option><option value="f2">Factor 2</option><option value="interaction">Interaction</option></select></div><div class="export-actions"><button id="expand" class="button" type="button">View large</button><button id="svg" class="button" type="button">SVG</button><button id="png" class="button" type="button">PNG</button><button id="pngHigh" class="button" type="button">High resolution PNG</button><button id="pngTransparent" class="button" type="button">Transparent PNG</button><button id="copy" class="button" type="button">Copy figure</button><button id="vector" class="button" type="button">PDF quality SVG</button><button id="html" class="button primary" type="button">Save HTML</button></div></div>
+ <div id="view-tabs" class="view-tabs" role="tablist" aria-label="Figure views"></div><p id="view-description" class="view-description"></p><div class="plot-scroll"><div id="plot"><div class="empty"><div class="illustration" aria-hidden="true"><span></span><span></span><span></span></div><h2>Clear figures.<br>Your own data.</h2><p>Import a CSV, select one outcome and up to two factors, then explore the layers that best show your observations.</p><button id="empty-demo" type="button" class="button primary">Explore example data</button></div></div></div><div class="figure-footer">Descriptive visualisation only. Error bars use the selected descriptive measure; no statistical tests are performed.</div></div>
+ <div id="plot-error" class="error" role="alert"></div><div id="message" class="message" role="status" aria-live="polite"></div><div id="metadata" class="metadata"></div><div id="data-notes" class="info" hidden></div>
+ <details class="panel data-details"><summary>Data preview and column types</summary><div class="panel-body"><div id="column-types" class="columns"></div><div id="preview" class="table-scroll"></div></div></details>
+ <details class="panel help"><summary>Data format and figure guidance</summary><div class="panel-body"><p><strong>JAMOVI:</strong> export your data as CSV. Select a numeric outcome and categorical factors. Numeric group codes such as 1, 2 and 3 can be used as factor levels.</p><p><strong>Repeated measures:</strong> use long format, with one row per participant per condition. Assign the participant ID and explicitly mark the repeated factor as Within subjects to connect matching observations. Reshape wide repeated measures data before import. Both factors may be Within subjects. In the interaction view, choose which factor participant lines connect across; the other factor is held constant. Main effect views automatically connect the factor displayed on the X axis.</p><p><strong>Main effects:</strong> a main effect view shows one factor averaged across the other selected factor. These observed marginal means describe the uploaded sample; they are not fitted or model adjusted means.</p><p><strong>Marginal means:</strong> in a repeated design, trial rows are first averaged within each participant and condition, then available conditions are averaged within each participant for a main effect. Participants contribute equally within each displayed group. In a between subjects design without IDs, each row contributes equally. Unequal group sizes give sample weighted marginal means across between subjects groups.</p><p><strong>Interaction plots:</strong> each combination of factor levels is shown separately. Nothing is collapsed across either factor. Lines between means help you compare the patterns across conditions.</p><p><strong>Observation units:</strong> without an ID, each valid row is an observation. With an ID, each displayed point is a participant average. Missing conditions are not imputed. Data notes identify incomplete repeated observations.</p><p><strong>Error bars:</strong> choose mean ± SD, mean ± SE, or an approximate 95% confidence interval given by mean ± 1.96 × SE. SE = SD / √n, where n is the number of observation units in the displayed group. The original Student t interval remains available and uses its critical value instead of 1.96. All measures require at least two observation units. In repeated designs, calculations use participant averages within the displayed condition. These are not intervals for paired differences.</p><p><strong>Distributions:</strong> boxes show quartiles, a median and whiskers within 1.5 times the interquartile range. Violin and raincloud layers use kernel density estimates with equal maximum width, trimmed to the observed range. A density is omitted for constant groups or groups with fewer than two observations.</p><p><strong>Exports:</strong> SVG preserves editable vector shapes and text. The PDF quality SVG uses the same vector geometry and can be opened in illustration or presentation software before PDF export. PNG exports include a standard size, the chosen high resolution size, a transparent background option and clipboard copying where the browser permits it. Manual brackets and custom axes are included. Saved HTML can retain the complete project without a network connection.</p></div></details>
+</section>
+</main>
+<footer class="footer">Figure Studio is a local visualisation tool for psychology students. Uploaded files are processed on your device. No inferential tests, assumption checks or interpretations are generated. Any comparison annotations are supplied manually by the user.</footer>
+<dialog id="large"><div class="close-row"><button id="closeLarge" type="button" class="button">Close preview</button></div><div id="large-plot"></div></dialog>
+<script id="saved-project" type="application/json">null</script>
+<script>
+'use strict';
+
+/* Data parser */
+const CSV={
+ missing(v){return /^(?:|NA|N\/A|NAN|NULL|\.)$/i.test(String(v).trim());},
+ number(v,decimal='.'){
+  let s=String(v).trim();if(this.missing(s))return null;
+  if(decimal===',')s=s.replace(',','.');
+  if(!/^[+\-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+\-]?\d+)?$/i.test(s))return null;
+  const n=Number(s);return Number.isFinite(n)?n:null;
+ },
+ matrix(text,delimiter){
+  text=String(text).replace(/^\uFEFF/,'');const rows=[];let row=[],cell='',quoted=false,closed=false;
+  for(let i=0;i<text.length;i++){
+   const c=text[i];
+   if(quoted){if(c==='"'){if(text[i+1]==='"'){cell+='"';i++;}else{quoted=false;closed=true;}}else cell+=c;continue;}
+   if(c==='"'){if(cell.trim()||closed)throw Error('Unexpected quotation mark near row '+(rows.length+1)+'.');quoted=true;cell='';continue;}
+   if(c===delimiter){row.push(cell);cell='';closed=false;continue;}
+   if(c==='\n'||c==='\r'){if(c==='\r'&&text[i+1]==='\n')i++;row.push(cell);if(row.some(v=>v.trim()!==''))rows.push(row);row=[];cell='';closed=false;continue;}
+   if(closed&&c.trim())throw Error('Unexpected text after a quoted value near row '+(rows.length+1)+'.');
+   if(!closed)cell+=c;
+  }
+  if(quoted)throw Error('A quoted value is not closed. Check the CSV export.');
+  row.push(cell);if(row.some(v=>v.trim()!==''))rows.push(row);return rows;
+ },
+ detect(text){
+  const candidates=[',',';','\t'];let best=',',bestScore=-Infinity;
+  for(const d of candidates){try{const m=this.matrix(text.slice(0,200000),d).slice(0,30);if(!m.length)continue;const width=m[0].length;const consistency=m.filter(r=>r.length===width).length/m.length;const score=(width>1?100:0)+consistency*20+Math.min(width,30);if(score>bestScore){bestScore=score;best=d;}}catch(e){
+   // A sample ending inside a quote is retried with complete text.
+   try{const m=this.matrix(text,d).slice(0,20),width=m[0]?.length||0;const score=(width>1?100:0)+(m.filter(r=>r.length===width).length/(m.length||1))*20+Math.min(width,30);if(score>bestScore){bestScore=score;best=d;}}catch(_){}
+  }}return best;
+ },
+ parse(text,choice='auto'){
+  const delimiter=choice==='auto'?this.detect(text):choice==='tab'?'\t':choice;
+  const matrix=this.matrix(text,delimiter);if(matrix.length<2)throw Error('Include a header row and at least one data row.');
+  const names=new Set(),warnings=[];
+  const headers=matrix[0].map((v,i)=>{let name=v.trim()||'Column '+(i+1),base=name,k=2;while(names.has(name))name=base+' ('+(k++)+')';if(name!==v.trim())warnings.push('Blank or duplicate headers were given unique names.');names.add(name);return name;});
+  const rows=matrix.slice(1);for(let i=0;i<rows.length;i++)if(rows[i].length!==headers.length)throw Error('Row '+(i+2)+' has '+rows[i].length+' fields; the header has '+headers.length+'. Check the delimiter and quotation marks.');
+  return {headers,rows,delimiter,warnings:[...new Set(warnings)]};
+ }
+};
+
+/* Variable detection and descriptive summaries */
+const Desc={
+ mean(a){let m=0;for(let i=0;i<a.length;i++)m+=(a[i]-m)/(i+1);return m;},
+ sd(a){if(a.length<2)return null;let m=0,s=0;for(let i=0;i<a.length;i++){const delta=a[i]-m;m+=delta/(i+1);s+=delta*(a[i]-m);}return Math.sqrt(Math.max(0,s/(a.length-1)));},
+ quantile(sorted,q){if(!sorted.length)return null;const x=(sorted.length-1)*q,i=Math.floor(x);return sorted[i]+(sorted[Math.ceil(x)]-sorted[i])*(x-i);},
+ logGamma(z){const p=[676.5203681218851,-1259.1392167224028,771.3234287776531,-176.6150291621406,12.507343278686905,-.13857109526572012,9.984369578019572e-6,1.5056327351493116e-7];if(z<.5)return Math.log(Math.PI)-Math.log(Math.sin(Math.PI*z))-this.logGamma(1-z);z--;let x=.9999999999998099;for(let i=0;i<p.length;i++)x+=p[i]/(z+i+1);let t=z+p.length-.5;return .5*Math.log(2*Math.PI)+(z+.5)*Math.log(t)-t+Math.log(x);},
+ betaFraction(a,b,x){const tiny=1e-300;let c=1,d=1-(a+b)*x/(a+1);if(Math.abs(d)<tiny)d=tiny;d=1/d;let h=d;for(let m=1;m<=240;m++){let aa=m*(b-m)*x/((a+2*m-1)*(a+2*m));d=1+aa*d;if(Math.abs(d)<tiny)d=tiny;c=1+aa/c;if(Math.abs(c)<tiny)c=tiny;d=1/d;h*=d*c;aa=-(a+m)*(a+b+m)*x/((a+2*m)*(a+2*m+1));d=1+aa*d;if(Math.abs(d)<tiny)d=tiny;c=1+aa/c;if(Math.abs(c)<tiny)c=tiny;d=1/d;const delta=d*c;h*=delta;if(Math.abs(delta-1)<1e-12)break;}return h;},
+ beta(x,a,b){if(x<=0)return 0;if(x>=1)return 1;const front=Math.exp(this.logGamma(a+b)-this.logGamma(a)-this.logGamma(b)+a*Math.log(x)+b*Math.log1p(-x));return x<(a+1)/(a+b+2)?front*this.betaFraction(a,b,x)/a:1-front*this.betaFraction(b,a,1-x)/b;},
+ tCache:new Map(),
+ t95(df){if(this.tCache.has(df))return this.tCache.get(df);let low=0,high=16;const cumulative=x=>1-.5*this.beta(df/(df+x*x),df/2,.5);while(cumulative(high)<.975)high*=2;for(let k=0;k<65;k++){const mid=(low+high)/2;if(cumulative(mid)<.975)low=mid;else high=mid;}const result=(low+high)/2;this.tCache.set(df,result);return result;},
+ summary(values){const sorted=[...values].sort((a,b)=>a-b),n=values.length,mean=this.mean(values),sd=this.sd(values),q1=this.quantile(sorted,.25),q3=this.quantile(sorted,.75),median=this.quantile(sorted,.5),iqr=q3-q1,inside=sorted.filter(v=>v>=q1-1.5*iqr&&v<=q3+1.5*iqr);const half=n>=2?this.t95(n-1)*sd/Math.sqrt(n):null;return {n,mean,sd,median,q1,q3,low:inside[0],high:inside.at(-1),min:sorted[0],max:sorted.at(-1),ciLow:half===null?null:mean-half,ciHigh:half===null?null:mean+half};},
+ detect(data,decimal){return data.headers.map((name,index)=>{const vals=data.rows.map(r=>r[index]).filter(v=>!CSV.missing(v)),numeric=vals.filter(v=>CSV.number(v,decimal)!==null).length,unique=new Set(vals.map(v=>v.trim())).size;return {name,index,count:vals.length,unique,numeric,eligible:numeric>0&&numeric/vals.length>=.8,type:!vals.length?'Empty':numeric===vals.length?'Numeric':numeric>0&&numeric/vals.length>=.8?'Numeric with text':'Categorical'};});}
+};
+
+/* Theme engine */
+const Themes={
+ apa:{bg:'#ffffff',ink:'#161616',muted:'#555555',grid:'#e4e4e4',font:'Times New Roman',size:18,width:1100,plotHeight:410,gridDefault:false},
+ journal:{bg:'#ffffff',ink:'#263b34',muted:'#5d6e65',grid:'#e6ece7',font:'Arial',size:18,width:1100,plotHeight:430,gridDefault:true},
+ poster:{bg:'#ffffff',ink:'#18392d',muted:'#51695a',grid:'#e0e9e0',font:'Arial',size:26,width:1600,plotHeight:560,gridDefault:true},
+ presentation:{bg:'#ffffff',ink:'#18392d',muted:'#526b5a',grid:'#e4ebe3',font:'Arial',size:23,width:1280,plotHeight:470,gridDefault:false},
+ dark:{bg:'#1e3029',ink:'#e6eee7',muted:'#b0c6b7',grid:'#3b5144',font:'Arial',size:21,width:1280,plotHeight:470,gridDefault:true}
+};
+const Palettes={safe:['#0072B2','#D55E00','#009E73','#CC79A7','#E69F00','#56B4E9','#8A6D00','#333333'],apa:['#292929','#777777','#B1B1B1','#4F4F4F','#D0D0D0','#969696'],grey:['#202020','#666666','#A0A0A0','#444444','#BDBDBD','#808080']};
+const defaults=()=>({dv:'',f1:'',f2:'',id:'',role1:'',role2:'',trajectoryFactor:'f1',repeated:'',view:'f1',type:'dot',mean:true,median:false,ci:true,errorType:'ci',boxes:false,observations:false,jitter:true,violin:false,rain:false,connections:false,labels:false,legend:true,grid:true,labelMode:'mean',digits:2,sort:'file',theme:'journal',palette:'safe',font:'Arial',fontSize:18,width:1100,opacity:70,pointSize:4,lineWidth:1.5,smoothing:1,title:'',subtitle:'',xTitle:'',yTitle:'',yMin:'',yMax:'',yStep:'',xMin:'',xMax:'',xStep:1,angle:0,note:'',resolution:3300,includeData:true,custom:Object.create(null),beeswarm:false,trajectories:false,participantPoints:false,yScale:'auto',yDigits:'auto',gridDensity:1,annotationEnabled:false,annotations:[]});
+const $=id=>document.getElementById(id);
+const escapeText=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const keyOf=(...xs)=>JSON.stringify(xs);
+const hasColumn=v=>v!==''&&v!==null&&Number.isInteger(Number(v));
+const nameOf=(data,v)=>hasColumn(v)&&data?data.headers[Number(v)]||'':'';
+const colourValid=s=>/^#[\da-f]{6}$/i.test(s);
+function colourFor(index,label,s){if(s.palette==='custom'&&colourValid(s.custom[label]||''))return s.custom[label];let p=Palettes[s.palette]||Palettes.safe;if(s.theme==='dark')p=s.palette==='safe'||s.palette==='custom'?['#56B4E9','#F39B63','#5BCAA3','#DFA1CA','#F0C052','#A6DBF2','#E5D292','#EEEEEE']:['#EEEEEE','#BDBDBD','#919191','#D7D7D7','#777777','#A5A5A5'];return p[index%p.length];}
+function axisNumber(value){const text=String(value).trim();return /^[+-]?(?:\d+(?:[.,]\d*)?|[.,]\d+)(?:e[+-]?\d+)?$/i.test(text)?Number(text.replace(',','.')):NaN;}
+function errorBounds(g,s){
+ const type=s.errorType||'ci',se=g.sd===null?null:g.sd/Math.sqrt(g.n),half=g.n<2||se===null?null:type==='sd'?g.sd:type==='se'?se:type==='t'?Desc.t95(g.n-1)*se:1.96*se;
+ return {ciLow:half===null?null:g.mean-half,ciHigh:half===null?null:g.mean+half};
+}
+function errorNote(s){return s.errorType==='sd'?'Error bars: mean ± 1 sample standard deviation within each displayed condition.':s.errorType==='se'?'Error bars: mean ± 1 standard error (SD / √n).':s.errorType==='t'?'Error bars: pointwise 95% Student t confidence intervals for displayed means.':'Error bars: approximate pointwise 95% confidence intervals (mean ± 1.96 × SE; SE = SD / √n).';}
+function withinFactors(s){return ['f1','f2'].filter(k=>hasColumn(s[k])&&s[k==='f1'?'role1':'role2']==='within');}
+function withinFactor(s){return withinFactors(s)[0]||'';}
+function normalise(s,changed=''){
+ s={...defaults(),...s,custom:Object.assign(Object.create(null),s.custom||{}),annotations:Array.isArray(s.annotations)?s.annotations:[]};
+ if(hasColumn(s.dv)&&s.dv===s.f1)s.f1='';if(hasColumn(s.f2)&&(s.dv===s.f2||s.f1===s.f2))s.f2='';if(hasColumn(s.id)&&[s.dv,s.f1,s.f2].includes(s.id))s.id='';
+ if(!hasColumn(s.f1))s.role1='';if(!hasColumn(s.f2))s.role2='';const within=withinFactors(s);if(!within.includes(s.trajectoryFactor))s.trajectoryFactor=within[0]||'f1';s.repeated=withinFactor(s);
+ const two=hasColumn(s.f1)&&hasColumn(s.f2);
+ if(!two){s.view=hasColumn(s.f2)?'f2':'f1';if(s.type==='interaction')s.type='dot';}
+ if(changed==='view'&&s.view!=='interaction'&&s.type==='interaction')s.type='dot';
+ if(changed==='type'&&s.type==='interaction'&&two)s.view='interaction';
+ if(changed==='rain'&&s.rain)s.type='raincloud';
+ if(s.type==='raincloud'){s.rain=true;s.violin=false;s.boxes=true;s.observations=true;}else if(changed==='type')s.rain=false;
+ if(s.type==='violin')s.violin=true;if(s.type==='box')s.boxes=true;
+ if(s.type==='bar'||s.type==='interaction')s.mean=true;
+ if(!s.mean)s.ci=false;
+ if(!s.repeated||!hasColumn(s.id)){s.connections=false;s.trajectories=false;}
+ if(!s.observations)s.connections=false;
+ if(s.beeswarm)s.jitter=false;s.participantPoints=s.observations;
+ return s;
+}
+function layerRules(s,model){const paired=!!model?.pairPaths.length;return {mean:!['bar','interaction'].includes(s.type),median:true,ci:s.mean,boxes:!['box','raincloud'].includes(s.type),observations:s.type!=='raincloud',jitter:s.observations&&!s.beeswarm,beeswarm:s.observations,violin:!['violin','raincloud'].includes(s.type),rain:s.type!=='raincloud',connections:paired&&s.observations,trajectories:paired,participantPoints:!!withinFactor(s)&&hasColumn(s.id)&&s.type!=='raincloud',labels:true,legend:true,grid:true};}
+
+/* Explicit design and participant level data model */
+function modelFor(data,s){
+ if(!data||!hasColumn(s.dv))return null;
+ const factors=['f1','f2'].filter(k=>hasColumn(s[k])),two=factors.length===2,hasID=hasColumn(s.id);
+ for(const k of factors)if(!['between','within'].includes(s[k==='f1'?'role1':'role2']))throw Error('Assign a Between subjects or Within subjects role to '+nameOf(data,s[k])+'.');
+ const within=factors.filter(k=>s[k==='f1'?'role1':'role2']==='within');
+ if(within.length&&!hasID)throw Error('Assign a Participant ID for a Within subjects factor. Matching rows must be identified explicitly.');
+ const active=s.view==='f2'&&hasColumn(s.f2)?'f2':hasColumn(s.f1)?'f1':factors[0],interaction=two&&s.view==='interaction',repeated=interaction?(within.includes(s.trajectoryFactor)?s.trajectoryFactor:within[0]||''):(within.includes(active)?active:'');
+ const valid=[],levels={f1:[],f2:[]},betweenIDs=new Map();let omitted=0;
+ for(let i=0;i<data.rows.length;i++){
+  const row=data.rows[i],y=CSV.number(row[Number(s.dv)],App.decimal),values={f1:hasColumn(s.f1)?String(row[Number(s.f1)]).trim():'All observations',f2:hasColumn(s.f2)?String(row[Number(s.f2)]).trim():''},id=hasID?String(row[Number(s.id)]).trim():'';
+  if(y===null||factors.some(k=>CSV.missing(values[k]))||(hasID&&CSV.missing(id))){omitted++;continue;}
+  for(const k of factors)if(!levels[k].includes(values[k]))levels[k].push(values[k]);
+  if(hasID){const signature=keyOf(...factors.filter(k=>!within.includes(k)).map(k=>values[k]));if(betweenIDs.has(id)&&betweenIDs.get(id)!==signature)throw Error('Participant '+id+' occurs in multiple levels of a Between subjects factor. Check the ID or factor roles.');betweenIDs.set(id,signature);}
+  valid.push({y,id,source:i,values});
+ }
+ if(!valid.length)throw Error('No complete numeric observations remain. Check missing values, decimal symbol and assigned columns.');
+ const cats=active?levels[active].slice():['All observations'],series=interaction?levels.f2.slice():['All'];
+ if(s.sort==='alpha'){cats.sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));series.sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));}
+ if(cats.length*series.length>600)throw Error('More than 600 possible cells. Choose categorical factors rather than an identifier.');
+ // Average trial rows within participant and full condition before collapsing repeated conditions.
+ const cells=new Map();
+ for(const r of valid){const key=hasID?keyOf(r.id,...factors.map(k=>r.values[k])):keyOf(r.source);if(!cells.has(key))cells.set(key,[]);cells.get(key).push(r);}
+ const units=[...cells.values()].map(rows=>({...rows[0],y:Desc.mean(rows.map(r=>r.y)),rows:rows.length})),map=new Map();
+ for(const r of units){const category=active?r.values[active]:'All observations',group=interaction?r.values.f2:'All',key=keyOf(category,group);if(!map.has(key))map.set(key,{category,series:group,units:new Map()});const g=map.get(key),unit=hasID?r.id:'row:'+r.source;if(!g.units.has(unit))g.units.set(unit,[]);g.units.get(unit).push(r);}
+ const groups=[...map.values()].map(g=>{const records=[...g.units.entries()].map(([id,rows])=>({id,y:Desc.mean(rows.map(r=>r.y)),source:rows[0].source,rows:rows.reduce((n,r)=>n+r.rows,0)}));return {key:keyOf(g.category,g.series),category:g.category,series:g.series,categoryIndex:cats.indexOf(g.category),seriesIndex:series.indexOf(g.series),records,...Desc.summary(records.map(r=>r.y))};});
+ const first=s.xMin===''?1:Number(s.xMin),last=s.xMax===''?cats.length:Number(s.xMax);
+ if(!Number.isInteger(first)||!Number.isInteger(last)||first<1||last>cats.length||last<first)throw Error('X limits must be whole category numbers from 1 to '+cats.length+'.');
+ const visibleCategories=cats.slice(first-1,last),visibleGroups=groups.filter(g=>visibleCategories.includes(g.category)),pathMap=new Map();
+ if(hasID&&repeated&&(interaction||active===repeated))for(const g of visibleGroups)for(const r of g.records){const stratum=interaction?(repeated==='f1'?g.series:g.category):'all',key=keyOf(r.id,stratum);if(!pathMap.has(key))pathMap.set(key,[]);pathMap.get(key).push({g,r});}
+ const pairPaths=[...pathMap.values()].filter(a=>a.length>1).map(a=>a.sort((x,y)=>interaction&&repeated==='f2'?x.g.seriesIndex-y.g.seriesIndex:x.g.categoryIndex-y.g.categoryIndex));
+ const notes=[],other=two?(active==='f1'?'f2':'f1'):'',xName=active?nameOf(data,s[active]):'Observations',title=interaction?nameOf(data,s.f1)+' × '+nameOf(data,s.f2)+' Interaction':active?xName+(two?' Main Effect':''):'Outcome distribution',explanation=interaction?'Interaction plot: cell means shown separately.':two?'Averaged across '+nameOf(data,s[other])+'.':'Observed distribution of '+nameOf(data,s.dv)+'.';
+ notes.push(hasID?'Each observation unit is a participant average within the displayed group.':'Each observation unit is one valid CSV row.');
+ if(two&&!interaction)notes.push('Averaged across '+nameOf(data,s[other])+'. These are observed, sample weighted marginal means, not model adjusted estimates.');
+ if(within.length){const counts=new Map(),expected=within.reduce((n,k)=>n*levels[k].length,1);for(const r of units){if(!counts.has(r.id))counts.set(r.id,new Set());counts.get(r.id).add(keyOf(...within.map(k=>r.values[k])));}const incomplete=[...counts.values()].filter(v=>v.size<expected).length;if(incomplete)notes.push(incomplete+' participants have incomplete repeated conditions. Available conditions are used; missing observations are not imputed.');}
+
+ if(hasID&&valid.length>cells.size)notes.push('Trial rows were averaged within each participant and full condition first. Participants contribute equally within displayed groups.');
+ if(hasID&&two&&!interaction&&within.some(k=>k!==active))notes.push('Available repeated condition means are averaged within each participant before the group summary.');
+ if(omitted)notes.push(omitted+' rows omitted because an assigned field was missing or nonnumeric.');
+ if(s.ci&&visibleGroups.some(g=>g.n<2))notes.push('Intervals are unavailable where fewer than two observation units remain.');
+ return {groups:visibleGroups,allGroups:groups,categories:visibleCategories,allCategories:cats,series,colourLevels:interaction?series:cats,interaction,pairPaths,repeated,repeatedName:repeated?nameOf(data,s[repeated]):'',omitted,validRows:valid.length,plottedUnits:visibleGroups.reduce((n,g)=>n+g.n,0),notes,xName,seriesName:interaction?nameOf(data,s.f2):'',yName:nameOf(data,s.dv),title,explanation,signature:keyOf(s.dv,s.f1,s.f2,s.id,s.role1,s.role2,s.view)};
+}
+function visibleAnnotations(model,s){return s.annotationEnabled?s.annotations.filter(a=>a.signature===model.signature&&Number.isFinite(a.y)&&model.groups.some(g=>g.key===a.a)&&model.groups.some(g=>g.key===a.b)&&a.a!==a.b):[];}
+
+/* SVG plot engine */
+const Plot={
+ widthOf(text,size){return [...String(text)].reduce((n,c)=>n+("ilI.,:;'!| ".includes(c)?.28:'mwMW@%'.includes(c)?.87:.55)*size,0);},
+ wrap(text,width,size){const words=String(text).split(/\s+/),lines=[];let line='';for(let word of words){if(!word)continue;while(this.widthOf(word,size)>width&&word.length>1){if(line){lines.push(line);line='';}let k=1;while(k<word.length&&this.widthOf(word.slice(0,k+1),size)<width)k++;lines.push(word.slice(0,k));word=word.slice(k);}if(line&&this.widthOf(line+' '+word,size)>width){lines.push(line);line=word;}else line=(line+' '+word).trim();}if(line)lines.push(line);return lines;},
+ hash(value){let h=2166136261;for(const c of String(value)){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return ((h>>>0)%10007)/10006-.5;},
+ nice(step){const p=10**Math.floor(Math.log10(step)),q=step/p;return (q<=1?1:q<=2?2:q<=2.5?2.5:q<=5?5:10)*p;},
+ format(v,step){if(v===0||Math.abs(v)<Math.abs(step)*1e-10)return '0';if(Math.abs(v)>=1e6||Math.abs(v)<1e-4)return v.toExponential(2).replace('-','−');let digits=0;while(digits<8&&Math.abs(step*10**digits-Math.round(step*10**digits))>1e-7)digits++;return Number(v.toFixed(digits)).toLocaleString('en-GB',{maximumFractionDigits:digits}).replace('-','−');},
+ density(records,smoothing){const values=records.map(r=>r.y),sorted=[...values].sort((a,b)=>a-b),spread=Desc.sd(values);if(values.length<2||!spread)return null;const iq=Desc.quantile(sorted,.75)-Desc.quantile(sorted,.25),sigma=iq>0?Math.min(spread,iq/1.34):spread,bw=.9*sigma*values.length**(-.2)*smoothing;if(!(bw>0))return null;const min=sorted[0],max=sorted.at(-1),points=[];for(let i=0;i<=96;i++){const y=min+(max-min)*i/96;let z=0;for(const v of values){const u=(y-v)/bw;z+=Math.exp(-.5*u*u);}points.push({y,d:z/(values.length*bw*Math.sqrt(2*Math.PI))});}const peak=Math.max(...points.map(p=>p.d));return points.map(p=>({y:p.y,w:p.d/peak}));},
+ render(model,s){
+  model={...model,groups:model.groups.map(g=>({...g,...errorBounds(g,s)}))};
+  const theme=Themes[s.theme]||Themes.journal,fs=Number(s.fontSize),alpha=Number(s.opacity)/100,lw=Number(s.lineWidth),pointSize=Number(s.pointSize),inter=model.interaction,rain=s.type==='raincloud',isLine=s.type==='interaction';
+  if(!(fs>=12&&fs<=40))throw Error('Choose a font size from 12 to 40.');
+  if(!Number.isInteger(Number(s.digits))||Number(s.digits)<0||Number(s.digits)>5)throw Error('Choose a label precision from zero to five decimal places.');
+  if(!(Number(s.xStep)>=1&&Number.isInteger(Number(s.xStep))))throw Error('X tick interval must be a positive whole number.');
+  const W=Math.max(Number(s.width),model.categories.length*(inter?Math.min(260,70+model.series.length*40):90)+150),L=Math.max(94,fs*4.9),R=48,plotW=W-L-R;
+  const title=s.title||model.title,subtitle=s.subtitle?s.subtitle+' · '+model.explanation:model.explanation,titleLines=this.wrap(title,plotW,fs*1.4),subLines=this.wrap(subtitle,plotW,fs*.9);
+  let cursor=35;const texts=[];titleLines.forEach(line=>{texts.push({x:L,y:cursor+fs*1.15,text:line,size:fs*1.4,weight:'700'});cursor+=fs*1.63;});if(subLines.length)cursor+=8;subLines.forEach(line=>{texts.push({x:L,y:cursor+fs*.9,text:line,size:fs*.9,fill:theme.muted});cursor+=fs*1.25;});
+  const legendItems=[];if(s.legend){let x=L,y=cursor+fs+15,rowHeight=fs*1.65;for(let i=0;i<model.colourLevels.length;i++){const label=model.colourLevels[i],lines=this.wrap(label,Math.min(plotW-35,285),fs*.82),space=Math.max(...lines.map(line=>this.widthOf(line,fs*.82)))+45;if(x+space>W-R&&x>L){x=L;y+=rowHeight;rowHeight=fs*1.65;}legendItems.push({x,y,label,lines,index:i});rowHeight=Math.max(rowHeight,lines.length*fs+fs*.5);x+=space;}cursor=y+rowHeight-fs*.4;}
+  const top=cursor+28,plotH=theme.plotHeight,bottom=top+plotH;
+  const step=plotW/model.categories.length,spacing=inter?step/(model.series.length+1):0,cluster=inter?spacing*.62:Math.min(100,step*.36);
+  const X=i=>L+step*(i+.5),center=g=>X(model.categories.indexOf(g.category))+(inter?(g.seriesIndex-(model.series.length-1)/2)*spacing*(isLine?.45:1):0),cx=g=>center(g)+(rain?-cluster*.12:0);
+  const swarm=new Map(),pointX=(g,r)=>center(g)+(rain?-cluster*.78:0)+(s.beeswarm?(swarm.get(g.key)?.get(r.source)||0):s.jitter?this.hash(hasColumn(s.id)?r.id:r.source)*Math.min(cluster*.75,48):0);
+  const colour=g=>colourFor(inter?g.seriesIndex:model.allCategories.indexOf(g.category),inter?g.series:g.category,s);
+  const annotations=visibleAnnotations(model,s);let min=Infinity,max=-Infinity;
+  for(const g of model.groups){const extremes=s.observations||s.connections||s.trajectories||s.boxes||s.violin||rain?[g.min,g.max]:[g.mean,s.median?g.median:g.mean];if(s.ci&&g.ciLow!==null)extremes.push(g.ciLow,g.ciHigh);for(const v of extremes){min=Math.min(min,v);max=Math.max(max,v);}}
+  if(!Number.isFinite(min)||!Number.isFinite(max)||!Number.isFinite(max-min))throw Error('The numeric range is too large to plot. Rescale the outcome values before import.');
+  if(s.yScale==='auto')for(const a of annotations){max=Math.max(max,a.y);min=Math.min(min,a.y);}if(s.type==='bar'){min=Math.min(0,min);max=Math.max(0,max);}let span=max-min;if(span===0)span=Math.abs(max)*.2||2;
+  const manual=s.yScale==='manual';const boundSpan=manual&&s.yMin!==''&&s.yMax!==''?axisNumber(s.yMax)-axisNumber(s.yMin):span;let tick=!manual||s.yStep===''?this.nice((boundSpan>0?boundSpan:span)/5):axisNumber(s.yStep);if(!(tick>0&&Number.isFinite(tick)))throw Error('Y tick interval must be positive.');
+  let ymin=!manual||s.yMin===''?Math.floor((min-(s.type==='bar'&&min===0?0:span*.08))/tick)*tick:axisNumber(s.yMin),ymax=!manual||s.yMax===''?Math.ceil((max+span*.12)/tick)*tick:axisNumber(s.yMax);
+  if(!(Number.isFinite(ymin)&&Number.isFinite(ymax)&&ymax>ymin))throw Error('The Y maximum must be greater than the Y minimum.');
+  if(s.type==='bar'&&(ymin>0||ymax<0))throw Error('Bar plot limits must include zero. Use a dot plot to show a restricted Y range.');
+  if((ymax-ymin)/tick>60)throw Error('The requested interval produces too many ticks. Increase the Y tick interval.');
+  if(!['auto','0','1','2','3','4','5'].includes(String(s.yDigits)))throw Error('Y decimal places must be automatic or zero to five.');
+  const Y=v=>bottom-(v-ymin)/(ymax-ymin)*plotH,angle=Number(s.angle),labelSize=fs*.83;
+  let crowded=false;
+  if(s.beeswarm&&s.observations)for(const g of model.groups){const offsets=new Map(),placed=[],distance=pointSize*1.3+1,limit=Math.min(cluster*.4,48);for(const r of g.records.slice().sort((a,b)=>a.y-b.y||a.source-b.source)){const y=Y(r.y);while(placed.length&&placed[0].y-y>distance)placed.shift();const candidates=[0];for(const p of placed){const dy=Math.abs(y-p.y);if(dy<distance){const dx=Math.sqrt(distance*distance-dy*dy);candidates.push(p.x-dx,p.x+dx);}}candidates.sort((a,b)=>Math.abs(a)-Math.abs(b));let x=candidates.find(x=>Math.abs(x)<=limit&&placed.every(p=>(x-p.x)**2+(y-p.y)**2>=distance*distance-.01));if(x===undefined){x=this.hash(r.source)*limit*2;crowded=true;}offsets.set(r.source,x);placed.push({x,y});}swarm.set(g.key,offsets);}
+
+  const labelLines=model.categories.map(label=>angle?[label]:this.wrap(label,Math.max(50,step-15),labelSize));
+  const xHeight=angle?Math.max(...model.categories.map(label=>this.widthOf(label,labelSize)))*Math.sin(angle*Math.PI/180)+35:Math.max(...labelLines.map(a=>a.length))*labelSize*1.25+22;
+  const xTitleLines=this.wrap(s.xTitle||model.xName,plotW,fs),yTitleLines=this.wrap(s.yTitle||model.yName,plotH-25,fs);
+  const notes=[];
+  if(s.ci)notes.push(errorNote(s)+(model.groups.some(g=>g.n<2)?' Omitted where n < 2.':''));
+  if(rain)notes.push('Clouds: density estimates. Boxes: median and quartiles. Points: observation units.');else if(s.violin)notes.push('Violin width shows a kernel density estimate, scaled to equal maximum width and trimmed to the data range.');
+  if(s.boxes&&!rain)notes.push('Boxes: quartiles and median; whiskers: observed values within 1.5 × IQR.');
+  if(s.mean&&s.type!=='bar'&&s.type!=='interaction')notes.push('Large markers: means.'+(s.median?' Short horizontal marks: medians.':''));else if(s.median)notes.push('Short horizontal marks: medians.');
+  if(s.observations)notes.push(hasColumn(s.id)?'Observation units are participant averages within each displayed group.':'Each individual point represents one valid CSV row.');
+  if(s.connections||s.trajectories)notes.push('Participant lines join matching IDs across '+model.repeatedName+'.'+(model.interaction?' The other factor is held constant.':' Participant averages are connected across the displayed levels.'));if(annotations.length)notes.push('Comparison annotations were entered manually by the user.');if(crowded)notes.push('Dense swarm points may overlap. Increase the figure width or reduce point size.');
+  if(isLine)notes.push('Coloured profile lines connect condition means. Series are slightly offset within categories for legibility.');
+  if(model.omitted)notes.push(model.omitted+' row'+(model.omitted===1?' omitted.':'s omitted.')+' See the data notes for details.');
+  if(s.note)notes.push(s.note);
+  const footSize=Math.max(10,fs*.65),footLines=notes.flatMap(n=>this.wrap(n,plotW,footSize)),footTop=bottom+xHeight+fs*(1.2*xTitleLines.length+1.3),H=footTop+footLines.length*footSize*1.35+23;
+  const out=[],add=x=>out.push(x),text=(x,y,label,size,extra='')=>add(`<text x="${x}" y="${y}" font-size="${size}" ${extra}>${escapeText(label)}</text>`),line=(x1,y1,x2,y2,stroke=theme.ink,width=lw,extra='')=>add(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${width}" ${extra}/>`),rect=(x,y,w,h,fill,extra='')=>add(`<rect x="${x}" y="${y}" width="${w}" height="${Math.max(0,h)}" fill="${fill}" ${extra}/>`);
+  const marker=(x,y,r,fill,index=0,extra='')=>{const common=`fill="${fill}" stroke="${theme.bg}" stroke-width="${Math.max(1,lw)}" ${extra}`;switch(index%4){case 1:rect(x-r,y-r,r*2,r*2,fill,`stroke="${theme.bg}" stroke-width="${Math.max(1,lw)}" ${extra}`);break;case 2:add(`<path d="M${x},${y-r*1.3} L${x+r*1.2},${y+r} L${x-r*1.2},${y+r} Z" ${common}/>`);break;case 3:add(`<path d="M${x},${y-r*1.4} L${x+r*1.15},${y} L${x},${y+r*1.4} L${x-r*1.15},${y} Z" ${common}/>`);break;default:add(`<circle cx="${x}" cy="${y}" r="${r}" ${common}/>`);}};
+  add(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="figure-title figure-description"><title id="figure-title">${escapeText(title)}</title><desc id="figure-description">${escapeText(s.type+' of '+model.yName+' grouped by '+model.xName+(inter?' and '+model.seriesName:'')+'. Descriptive visualisation.')}</desc><rect data-background="true" width="${W}" height="${H}" fill="${theme.bg}"/><g font-family="${escapeText(s.font)}" fill="${theme.ink}">`);
+  texts.forEach(t=>text(t.x,t.y,t.text,t.size,`fill="${t.fill||theme.ink}" font-weight="${t.weight||400}"`));
+  for(const item of legendItems){const colour=colourFor(item.index,item.label,s);if(s.type==='bar')rect(item.x,item.y-10,11,11,colour);else marker(item.x+5,item.y-4,5,colour,inter?item.index:0);item.lines.forEach((line,i)=>text(item.x+20,item.y+i*fs,line,fs*.82,`fill="${theme.muted}"`));}
+  const start=Math.ceil((ymin-tick*1e-9)/tick)*tick;for(let v=start,i=0;v<=ymax+tick*1e-8&&i<62;v+=tick,i++){const y=Y(v);if(s.grid&&i%Math.max(1,Number(s.gridDensity))===0)line(L,y,W-R,y,theme.grid,.8);line(L-5,y,L,y,theme.ink,lw);text(L-12,y+fs*.28,s.yDigits==='auto'?this.format(v,tick):(Math.abs(v)<tick*1e-9?0:v).toFixed(Number(s.yDigits)),fs*.8,'text-anchor="end"');}
+  line(L,top,L,bottom,theme.ink,lw);line(L,bottom,W-R,bottom,theme.ink,lw);
+  add(`<defs><clipPath id="data-clip"><rect x="${L}" y="${top}" width="${plotW}" height="${plotH}"/></clipPath></defs><g clip-path="url(#data-clip)">`);
+  if(s.type==='bar')for(const g of model.groups){const y0=Y(0),ym=Y(g.mean);rect(center(g)-cluster/2,Math.min(y0,ym),cluster,Math.abs(y0-ym),colour(g),`fill-opacity="${alpha}"`);}
+  if(s.violin||rain)for(const g of model.groups){const density=this.density(g.records,Number(s.smoothing));if(!density)continue;const x=center(g),bw=inter?Math.min(spacing*.43,50):Math.min(step*.24,90),base=rain?x+cluster*.28:x;const pts=rain?[[base,Y(density[0].y)],...density.map(p=>[base+p.w*bw,Y(p.y)]),[base,Y(density.at(-1).y)]]:[...density.map(p=>[x+p.w*bw,Y(p.y)]),...density.slice().reverse().map(p=>[x-p.w*bw,Y(p.y)])];add(`<path d="M${pts.map(p=>p.join(',')).join('L')}Z" fill="${colour(g)}" fill-opacity="${alpha*.35}" stroke="${colour(g)}" stroke-opacity=".55" stroke-width="${lw*.7}"/>`);}
+  if(s.connections||s.trajectories)for(const path of model.pairPaths)for(let i=1;i<path.length;i++){const a=path[i-1],b=path[i];line(pointX(a.g,a.r),Y(a.r.y),pointX(b.g,b.r),Y(b.r.y),s.trajectories?colourFor(Math.floor((this.hash(a.r.id)+.5)*100),a.r.id,s):theme.muted,Math.max(.6,lw*.6),'opacity=".3" data-pair="true"');}
+  if(s.boxes)for(const g of model.groups){const x=cx(g),w=rain?Math.max(12,cluster*.23):cluster*.7;line(x,Y(g.low),x,Y(g.high),theme.muted,lw*.8);line(x-w*.25,Y(g.low),x+w*.25,Y(g.low),theme.muted,lw*.8);line(x-w*.25,Y(g.high),x+w*.25,Y(g.high),theme.muted,lw*.8);rect(x-w/2,Y(g.q3),w,Y(g.q1)-Y(g.q3),colour(g),`fill-opacity="${alpha*.25}" stroke="${theme.muted}" stroke-width="${lw*.8}"`);line(x-w/2,Y(g.median),x+w/2,Y(g.median),theme.ink,lw*1.1);}
+  if(s.observations)for(const g of model.groups)for(const r of g.records)add(`<circle cx="${pointX(g,r)}" cy="${Y(r.y)}" r="${pointSize*.65}" fill="${colour(g)}" fill-opacity="${Math.min(.85,alpha)}" data-observation="true"><title>${escapeText(hasColumn(s.id)?r.id:'Row '+(r.source+2))}: ${escapeText(r.y)}</title></circle>`);
+  if(isLine)for(const series of model.series){let previous=null;for(const cat of model.categories){const g=model.groups.find(g=>g.series===series&&g.category===cat);if(g&&previous)line(center(previous),Y(previous.mean),center(g),Y(g.mean),colour(g),lw*1.25,'data-profile="true"');previous=g||null;}}
+  if(s.ci)for(const g of model.groups)if(g.ciLow!==null){const x=cx(g),a=Y(g.ciLow),b=Y(g.ciHigh);line(x,a,x,b,colour(g),lw*1.15);line(x-6,a,x+6,a,colour(g),lw*1.15);line(x-6,b,x+6,b,colour(g),lw*1.15);}
+  if(s.median)for(const g of model.groups)line(cx(g)-pointSize*1.6,Y(g.median),cx(g)+pointSize*1.6,Y(g.median),theme.ink,lw*1.5);
+  if(s.mean&&s.type!=='bar')for(const g of model.groups)marker(cx(g),Y(g.mean),pointSize*1.4,colour(g),inter?g.seriesIndex:0);
+  if(s.labels)for(const g of model.groups){const value=s.labelMode==='median'?g.median:g.mean;const label=s.labelMode==='n'?'n = '+g.n:s.labelMode==='both'?value.toFixed(Number(s.digits))+' (n = '+g.n+')':value.toFixed(Number(s.digits));text(cx(g),Y(s.ci&&g.ciHigh!==null?Math.max(value,g.ciHigh):value)-fs*.65,label,fs*.75,'text-anchor="middle"');}
+  for(const a of annotations){const ga=model.groups.find(g=>g.key===a.a),gb=model.groups.find(g=>g.key===a.b),x1=cx(ga),x2=cx(gb),y=Y(a.y);add(`<g class="annotation" data-annotation-id="${escapeText(a.id)}" tabindex="0" role="button" aria-label="${escapeText(a.label)}. Drag vertically or use the up and down arrow keys to adjust height."><title>Manually entered annotation. Drag vertically to adjust height.</title><path d="M${x1},${y+8}V${y}H${x2}V${y+8}" fill="none" stroke="${theme.ink}" stroke-width="${lw}"/><path d="M${x1},${y}H${x2}" stroke="transparent" stroke-width="24"/>`);text((x1+x2)/2,y-fs*.4,a.label,fs*.9,'text-anchor="middle"');add('</g>');}
+  add('</g>');
+  model.categories.forEach((name,i)=>{if(i%Number(s.xStep))return;const x=X(i);if(angle){text(x,bottom+22,name,labelSize,`text-anchor="end" transform="rotate(-${angle} ${x} ${bottom+22})"`);}else labelLines[i].forEach((label,j)=>text(x,bottom+labelSize+13+j*labelSize*1.25,label,labelSize,'text-anchor="middle"'));});
+  xTitleLines.forEach((label,i)=>text((L+W-R)/2,bottom+xHeight+fs*(1.1+i*1.2),label,fs,'text-anchor="middle"'));
+  add(`<g transform="translate(${fs*1.8} ${(top+bottom)/2}) rotate(-90)">`);yTitleLines.forEach((label,i)=>text(0,(i-(yTitleLines.length-1)/2)*fs*1.15,label,fs,'text-anchor="middle"'));add('</g>');
+  footLines.forEach((line,i)=>text(L,footTop+i*footSize*1.35,line,footSize,`fill="${theme.muted}"`));
+  add('</g></svg>');return {svg:out.join(''),width:W,height:H,clipped:model.groups.some(g=>g.min<ymin||g.max>ymax)||annotations.some(a=>a.y<ymin||a.y+(ymax-ymin)*fs/plotH>ymax),notes,metrics:{ymin,ymax,top,bottom,plotH,tick}};
+ }
+};
+
+/* Interface controller */
+const BOOL=['mean','median','ci','boxes','observations','jitter','violin','rain','connections','labels','legend','grid','includeData','beeswarm','trajectories','participantPoints','annotationEnabled'];
+const NUMBER=['fontSize','width','opacity','pointSize','lineWidth','smoothing','digits','xStep','angle','resolution','gridDensity'];
+const STR=['dv','f1','f2','id','role1','role2','view','type','labelMode','sort','theme','palette','font','title','subtitle','xTitle','yTitle','yMin','yMax','yStep','xMin','xMax','note','yScale','yDigits','errorType','trajectoryFactor'];
+const App={state:defaults(),data:null,columns:[],raw:'',filename:'',decimal:'.',delimiter:'auto',model:null,figure:null,delay:null,selectedAnnotation:'',annotationDraft:null};
+function option(value,label,disabled=false){return `<option value="${escapeText(value)}" ${disabled?'disabled':''}>${escapeText(label)}</option>`;}
+function syncSelectors(){
+ const s=App.state,cols=App.columns;
+ $('dv').innerHTML=option('','Select an outcome')+cols.filter(c=>c.eligible).map(c=>option(c.index,c.name+(c.type==='Numeric with text'?' (contains text)':''))).join('');
+ for(const id of ['f1','f2'])$(''+id).innerHTML=option('',id==='f1'?'Select a factor':'None')+cols.filter(c=>c.count&&String(c.index)!==s.dv).map(c=>option(c.index,c.name+' · '+c.unique+' levels',String(c.index)===s[id==='f1'?'f2':'f1'])).join('');
+ $('id').innerHTML=option('','Each CSV row is an observation')+cols.filter(c=>c.count&&![s.dv,s.f1,s.f2].includes(String(c.index))).map(c=>option(c.index,c.name)).join('');
+ $('view').innerHTML=option('f1','Factor 1 Main Effect')+option('f2','Factor 2 Main Effect')+option('interaction','Interaction');
+ $('trajectoryFactor').innerHTML=withinFactors(s).map(k=>option(k,nameOf(App.data,s[k]))).join('');
+ const types=$('type').options;for(const o of types)if(o.value==='interaction')o.disabled=!(hasColumn(s.f1)&&hasColumn(s.f2));
+}
+function syncUI(){
+ const s=App.state;for(const id of BOOL)$(id).checked=!!s[id];for(const id of [...STR,...NUMBER])if(!(['yMin','yMax','yStep'].includes(id)&&document.activeElement===$(id)))$(id).value=s[id];
+ document.body.classList.toggle('dark',s.theme==='dark');
+ const rules=layerRules(s,App.model);for(const [id,enabled] of Object.entries(rules))$(id).disabled=!enabled;
+ const within=withinFactors(s);$('trajectoryFactor').innerHTML=within.map(k=>option(k,nameOf(App.data,s[k]))).join('');$('trajectoryFactor').value=App.model?.repeated||s.trajectoryFactor;$('trajectoryFactor').disabled=within.length<2||s.view!=='interaction';$('trajectory-factor-field').hidden=within.length<2;
+ $('errorType').disabled=!s.ci||!s.mean;$('role1').disabled=!hasColumn(s.f1);$('role2').disabled=!hasColumn(s.f2);$('labels').disabled=false;$('labelMode').disabled=!s.labels;$('digits').disabled=!s.labels;
+ $('opacity-out').textContent=s.opacity+'%';$('pointSize-out').textContent=s.pointSize;$('lineWidth-out').textContent=s.lineWidth;$('smoothing-out').textContent=Number(s.smoothing).toFixed(1);$('smoothing').disabled=!s.violin&&!s.rain;
+ $('unit-hint').textContent=withinFactor(s)?'A Within subjects factor requires a Participant ID. Between subjects assignments must remain constant for each ID.':'Factor roles are never inferred from the CSV. Without an ID, each valid row is an observation.';
+ $('layer-hint').textContent=s.type==='raincloud'?'Rainclouds combine half densities, boxes and observations. Switch figure type to change the structural layers.':'Raw observations, summaries and distribution overlays can be displayed together. Interaction profile lines connect group means.';
+ $('participant-hint').textContent=App.model?.pairPaths.length?'Participant lines connect matching IDs across the displayed repeated factor. In an interaction view, the other factor is held constant.':'Assign a Within subjects factor and ID, then select a view containing repeated observations. Between subjects main effects have no participant connections.';
+ for(const id of ['yMin','yMax','yStep'])$(id).disabled=s.yScale!=='manual';
+ for(const id of ['svg','png','pngHigh','pngTransparent','copy','vector','expand'])$(id).disabled=!App.figure;
+ const two=hasColumn(s.f1)&&hasColumn(s.f2);
+ $('view-tabs').innerHTML=two?['f1','f2','interaction'].map(k=>`<button type="button" role="tab" data-view="${k}" aria-selected="${s.view===k}" tabindex="${s.view===k?0:-1}">${escapeText(k==='interaction'?'Interaction':nameOf(App.data,s[k])+' Main Effect')}</button>`).join(''):'';
+ $('view-description').textContent=App.model?App.model.title+' · '+App.model.explanation:'';
+ syncAnnotations();
+ renderColours();
+}
+function renderColours(){
+ const levels=App.model?.colourLevels||[];$('colours').innerHTML=levels.map((label,i)=>`<label class="colour-row"><input type="color" data-colour="${i}" value="${colourFor(i,label,App.state)}" aria-label="Colour for ${escapeText(label)}"><span title="${escapeText(label)}">${escapeText(label)}</span></label>`).join('');
+}
+function preview(){if(!App.data)return;const d=App.data;$('column-types').innerHTML=App.columns.map(c=>`<span class="column-chip">${escapeText(c.name)}: ${c.type}</span>`).join('');$('preview').innerHTML='<table><thead><tr>'+d.headers.map(h=>'<th>'+escapeText(h)+'</th>').join('')+'</tr></thead><tbody>'+d.rows.slice(0,8).map(r=>'<tr>'+r.map(c=>'<td>'+escapeText(c)+'</td>').join('')+'</tr>').join('')+'</tbody></table>';}
+function render(){
+ App.model=null;App.figure=null;$('plot-error').textContent='';
+ try{
+  App.state=normalise(App.state);App.model=modelFor(App.data,App.state);
+  if(App.model){if(!layerRules(App.state,App.model).connections)App.state.connections=false;App.figure=Plot.render(App.model,App.state);$('plot').innerHTML=App.figure.svg;
+   $('status').textContent=App.model.groups.length+' groups · '+App.model.plottedUnits+' observation units';
+   const m=App.model;$('metadata').innerHTML=[App.data.rows.length+' imported rows',m.validRows+' complete rows',m.plottedUnits+' plotted units',hasColumn(App.state.id)?'Participant averages':'CSV row observations'].map(t=>'<span>'+escapeText(t)+'</span>').join('');
+   const notes=[...App.data.warnings,...m.notes];if(App.figure.clipped)notes.push('The chosen axis limits exclude some observations or annotations. Adjust the scale or bracket height.');$('data-notes').hidden=!notes.length;$('data-notes').textContent=notes.join(' ');
+  }else{
+   $('status').textContent=App.data?'Assign your variables':'Ready to import';$('metadata').innerHTML='';$('data-notes').hidden=true;
+   if(App.data)$('plot').innerHTML='<div class="empty"><h2>Select your variables</h2><p>Choose a numeric dependent variable. Factors are optional. Assign a role to each selected factor, and an ID for repeated observations.</p></div>';
+  }
+ }catch(e){$('plot-error').textContent=e.message;$('status').textContent='Check selections';$('metadata').innerHTML='';$('data-notes').hidden=true;$('plot').innerHTML='<div class="empty"><h2>Adjust the figure settings</h2><p>'+escapeText(e.message)+'</p></div>';}
+ syncUI();
+}
+function loadCSV(raw,filename,restore=null){
+ try{
+  const parsed=CSV.parse(raw,$('delimiter').value),decimal=$('decimal').value,columns=Desc.detect(parsed,decimal);
+  if(!columns.some(c=>c.eligible))throw Error('No numeric outcome was detected. Check the delimiter and decimal symbol.');
+  App.raw=raw;App.filename=filename;App.data=parsed;App.columns=columns;App.decimal=decimal;App.delimiter=$('delimiter').value;
+  let s={...App.state,dv:'',f1:'',f2:'',id:'',role1:'',role2:'',view:'f1',type:'dot',title:'',xTitle:'',yTitle:'',xMin:'',xMax:'',yScale:'auto',yMin:'',yMax:'',yStep:'',connections:false,trajectories:false,annotations:[],annotationEnabled:false};App.selectedAnnotation='';App.annotationDraft=null;
+  if(restore){s={...s,...restore,custom:restore.custom||{}};for(const key of ['dv','f1','f2','id'])if(hasColumn(s[key])&&Number(s[key])>=parsed.headers.length)s[key]='';}
+  App.state=normalise(s);$('filename').textContent=filename;$('import-info').textContent=parsed.rows.length+' rows · '+parsed.headers.length+' columns · '+(parsed.delimiter==='\t'?'tab':parsed.delimiter===';'?'semicolon':'comma')+' separated';$('import-error').textContent='';
+  syncSelectors();preview();render();
+ }catch(e){$('import-error').textContent=e.message;}
+}
+async function readFile(file){if(!file)return;if(file.size>30*1024*1024){$('import-error').textContent='This browser tool accepts files up to 30 MB. Export only the columns and rows needed for the figure.';return;}try{const bytes=await file.arrayBuffer(),u=new Uint8Array(bytes);const encoding=u[0]===255&&u[1]===254?'utf-16le':u[0]===254&&u[1]===255?'utf-16be':'utf-8';loadCSV(new TextDecoder(encoding).decode(bytes),file.name);}catch(e){$('import-error').textContent='The file could not be read: '+e.message;}}
+function presetType(type){Object.assign(App.state,{type,mean:true,median:false,boxes:type==='box'||type==='raincloud',observations:type==='raincloud',jitter:true,violin:type==='violin',rain:type==='raincloud',connections:false,trajectories:false,ci:['bar','dot','interaction','raincloud'].includes(type)});}
+function update(id){
+ if(['yMin','yMax','yStep'].includes(id)){const field=$(id),valid=field.value.trim()===''||Number.isFinite(axisNumber(field.value));field.setCustomValidity?.(valid?'':'Enter a numeric value, such as 0.25.');if(!valid)return;}
+ const old={...App.state};App.state[id]=BOOL.includes(id)?$(id).checked:NUMBER.includes(id)?Number($(id).value):$(id).value;
+ if(id==='type')presetType(App.state.type);
+ if(id==='participantPoints')App.state.observations=App.state.participantPoints;
+ if(id==='jitter'&&App.state.jitter)App.state.beeswarm=false;
+ if(id==='f1')App.state.role1='';if(id==='f2')App.state.role2='';
+ if(id==='theme'){const t=Themes[App.state.theme];Object.assign(App.state,{font:t.font,fontSize:t.size,width:t.width,grid:t.gridDefault,pointSize:t.size/4,lineWidth:Math.round(t.size/3)/4});if(App.state.theme==='apa')App.state.palette='apa';}
+ if(id==='palette'&&App.state.palette==='custom'&&App.model)App.model.colourLevels.forEach((label,i)=>{if(!App.state.custom[label])App.state.custom[label]=colourFor(i,label,old);});
+ if(['dv','f1','f2','id','role1','role2','view'].includes(id)){App.state.xMin='';App.state.xMax='';App.selectedAnnotation='';App.annotationDraft=null;}
+ App.state=normalise(App.state,id);if(['dv','f1','f2','id'].includes(id))syncSelectors();
+ clearTimeout(App.delay);App.delay=setTimeout(render,['title','subtitle','xTitle','yTitle','note'].includes(id)?160:0);
+}
+
+/* Manual annotation editor. Brackets store stable group keys and data coordinates. */
+function annotationName(g,model){return g.category+(model.interaction?' × '+g.series:'');}
+function annotationDraft(){return {a:$('annotation-a').value,b:$('annotation-b').value,preset:$('annotation-label').value,custom:$('annotation-custom').value,y:$('annotation-y').value};}
+function syncAnnotations(){
+ const s=App.state,m=App.model,existing=m?s.annotations.filter(a=>a.signature===m.signature):[];
+ const selected=existing.find(a=>a.id===App.selectedAnnotation);if(!selected)App.selectedAnnotation='';
+ $('annotation-list').innerHTML=option('','New annotation')+existing.map(a=>option(a.id,a.label+' · '+(m.groups.find(g=>g.key===a.a)?annotationName(m.groups.find(g=>g.key===a.a),m):'Hidden group')+' / '+(m.groups.find(g=>g.key===a.b)?annotationName(m.groups.find(g=>g.key===a.b),m):'Hidden group'))).join('');
+ $('annotation-list').value=App.selectedAnnotation;
+ const groups=m?.groups||[];for(const id of ['annotation-a','annotation-b'])$(id).innerHTML=groups.map(g=>option(g.key,annotationName(g,m))).join('');
+ const presets=['*','**','***','****','ns','p < .05','p < .01','p < .001'];
+ const d=App.annotationDraft||(selected?{a:selected.a,b:selected.b,preset:presets.includes(selected.label)?selected.label:'custom',custom:presets.includes(selected.label)?'':selected.label,y:String(selected.y)}:{a:groups[0]?.key||'',b:groups[1]?.key||'',preset:'*',custom:'',y:''});
+ for(const [id,value] of Object.entries({'annotation-a':d.a,'annotation-b':d.b,'annotation-label':d.preset,'annotation-custom':d.custom,'annotation-y':d.y}))$(id).value=value??'';
+ $('annotation-custom').disabled=d.preset!=='custom';$('annotation-fields').disabled=!s.annotationEnabled||!m;$('annotation-new').disabled=groups.length<2;$('annotation-save').disabled=groups.length<2;
+ $('annotation-save').textContent=selected?'Update bracket':'Add bracket';$('annotation-delete').disabled=!selected;
+ $('annotation-items').innerHTML=existing.length?existing.map((a,i)=>{const ga=m.allGroups.find(g=>g.key===a.a),gb=m.allGroups.find(g=>g.key===a.b);return `<div class="annotation-item" aria-current="${a.id===App.selectedAnnotation}"><p><strong>${i+1}. ${escapeText(a.label)}</strong><br>${escapeText(ga?annotationName(ga,m):'Hidden group')} versus ${escapeText(gb?annotationName(gb,m):'Hidden group')}</p><div class="row"><button type="button" class="button" data-edit-annotation="${escapeText(a.id)}">Edit</button><button type="button" class="button" data-remove-annotation="${escapeText(a.id)}">Remove</button></div></div>`;}).join(''):'<p class="hint">No annotations in this figure view yet.</p>';
+
+}
+function saveAnnotation(){
+ try{const m=App.model;if(!m)throw Error('Assign variables first.');const d=annotationDraft(),ga=m.groups.find(g=>g.key===d.a),gb=m.groups.find(g=>g.key===d.b);if(!ga||!gb||ga.key===gb.key)throw Error('Choose two different plotted groups.');
+ const label=(d.preset==='custom'?d.custom:d.preset).trim().slice(0,100);if(!label)throw Error('Enter a label.');
+ const metrics=App.figure.metrics,span=metrics.ymax-metrics.ymin,previous=visibleAnnotations(m,App.state),highest=Math.max(...m.groups.map(g=>Math.max(g.max,App.state.ci&&errorBounds(g,App.state).ciHigh!==null?errorBounds(g,App.state).ciHigh:g.max)),...previous.map(a=>a.y)),y=d.y===''?highest+span*.09:Number(d.y);if(!Number.isFinite(y))throw Error('Bracket height must be a finite number.');
+ const id=App.selectedAnnotation||'a'+Date.now().toString(36)+Math.random().toString(36).slice(2,7),value={id,signature:m.signature,a:d.a,b:d.b,label,y};
+ const index=App.state.annotations.findIndex(a=>a.id===id);if(index>=0)App.state.annotations[index]=value;else App.state.annotations.push(value);
+ App.selectedAnnotation=id;App.annotationDraft=null;$('annotation-message').textContent='Annotation saved. Select Add another annotation to create another bracket, or use Edit and Remove below.';render();
+ }catch(e){$('annotation-message').textContent=e.message;}
+}
+function newAnnotation(){App.selectedAnnotation='';App.annotationDraft=null;$('annotation-message').textContent='Choose two groups and a label, then select Add bracket. Existing annotations are retained.';syncAnnotations();$('annotation-a').focus?.();}
+function removeAnnotation(id){App.state.annotations=App.state.annotations.filter(a=>a.id!==id);if(App.selectedAnnotation===id){App.selectedAnnotation='';App.annotationDraft=null;}$('annotation-message').textContent='Annotation removed. Other annotations are retained.';render();}
+function initAnnotations(){
+ $('annotation-new').addEventListener('click',newAnnotation);
+ $('annotation-items').addEventListener('click',e=>{const edit=e.target.closest('[data-edit-annotation]'),remove=e.target.closest('[data-remove-annotation]');if(edit){App.selectedAnnotation=edit.dataset.editAnnotation;App.annotationDraft=null;syncAnnotations();}else if(remove)removeAnnotation(remove.dataset.removeAnnotation);});
+
+ $('view-tabs').addEventListener('click',e=>{const button=e.target.closest('[data-view]');if(!button)return;$('view').value=button.dataset.view;update('view');});
+ $('view-tabs').addEventListener('keydown',e=>{const keys=['ArrowLeft','ArrowRight','Home','End'];if(!keys.includes(e.key))return;const buttons=[...$('view-tabs').querySelectorAll('[data-view]')],current=buttons.indexOf(e.target);if(current<0)return;e.preventDefault();let index=e.key==='Home'?0:e.key==='End'?buttons.length-1:(current+(e.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length;buttons[index].click();setTimeout(()=>$('view-tabs').querySelector('[aria-selected=true]')?.focus(),0);});
+ $('annotation-list').addEventListener('change',()=>{App.selectedAnnotation=$('annotation-list').value;App.annotationDraft=null;syncAnnotations();});
+ for(const id of ['annotation-a','annotation-b','annotation-label','annotation-custom','annotation-y'])$(id).addEventListener('input',()=>{App.annotationDraft=annotationDraft();$('annotation-custom').disabled=App.annotationDraft.preset!=='custom';});
+ $('annotation-save').addEventListener('click',saveAnnotation);
+ $('annotation-delete').addEventListener('click',()=>removeAnnotation(App.selectedAnnotation));
+ let drag=null;
+ const svgPoint=e=>{const svg=$('plot').querySelector('svg');if(!svg)return null;const matrix=svg.getScreenCTM();if(!matrix)return null;const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(matrix.inverse());};
+ $('plot').addEventListener('pointerdown',e=>{const target=e.target.closest('[data-annotation-id]');if(!target||e.button!==0)return;const a=App.state.annotations.find(a=>a.id===target.dataset.annotationId),p=svgPoint(e);if(!a||!p)return;e.preventDefault();App.selectedAnnotation=a.id;App.annotationDraft=null;syncAnnotations();drag={id:a.id,pointer:e.pointerId,start:p.y,y:a.y,scale:(App.figure.metrics.ymax-App.figure.metrics.ymin)/App.figure.metrics.plotH};$('plot').setPointerCapture(e.pointerId);});
+ $('plot').addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.pointer)return;const p=svgPoint(e),a=App.state.annotations.find(a=>a.id===drag.id);if(!p||!a)return;a.y=drag.y+(drag.start-p.y)*drag.scale;App.annotationDraft=null;render();});
+ const end=e=>{if(drag&&e.pointerId===drag.pointer){if($('plot').hasPointerCapture(e.pointerId))$('plot').releasePointerCapture(e.pointerId);drag=null;}};
+ $('plot').addEventListener('pointerup',end);$('plot').addEventListener('pointercancel',end);
+ $('plot').addEventListener('keydown',e=>{const target=e.target.closest('[data-annotation-id]');if(!target||!['ArrowUp','ArrowDown','Delete','Backspace','Enter'].includes(e.key))return;e.preventDefault();App.selectedAnnotation=target.dataset.annotationId;App.annotationDraft=null;const a=App.state.annotations.find(a=>a.id===App.selectedAnnotation);if(!a)return;if(['Delete','Backspace'].includes(e.key)){App.state.annotations=App.state.annotations.filter(v=>v.id!==a.id);App.selectedAnnotation='';}else if(e.key!=='Enter')a.y+=(e.key==='ArrowUp'?1:-1)*App.figure.metrics.tick*(e.shiftKey?1:.2);render();if(App.selectedAnnotation)$('plot').querySelector('[data-annotation-id="'+App.selectedAnnotation+'"]')?.focus();});
+}
+
+/* Export engine */
+const Export={
+ save(name,content,mime){const blob=content instanceof Blob?content:new Blob([content],{type:mime}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);},
+ filename(){return (App.state.title||'Psychology_figure').replace(/[^a-z0-9_\- ]/gi,'').trim().replace(/\s+/g,'_').slice(0,80)||'Psychology_figure';},
+ svg(printQuality=false){if(!App.figure)return;const xml='<?xml version="1.0" encoding="UTF-8"?>\n'+App.figure.svg;this.save(this.filename()+(printQuality?'_print':'')+'.svg',xml,'image/svg+xml;charset=utf-8');$('message').textContent=printQuality?'Vector SVG prepared for illustration software or PDF export.':'SVG figure prepared.';},
+ async raster(width,transparent=false){
+  if(!App.figure)throw Error('Create a figure first.');
+  const figure={...App.figure},svg=transparent?figure.svg.replace(/<rect data-background="true"[^>]*\/>/,''):figure.svg,url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml;charset=utf-8'}));
+  try{const image=new Image();await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(Error('The browser could not rasterise this SVG.'));image.src=url;});const canvas=document.createElement('canvas');canvas.width=width;canvas.height=Math.round(width*figure.height/figure.width);if(canvas.width*canvas.height>100000000)throw Error('Image exceeds the browser canvas limit. Choose a smaller export width.');const ctx=canvas.getContext('2d');if(!ctx)throw Error('Canvas is unavailable.');ctx.drawImage(image,0,0,canvas.width,canvas.height);const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw Error('PNG creation failed.');return {blob,width:canvas.width,height:canvas.height};}finally{URL.revokeObjectURL(url);}
+ },
+ async png(high=false,transparent=false){try{$('message').textContent='Preparing PNG…';const r=await this.raster(high?Number(App.state.resolution):App.figure.width,transparent);this.save(this.filename()+(transparent?'_transparent':high?'_high_resolution':'')+'.png',r.blob,'image/png');$('message').textContent=r.width+' × '+r.height+' pixel PNG prepared.';}catch(e){$('message').textContent=e.message+' SVG export remains available.';}},
+ async copy(){try{if(!navigator.clipboard?.write||typeof ClipboardItem==='undefined')throw Error('Clipboard image copying is unavailable on this local page. Use a PNG download.');const blobPromise=this.raster(Number(App.state.resolution)).then(r=>r.blob);await navigator.clipboard.write([new ClipboardItem({'image/png':blobPromise})]);$('message').textContent='Figure copied as a high resolution PNG.';}catch(e){$('message').textContent='Copying was not permitted by this browser. Download PNG instead.';}},
+ html(){const project={state:App.state,raw:App.state.includeData?App.raw:'',filename:App.state.includeData?App.filename:'',decimal:App.decimal,delimiter:App.delimiter};const clone=document.documentElement.cloneNode(true);clone.querySelector('#saved-project').textContent=JSON.stringify(project).replace(/</g,'\\u003c');for(const id of ['plot','preview','column-types','metadata','data-notes','import-error','plot-error','message','large-plot','view-tabs','view-description','annotation-message','annotation-items'])clone.querySelector('#'+id).innerHTML='';clone.querySelector('#filename').textContent=project.filename||'No file selected';clone.querySelector('#import-info').textContent='Export your data from JAMOVI as a CSV.';clone.querySelector('#colours').innerHTML='';for(const id of ['annotation-list','annotation-a','annotation-b'])clone.querySelector('#'+id).innerHTML='';clone.querySelector('#large').removeAttribute('open');this.save('Psychology_Figure_Studio.html','<!doctype html>\n'+clone.outerHTML,'text/html;charset=utf-8');$('message').textContent=App.state.includeData&&App.raw?'Standalone HTML prepared with the current data and settings.':'Standalone HTML prepared without uploaded data.';}
+};
+
+function demoCSV(){
+ const rows=[['Participant','Study medium','Review','Test score']];const media=['Laptop','Tablet','Pen and paper'];
+ for(let i=0;i<54;i++){const group=Math.floor(i/18),ability=Math.sin(i*2.17)*8+Math.cos(i*.73)*3;for(let r=0;r<2;r++){const y=56+group*2+ability+(r?(group===0?6:15):0)+Math.sin(i*1.33+r*2)*3;rows.push(['P'+String(i+1).padStart(3,'0'),media[group],r?'Review':'No review',y.toFixed(1)]);}}
+ return rows.map(r=>r.join(',')).join('\n');
+}
+function loadDemo(){ $('delimiter').value='auto';$('decimal').value='.';loadCSV(demoCSV(),'Example: fabricated teaching data');Object.assign(App.state,{dv:'3',f1:'1',f2:'2',id:'0',role1:'between',role2:'within',repeated:'f2',view:'interaction',type:'raincloud',mean:true,ci:true,observations:true,boxes:true,rain:true,violin:false,connections:true,title:'',subtitle:'Fabricated example data',note:'These observations were fabricated for demonstration.'});App.state=normalise(App.state);syncSelectors();render();}
+function init(){
+ for(const id of [...BOOL,...NUMBER,...STR])$(id).addEventListener(['title','subtitle','xTitle','yTitle','note','opacity','pointSize','lineWidth','smoothing','fontSize','yMin','yMax','yStep','xMin','xMax','xStep','digits','annotation-y'].includes(id)?'input':'change',()=>update(id));
+ $('file').addEventListener('change',e=>readFile(e.target.files[0]));const dz=$('dropzone');for(const event of ['dragenter','dragover'])dz.addEventListener(event,e=>{e.preventDefault();dz.classList.add('drag');});for(const event of ['dragleave','drop'])dz.addEventListener(event,e=>{e.preventDefault();dz.classList.remove('drag');});dz.addEventListener('drop',e=>readFile(e.dataTransfer.files[0]));
+ for(const id of ['delimiter','decimal'])$(id).addEventListener('change',()=>{if(App.raw)loadCSV(App.raw,App.filename,App.state);});
+ $('demo').addEventListener('click',loadDemo);$('empty-demo')?.addEventListener('click',loadDemo);
+ $('colours').addEventListener('input',e=>{if(!e.target.matches('[data-colour]')||!App.model)return;const old={...App.state,custom:{...App.state.custom}},level=App.model.colourLevels[Number(e.target.dataset.colour)];App.model.colourLevels.forEach((label,i)=>{if(!App.state.custom[label])App.state.custom[label]=colourFor(i,label,old);});App.state.palette='custom';App.state.custom[level]=e.target.value;render();});
+ $('autoAxes').addEventListener('click',()=>{Object.assign(App.state,{xMin:'',xMax:'',yMin:'',yMax:'',yStep:'',yScale:'auto',yDigits:'auto',gridDensity:1,xStep:1,angle:0});render();});
+ $('resetStyle').addEventListener('click',()=>{const mapping=Object.fromEntries(['dv','f1','f2','id','role1','role2','trajectoryFactor','view','annotations','annotationEnabled'].map(k=>[k,App.state[k]]));App.state=normalise({...defaults(),...mapping});syncSelectors();render();});
+ $('svg').addEventListener('click',()=>Export.svg());$('vector').addEventListener('click',()=>Export.svg(true));$('png').addEventListener('click',()=>Export.png());$('pngHigh').addEventListener('click',()=>Export.png(true));$('pngTransparent').addEventListener('click',()=>Export.png(true,true));$('copy').addEventListener('click',()=>Export.copy());$('html').addEventListener('click',()=>Export.html());
+ $('expand').addEventListener('click',()=>{if(!App.figure)return;$('large-plot').innerHTML=App.figure.svg;$('large').showModal();});$('closeLarge').addEventListener('click',()=>$('large').close());
+ initAnnotations();
+ const stored=JSON.parse($('saved-project').textContent||'null');
+ if(stored){App.state={...defaults(),...stored.state,custom:stored.state?.custom||{}};$('delimiter').value=stored.delimiter||'auto';$('decimal').value=stored.decimal||'.';App.decimal=$('decimal').value;if(stored.raw){loadCSV(stored.raw,stored.filename||'Saved data',App.state);return;}Object.assign(App.state,{dv:'',f1:'',f2:'',id:'',view:'f1',connections:false});$('plot').innerHTML='<div class="empty"><h2>Import your data</h2><p>This copy preserves figure styling. Choose a CSV to create a new figure.</p></div>';$('data-notes').hidden=true;}
+ syncSelectors();syncUI();
+}
+window.FigureStudio={CSV,Desc,Themes,defaults,axisNumber,newAnnotation,removeAnnotation,errorBounds,errorNote,withinFactors,normalise,layerRules,modelFor,visibleAnnotations,Plot,App,Export,loadCSV,loadDemo,update,render,saveAnnotation,syncAnnotations};
+init();
+</script>
+</body>
+</html>
