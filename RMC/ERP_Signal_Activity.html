@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ERP Night Shift</title>
+<style>
+:root{--ink:#1c343b;--muted:#566b70;--teal:#156778;--peach:#f2b591;--paper:#faf9f6;--line:#d8e1e0;--good:#16694f;--bad:#9b442c;--white:#fff;--condB:#b06836}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:17px;line-height:1.45}
+button,select,input[type=range]{font:inherit}button,select,summary{cursor:pointer}
+button{border:1px solid var(--teal);border-radius:8px;padding:11px 18px;background:var(--teal);color:white;font-weight:700}
+button:hover{filter:brightness(.95)}button:disabled{opacity:.45;cursor:default}
+button:focus-visible,summary:focus-visible,.optbtn:focus-visible{outline:3px solid #b06836;outline-offset:3px}
+.secondary{background:white;color:var(--teal)}
+.quiet{border:0;background:transparent;color:var(--teal);padding:6px 0;text-decoration:underline;font-size:15px}
+header{background:var(--peach);padding:18px max(24px,calc((100vw - 1180px)/2));display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}
+header h1{margin:0;font-size:27px;letter-spacing:-.5px}header p{margin:2px 0 0;font-size:14px}
+.hud{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.hudblock{text-align:right;min-width:78px}
+.hudblock strong{font-size:25px;display:block;font-variant-numeric:tabular-nums}
+.hudblock span{font-size:12px;color:#5c4327}
+.timer.urgent strong{color:var(--bad);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+.lives strong{letter-spacing:2px}
+.streak strong{color:var(--teal)}
+main{max-width:1180px;margin:0 auto;padding:24px}
+.intro{max-width:880px;margin:30px auto 28px}
+.intro h2{font-size:38px;line-height:1.1;letter-spacing:-1px;margin:0 0 18px}
+.intro p{font-size:19px}
+.mechgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0}
+.mechcard{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:white}
+.mechcard h3{margin:0 0 6px;font-size:16px}
+.mechcard p{margin:0;font-size:14px;color:var(--muted)}
+.rules{padding-left:22px;font-size:16px}.rules li{margin:8px 0}
+.intro .start{margin-top:18px;font-size:20px;padding:15px 30px}
+.note{font-size:14px;color:var(--muted)}
+.progress{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 14px;flex-wrap:wrap}
+.roundlabel{font-size:15px;color:var(--muted)}
+.typebadge{display:inline-block;padding:3px 11px;border-radius:20px;font-size:12px;font-weight:700;margin-left:10px;vertical-align:middle}
+.t-contrast{background:#d7e8e6;color:var(--teal)}.t-average{background:#f6dcc0;color:#8a5322}.t-artifact{background:#f3cfc4;color:#9b442c}.t-epoch{background:#e4dcf3;color:#5a3c9b}
+.question h2{font-size:27px;line-height:1.25;margin:0 0 8px}
+.context{margin:0 0 14px;color:var(--muted);max-width:870px;font-size:17px}
+.mcq{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0 16px}
+.optbtn{border:1px solid var(--teal);background:white;color:var(--teal);border-radius:8px;padding:10px 16px;font-weight:600;font-size:15.5px}
+.optbtn.correct{background:#e4f3ea;border-color:var(--good);color:var(--good)}
+.optbtn.wrong{background:#fbe9e3;border-color:var(--bad);color:var(--bad)}
+.graph{background:white;border:1px solid var(--line);border-radius:12px;padding:6px 12px 0;position:relative}
+.graph svg{display:block;width:100%;height:auto;min-height:230px}
+.legend{display:flex;gap:18px;padding:8px 10px 0;font-size:14px;flex-wrap:wrap}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.swatch{width:16px;height:4px;border-radius:2px;display:inline-block}
+.graphcaption{display:flex;gap:20px;justify-content:space-between;padding:0 18px 12px;color:var(--muted);font-size:13px}
+.avgbar{display:flex;align-items:center;gap:16px;margin:14px 0;flex-wrap:wrap}
+.avgbar input[type=range]{flex:1;min-width:220px;accent-color:var(--teal)}
+.avgbar .count{font-size:15.5px;color:var(--ink);font-weight:700;min-width:170px}
+.below{display:grid;grid-template-columns:1fr auto;gap:22px;align-items:start;margin-top:16px}
+.feedback{min-height:96px;padding:16px 20px;border-left:5px solid #b9cbce;background:#eef3f2;border-radius:0 8px 8px 0}
+.feedback h3{font-size:19px;margin:0 0 6px}.feedback p{margin:0;font-size:16.5px}
+.feedback.good{border-color:var(--good);background:#edf6ef}
+.feedback.bad{border-color:var(--bad);background:#fbe9e3}
+.feedback.try{border-color:#c07a43;background:#fff3e7}
+.actions{min-width:182px;display:flex;flex-direction:column;gap:10px}
+.actions button{width:100%}
+.guide{margin-top:22px;border-top:1px solid var(--line);padding-top:12px}
+.guide summary{font-size:15px;color:var(--teal);font-weight:700}
+.guide table{border-collapse:collapse;width:100%;margin-top:14px;font-size:14.5px}
+.guide th,.guide td{text-align:left;padding:9px;border-bottom:1px solid var(--line)}
+.guide th{background:#f7e1d0}
+.teacher{margin-top:24px;border-top:1px solid var(--line);padding-top:14px}
+.teacher summary{font-size:16px;color:var(--teal);font-weight:700}
+.teacher p{font-size:15px;color:var(--muted)}
+.summary h2{font-size:35px;margin-bottom:6px}
+.score{font-size:54px;color:var(--teal);font-weight:700;line-height:1;margin:18px 0 4px}
+.badge{display:inline-block;background:var(--teal);color:white;padding:8px 18px;border-radius:30px;font-weight:700;font-size:17px;margin:10px 0 16px}
+.statrow{display:flex;gap:28px;flex-wrap:wrap;margin:10px 0 20px}
+.statrow div{min-width:120px}
+.statrow strong{display:block;font-size:24px;color:var(--teal)}
+.statrow span{font-size:13px;color:var(--muted)}
+.results{border-collapse:collapse;width:100%;margin:18px 0;font-size:15px}
+.results td,.results th{padding:10px 8px;text-align:left;border-bottom:1px solid var(--line)}
+.results th{background:#f7e1d0}
+.reflection{border-left:5px solid var(--peach);padding:3px 20px;margin:22px 0}
+.reflection h3{font-size:22px;margin:8px 0}.reflection p{font-size:18px}
+.sources{font-size:13px;color:var(--muted);padding:25px 0 6px}
+a{color:var(--teal)}
+[hidden]{display:none!important}
+.epoch{margin-top:10px;border:1px solid var(--line);border-radius:10px;background:white;padding:16px 18px}
+.epoch h3{margin:0 0 4px;font-size:19px}
+.epochgrid{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:14px;margin-top:14px}
+.epochpanel{border:1px solid var(--line);border-radius:8px;padding:8px}
+.epochpanel h4{margin:0 0 4px;font-size:14px;color:var(--muted)}
+.epochpanel svg{width:100%;height:auto;display:block}
+.togglebar{display:flex;align-items:center;gap:14px;margin:14px 0;flex-wrap:wrap}
+.togglebar input[type=range]{flex:1;min-width:200px;accent-color:var(--condB)}
+.togglelabels{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);max-width:420px}
+.epochslidebar{display:flex;align-items:center;gap:10px;margin-top:8px}
+.epochslidebar input[type=range]{flex:1;accent-color:var(--condB)}
+.epval{font-size:12.5px;color:var(--ink);font-weight:700;min-width:120px}
+@media(max-width:860px){.epochgrid{grid-template-columns:1fr}}
+@media(max-width:800px){.mechgrid{grid-template-columns:1fr}}
+@media(max-width:700px){header{padding:14px 16px}header h1{font-size:21px}header p{font-size:11px}.hud{gap:14px}.hudblock strong{font-size:20px}main{padding:16px 12px}.intro{margin:20px 10px}.intro h2{font-size:27px}.intro p{font-size:17px}.question h2{font-size:22px}.context{font-size:15.5px}.below{grid-template-columns:1fr}.actions{flex-direction:row;flex-wrap:wrap}.actions button{width:auto;flex:1}.graph{padding:0}.graphcaption{font-size:12px;padding:0 10px 10px}.graph svg{min-height:190px}.results{font-size:13px}.results td,.results th{padding:7px 5px}}
+</style>
+</head>
+<body>
+<header>
+<div><h1>ERP Night Shift</h1><p>9 cases. One shift. Five minutes.</p></div>
+<div class="hud">
+<div class="hudblock timer"><strong id="clock">05:00</strong><span>Time left</span></div>
+<div class="hudblock lives"><strong id="lives">&hearts;&hearts;&hearts;</strong><span>Lives</span></div>
+<div class="hudblock streak"><strong id="streakline">x1</strong><span>Streak bonus</span></div>
+<div class="hudblock score"><strong id="scorelive">0</strong><span>Score</span></div>
+</div>
+</header>
+<main>
+
+<section id="intro" class="intro">
+<h2>You're on call. 9 cases just came in.</h2>
+<p>Four component call-outs, two signal-averaging cases, two artefact checks and one epoching case &mdash; nine cases total, shuffled into a random order. Three wrong core calls and your shift ends early. Build a streak for bonus points.</p>
+<div class="mechgrid">
+<div class="mechcard"><h3>Spot the Difference (x4)</h3><p>Two conditions, one waveform each. Say which component differs between them &mdash; one case per component: P1, N1, P3, N400.</p></div>
+<div class="mechcard"><h3>Keep Averaging (x2)</h3><p>A single trial is just noise. Drag the slider to average in more trials and watch the real signal emerge &mdash; the fewer trials you need before you're confident, the more points.</p></div>
+<div class="mechcard"><h3>Real or Artifact? (x2)</h3><p>Genuine component, eye-blink, muscle twitch, or nothing at all? The context alone won't tell you &mdash; shape and timing give it away, not size.</p></div>
+</div>
+<p class="note" style="margin-top:-6px">Plus one <strong>Fix the Epoching</strong> case: two trials with the target at a different delay after fixation &mdash; drag each trial's window to line up with its own target and watch the grand average sharpen into a single clean peak.</p>
+<ol class="rules">
+<li>Read the case context &mdash; the paradigm tells you what to expect.</li>
+<li>Think first: a wrong core call costs a life.</li>
+<li>Consecutive correct cases build a score multiplier &mdash; one miss resets it.</li>
+<li>Finish all 9 (or run out of lives/time) to get your shift report to discuss with your partner.</li>
+</ol>
+<p class="note">All waveforms are schematic simulations for teaching, not real recordings. The order of the 9 cases is reshuffled every time you play.</p>
+<button id="start" class="start">Start the shift (5:00)</button>
+
+<details class="teacher"><summary>Teaching notes</summary>
+<p>Fixed 9-case structure for a 5-minute warm-up: 4 Spot-the-Difference cases (one each for P1, N1, P3, N400), 2 Keep-Averaging cases, 2 artefact-ID cases drawn at random each playthrough from a bank of 4 (genuine component, eye-blink, muscle artefact, pure noise/no signal), and 1 epoching-alignment case. Artefact contexts are now generic (visual task / oddball task / sentence task / quiet rest) rather than naming the artefact source (e.g. jaw clench, blink), so students must judge from waveform shape and timing rather than the sentence giving it away. Spot-the-Difference is single-step (identify the differing component; the psychological interpretation is given directly in the feedback) to keep pace brisk for students new to ERPs. Keep-Averaging starts from a single raw trial that is genuinely unreadable (noise RMS \u2248 signal amplitude) and uses a slider up to 50 trials; noise falls off roughly with 1/\u221an, so the component becomes clearly visible well before 50 &mdash; fewer trials used before locking in an answer earns more points. The epoching case gives each of two trials its own independent slider for where the analysis window starts; only when both are dragged to align with that trial's own target onset (not a shared fixed time) does the live grand average resolve into a single clean peak, and the student then commits to a one-click judgement of whether the epochs are correctly aligned, scored like any other case &mdash; directly illustrating why epochs are defined relative to the event of interest, not the clock. Electrode/topography content has been removed entirely; the task rests on paradigm logic and waveform shape only.</p>
+</details>
+</section>
+
+<section id="activity" hidden>
+<div class="progress"><span class="roundlabel" id="roundlabel"></span></div>
+<div class="question"><h2 id="qheading"></h2><p id="context" class="context"></p></div>
+
+<div id="stage"></div>
+
+<div class="below"><div id="feedback" class="feedback" role="status" aria-live="polite"><h3 id="feedbacktitle">First case incoming</h3><p id="feedbacktext">Read the context, then make your call.</p></div><div class="actions"><button id="next" disabled>Next case</button><button id="giveup" class="quiet">End shift now</button></div></div>
+
+<details class="guide"><summary>Component quick reference</summary><table><thead><tr><th>Component</th><th>Typical timing</th><th>Polarity, context and general region</th></tr></thead><tbody>
+<tr><td>P1</td><td>80&ndash;130 ms</td><td>Early positive visual response, posterior; reflects low-level visual input (e.g. brightness/contrast), largely unaffected by task relevance</td></tr>
+<tr><td>N1</td><td>140&ndash;200 ms</td><td>Early negative visual response, posterior; sensitive to spatial attention and perceptual discrimination</td></tr>
+<tr><td>P3 (P3b)</td><td>300&ndash;600 ms</td><td>Later positive response to rare, task-relevant events; largest over posterior/parietal regions; bigger and later with harder discrimination</td></tr>
+<tr><td>N400</td><td>300&ndash;500 ms</td><td>Negative response sensitive to semantic fit; larger for poorer context fit; broadly central/posterior</td></tr>
+</tbody></table><p class="note">Approximate teaching ranges, not diagnostic rules. Eye-blink artefacts are slow and large, often starting before or right at stimulus onset. Muscle artefacts are fast, jagged bursts confined to a short window.</p></details>
+</section>
+
+<section id="summary" class="summary" hidden>
+<h2 id="summaryheading">Shift report</h2>
+<p class="score" id="score"></p>
+<div class="badge" id="badgeline"></div>
+<div class="statrow">
+<div><strong id="statclosed"></strong><span>Cases closed (of 9)</span></div>
+<div><strong id="statacc"></strong><span>Accuracy</span></div>
+<div><strong id="statbest"></strong><span>Best streak</span></div>
+</div>
+<table class="results"><thead><tr><th>#</th><th>Type</th><th>Case</th><th>Outcome</th><th>Points</th></tr></thead><tbody id="resultbody"></tbody></table>
+<div class="reflection">
+<h3>Discuss with your partner</h3>
+<p>On a Keep Averaging case: how many trials did you use before locking in, and were you right? Would you wait longer next time?</p>
+<p>On a Spot the Difference case: was the component that actually differed the one the task logic predicted?</p>
+<p>If you got an artefact case wrong, what single feature of the shape or timing should have given it away?</p>
+<p>On the epoching case: what did the grand average look like before you aligned the windows, and why does locking to the event (not the clock) fix it?</p>
+</div>
+<button id="again">Start a new shift</button>
+</section>
+
+<footer class="sources">Teaching simulation for an EEG lecture. No responses are uploaded or stored. <details><summary>Scientific context</summary><p>Visual N1: Vogel and Luck (2000), <a href="https://pubmed.ncbi.nlm.nih.gov/10731769/" target="_blank" rel="noopener">The visual N1 component as an index of a discrimination process</a>. N400: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4052444/" target="_blank" rel="noopener">Kutas and Federmeier (2011)</a>. Limits of interpreting P3b as awareness: <a href="https://pubmed.ncbi.nlm.nih.gov/32409620/" target="_blank" rel="noopener">Cohen and colleagues (2020)</a>. Waveforms are generated for this activity and do not reproduce data from these studies.</p></details></footer>
+</main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+const frame={left:78,right:1030,top:20,bottom:330,xmin:-100,xmax:800,ymin:-7,ymax:7};
+function sx(t){return frame.left+(t-frame.xmin)/(frame.xmax-frame.xmin)*(frame.right-frame.left);}
+function sy(v){const f=(v-frame.ymin)/(frame.ymax-frame.ymin);return frame.bottom-f*(frame.bottom-frame.top);}
+function gauss(t,p){return p[2]*Math.exp(-0.5*((t-p[1])/p[3])**2);}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+const CONCEPT={P1:'Early, posterior, positive visual response, mostly reflecting physical input.',N1:'Early, posterior, negative; sensitive to attention and perceptual discrimination.',P3:'Later, positive, largest posteriorly; elicited by rare, task-relevant events.',N400:'Broad, negative; sensitive to how well a word or concept fits its context.'};
+
+/* ---------- CONTRAST BANK (exactly 4, one per component) ---------- */
+const CONTRAST_BANK=[
+{context:'Visual task comparing a dim, low-contrast flash to a bright, high-contrast flash of the same shape.',labelA:'Dim flash',labelB:'Bright flash',
+ peaksA:[['P1',99,1.0,19],['N1',170,-1.9,24],['P2',246,1.1,31]],
+ peaksB:[['P1',100,3.6,19],['N1',172,-2.0,24],['P2',248,1.15,31]],
+ diffOptions:['P1','N1','P2','No clear difference'],diffCorrect:'P1',
+ explain:'The earliest visual response mainly tracks physical stimulus intensity (brightness/contrast) rather than meaning or task relevance, so the brighter flash produces a clearly bigger P1.'},
+{context:'Visual discrimination task: compare an unattended location to an attended location for the same physical stimulus.',labelA:'Unattended location',labelB:'Attended location',
+ peaksA:[['P1',100,1.8,20],['N1',175,-1.3,24],['P2',250,1.0,30]],
+ peaksB:[['P1',101,1.9,20],['N1',176,-3.6,24],['P2',252,1.1,30]],
+ diffOptions:['P1','N1','P2','No clear difference'],diffCorrect:'N1',
+ explain:'The N1 is sensitive to attention and perceptual discrimination, so the same physical stimulus produces a larger N1 once it falls at an attended location.'},
+{context:'Visual oddball task: compare a frequent standard to a rare target requiring a button press.',labelA:'Standard (frequent)',labelB:'Target (rare)',
+ peaksA:[['P1',98,1.6,19],['N1',168,-2.0,24],['P2',245,1.1,32],['P3',400,0.9,65]],
+ peaksB:[['P1',99,1.7,19],['N1',169,-2.1,24],['P2',248,1.2,32],['P3',405,4.6,65]],
+ diffOptions:['P1','N1','P3','No clear difference'],diffCorrect:'P3',
+ explain:'The P3 reflects attentional/updating resources allocated to rare, task-relevant events, so the rare target produces a much larger P3 than the frequent standard.'},
+{context:'Sentence reading task: compare a highly predictable sentence ending to an unexpected ending.',labelA:'Expected word',labelB:'Unexpected word',
+ peaksA:[['P1',96,1.1,19],['N1',163,-1.5,23],['P2',235,1.3,31],['N400',405,-0.7,60]],
+ peaksB:[['P1',97,1.1,19],['N1',164,-1.5,23],['P2',236,1.3,31],['N400',408,-4.2,60]],
+ diffOptions:['N1','P2','N400','No clear difference'],diffCorrect:'N400',
+ explain:'The N400 is sensitive to how well a word fits its context, so the unexpected, harder-to-integrate word produces a much larger N400.'}
+];
+
+/* ---------- AVERAGING BANK (exactly 2) ---------- */
+const AVERAGE_BANK=[
+{context:'Visual task, raw single trial, strong background EEG activity.',target:'P1',peaks:[['P1',100,2.4,19],['N1',172,-1.3,24]],options:['P1','N1','P3','N400']},
+{context:'Oddball task, raw single trial; rare targets require a button press.',target:'P3',peaks:[['P1',99,1.2,19],['N1',165,-1.4,23],['P3',400,4.2,60]],options:['N2','P2','P3','N400']}
+];
+
+/* ---------- ARTIFACT BANK (4 entries; 2 drawn at random each game) ---------- */
+const ARTIFACT_OPTS=['Genuine ERP component','Eye-blink artefact','Muscle artefact','Not present / pure noise'];
+const ARTIFACT_BANK=[
+{context:'Single trial recorded during a visual discrimination task.',kind:'genuine',peaks:[['P1',100,1.6,19],['N1',172,-1.8,24],['P2',248,1.1,30]],options:ARTIFACT_OPTS,correct:'Genuine ERP component',explain:'One smooth, rounded deflection that rises and decays gradually, at a plausible latency after stimulus onset &mdash; the shape and timing of a real component, not an artefact.'},
+{context:'Single trial recorded during an oddball task.',kind:'blink',options:ARTIFACT_OPTS,correct:'Eye-blink artefact',explain:'A slow, very large deflection that starts before or right at stimulus onset is not time-locked the way a real component is &mdash; a classic sign of a blink.'},
+{context:'Single trial recorded during a sentence-reading task.',kind:'muscle',options:ARTIFACT_OPTS,correct:'Muscle artefact',explain:'Fast, jagged, high-frequency bursts confined to a short window look nothing like the smooth shape of a real ERP component.'},
+{context:'Single trial recorded during a quiet rest period, with no stimulus of interest presented.',kind:'none',options:ARTIFACT_OPTS,correct:'Not present / pure noise',explain:'Just irregular background fluctuation &mdash; no consistent rounded shape, and no slow blink-like or jagged muscle-like signature either.'}
+];
+
+/* ---------- state ---------- */
+let queue=[],qi=0,round=null,results=[],lives=3,score=0,streak=0,bestStreak=0,remaining=300,timer=null,running=false,timeUp=false,trialsAdded=1;
+const MAXTRIALS=50;
+
+function multiplier(){return streak>=4?2:streak>=2?1.5:1;}
+function award(pts){const m=multiplier();const final=Math.round(pts*m);score+=final;$('scorelive').textContent=score;return final;}
+
+function buildQueue(){
+ const c=CONTRAST_BANK.map(r=>({...r,kind2:'contrast'}));
+ const a=AVERAGE_BANK.map(r=>({...r,kind2:'average'}));
+ const f=shuffle(ARTIFACT_BANK.map(r=>({...r,kind2:'artifact'}))).slice(0,2);
+ const e=[{kind2:'epoch'}];
+ return shuffle([...c,...a,...f,...e]);
+}
+function jitterPeaks(peaks,amt=10){return peaks.map(p=>[p[0],p[1]+Math.round((Math.random()-.5)*amt),p[2]*(0.92+Math.random()*0.16),p[3]]);}
+
+function nextRoundData(){
+ const base=queue[qi++];
+ const phase=Math.random()*6.28;
+ if(base.kind2==='contrast'){
+  return {...base,phase,peaksA:jitterPeaks(base.peaksA,8),peaksB:jitterPeaks(base.peaksB,8)};
+ }
+ if(base.kind2==='average'){
+  const trials=[];for(let i=0;i<MAXTRIALS;i++)trials.push({f1:0.05+Math.random()*0.35,f2:0.08+Math.random()*0.3,p1:Math.random()*6.28,p2:Math.random()*6.28,amp:2.6+Math.random()*0.8});
+  return {...base,phase,peaks:jitterPeaks(base.peaks,8),trials,options:shuffle(base.options)};
+ }
+ if(base.kind2==='artifact'){
+  const blinkT=-50-Math.random()*40,blinkAmp=(Math.random()<0.5?1:-1)*(5+Math.random()*1.8);
+  const muscleT=130+Math.random()*180;
+  return {...base,phase,peaks:base.peaks?jitterPeaks(base.peaks,8):null,blinkT,blinkAmp,muscleT,options:shuffle(base.options)};
+ }
+ // epoch
+ const target1=80+Math.round(Math.random()*60);      // ~80-140ms
+ const target2=260+Math.round(Math.random()*80);     // ~260-340ms
+ return {...base,phase,target1,target2};
+}
+
+function baseWave(peaks,t,phase){let y=0;if(peaks)for(const p of peaks)y+=gauss(t,p);y+=0.06*Math.sin(t*0.058+phase)+0.04*Math.sin(t*0.121+phase*0.7);return y;}
+function avgNoise(r,t,n){if(n<=0)return 0;let s=0;for(let i=0;i<n;i++){const tr=r.trials[i];s+=tr.amp*Math.sin(t*tr.f1+tr.p1)+tr.amp*0.6*Math.sin(t*tr.f2+tr.p2);}return s/n;}
+function artifactWave(r,t){
+ if(r.kind==='genuine')return baseWave(r.peaks,t,r.phase)+0.10*Math.sin(t*0.14+r.phase*1.5);
+ if(r.kind==='none')return 0.14*Math.sin(t*0.05+r.phase)+0.12*Math.sin(t*0.17+r.phase*1.8)+0.08*Math.sin(t*0.3+r.phase*2.3);
+ if(r.kind==='blink')return r.blinkAmp*Math.exp(-0.5*((t-r.blinkT)/55)**2)+0.08*Math.sin(t*0.05+r.phase);
+ if(r.kind==='muscle'){const env=Math.exp(-0.5*((t-r.muscleT)/22)**2);return env*(1.8*Math.sin(t*0.42+r.phase)+1.4*Math.sin(t*0.61+r.phase*1.7)+1.1*Math.sin(t*0.33+r.phase*2.4))+0.06*Math.sin(t*0.05+r.phase);}
+ return 0;
+}
+
+function svgEl(tag,attrs={},text){const e=document.createElementNS(NS,tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));if(text!==undefined)e.textContent=text;return e;}
+
+function drawAxes(svg){
+ for(let v=-6;v<=6;v+=2){svg.appendChild(svgEl('line',{x1:frame.left,x2:frame.right,y1:sy(v),y2:sy(v),stroke:v===0?'#7d9699':'#e4ebea','stroke-width':v===0?1.5:1}));svg.appendChild(svgEl('text',{x:frame.left-13,y:sy(v)+5,'text-anchor':'end',fill:'#51676b','font-size':14},v>0?'+'+v:String(v)));}
+ for(let t=-100;t<=800;t+=100){svg.appendChild(svgEl('line',{x1:sx(t),x2:sx(t),y1:frame.top,y2:frame.bottom,stroke:t===0?'#9aadae':'#edf0ef','stroke-width':t===0?1.5:1,'stroke-dasharray':t===0?'5 5':'none'}));svg.appendChild(svgEl('text',{x:sx(t),y:frame.bottom+26,'text-anchor':'middle',fill:'#51676b','font-size':14},String(t)));}
+ svg.appendChild(svgEl('text',{x:554,y:392,'text-anchor':'middle',fill:'#294950','font-size':17},'Time from stimulus onset (ms)'));
+ svg.appendChild(svgEl('text',{x:22,y:175,transform:'rotate(-90 22 175)','text-anchor':'middle',fill:'#294950','font-size':17},'Voltage (\u00b5V)'));
+}
+function pathFor(fn,color,dash){let d='';for(let t=-100;t<=800;t+=3)d+=(t===-100?'M':'L')+sx(t).toFixed(2)+' '+sy(fn(t)).toFixed(2)+' ';return svgEl('path',{d,fill:'none',stroke:color,'stroke-width':3.4,'stroke-linejoin':'round','stroke-linecap':'round','stroke-dasharray':dash||'none'});}
+
+/* ---------- rendering per type ---------- */
+function renderStage(){
+ const stage=$('stage');stage.replaceChildren();
+ const r=round;
+ if(r.kind2==='contrast')renderContrast(stage,r);
+ else if(r.kind2==='average')renderAverage(stage,r);
+ else if(r.kind2==='artifact')renderArtifact(stage,r);
+ else renderEpoch(stage,r);
+}
+
+function makeGraphShell(){
+ const wrap=document.createElement('div');wrap.className='graph';
+ const svg=svgEl('svg',{viewBox:'0 0 1060 420',role:'img','aria-hidden':'true'});
+ wrap.appendChild(svg);
+ const cap=document.createElement('div');cap.className='graphcaption';cap.innerHTML='<span>Positive voltage plotted upwards</span><span>Time 0 = stimulus onset</span>';
+ wrap.appendChild(cap);
+ return {wrap,svg,cap};
+}
+
+function renderContrast(stage,r){
+ $('qheading').innerHTML='Which component differs? <span class="typebadge t-contrast">Spot the Difference</span>';
+ $('context').textContent=r.context;
+ const legend=document.createElement('div');legend.className='legend';
+ legend.innerHTML='<span><span class="swatch" style="background:#156778"></span>'+r.labelA+'</span><span><span class="swatch" style="background:#b06836"></span>'+r.labelB+'</span>';
+ const {wrap,svg}=makeGraphShell();
+ drawAxes(svg);
+ svg.insertBefore(pathFor(t=>baseWave(r.peaksB,t,r.phase),'#b06836'),svg.firstChild.nextSibling);
+ svg.appendChild(pathFor(t=>baseWave(r.peaksA,t,r.phase),'#156778'));
+ wrap.insertBefore(legend,wrap.firstChild);
+ stage.appendChild(wrap);
+ const mcq=document.createElement('div');mcq.className='mcq';mcq.id='mcq1';
+ shuffle(r.diffOptions).forEach(opt=>{const b=document.createElement('button');b.className='optbtn';b.textContent=opt;b.addEventListener('click',()=>answerContrast(opt,b));mcq.appendChild(b);});
+ stage.appendChild(mcq);
+ feedback('Your call','Which component shows the clearest difference between the two conditions?');
+}
+function answerContrast(opt,btn){
+ if(round._answered)return;round._answered=true;
+ const correct=opt===round.diffCorrect;
+ document.querySelectorAll('#mcq1 .optbtn').forEach(b=>{b.disabled=true;if(b.textContent===round.diffCorrect)b.classList.add('correct');else if(b===btn&&!correct)b.classList.add('wrong');});
+ let pts=0;if(correct)pts=14;else loseLife();
+ const finalPts=pts>0?award(pts):0;
+ registerHit(correct);
+ finishRound(correct?'Correct':'Wrong',finalPts,round.diffCorrect);
+ feedback(correct?'Correct':'Not quite',correct?round.explain:('The component that actually differs is '+round.diffCorrect+'. '+round.explain),correct?'good':'bad');
+}
+
+function renderAverage(stage,r){
+ $('qheading').innerHTML='Keep Averaging <span class="typebadge t-average">Keep Averaging</span>';
+ $('context').textContent=r.context+' A single trial is too noisy to read. Drag the slider to average in more trials, then call it as soon as you can see the pattern clearly.';
+ const {wrap,svg}=makeGraphShell();
+ svg.setAttribute('id','avgsvg');
+ drawAxes(svg);
+ trialsAdded=1;
+ svg.appendChild(pathFor(t=>baseWave(r.peaks,t,r.phase)+avgNoise(r,t,trialsAdded),'#156778'));
+ stage.appendChild(wrap);
+ const bar=document.createElement('div');bar.className='avgbar';
+ const slider=document.createElement('input');slider.type='range';slider.min='1';slider.max=String(MAXTRIALS);slider.value='1';slider.id='trialslider';
+ const count=document.createElement('span');count.className='count';count.id='trialcount';count.textContent='Trials averaged: 1 (very noisy)';
+ bar.appendChild(slider);bar.appendChild(count);
+ stage.appendChild(bar);
+ const mcq=document.createElement('div');mcq.className='mcq';mcq.id='avgmcq';
+ r.options.forEach(opt=>{const b=document.createElement('button');b.className='optbtn';b.textContent=opt;b.addEventListener('click',()=>answerAverage(opt,b));mcq.appendChild(b);});
+ stage.appendChild(mcq);
+ slider.addEventListener('input',()=>{
+  trialsAdded=parseInt(slider.value,10);
+  const tag=trialsAdded<=5?' (very noisy)':trialsAdded<=20?' (getting clearer)':trialsAdded<=35?' (fairly clear)':' (clean)';
+  count.textContent='Trials averaged: '+trialsAdded+tag;
+  const svgEl2=$('avgsvg');svgEl2.replaceChildren();drawAxes(svgEl2);
+  svgEl2.appendChild(pathFor(t=>baseWave(r.peaks,t,r.phase)+avgNoise(r,t,trialsAdded),'#156778'));
+ });
+ feedback('Case open','Fewer trials before you lock in your answer earns more points &mdash; but don\u2019t guess blind.');
+}
+function answerAverage(opt,btn){
+ if(round._answered)return;round._answered=true;
+ const slider=$('trialslider');if(slider)slider.disabled=true;
+ const correct=opt===round.target;
+ document.querySelectorAll('#avgmcq .optbtn').forEach(b=>{b.disabled=true;if(b.textContent===round.target)b.classList.add('correct');else if(b===btn&&!correct)b.classList.add('wrong');});
+ let pts=0;
+ if(correct){
+  pts=trialsAdded<=10?20:trialsAdded<=25?14:8;
+ } else {
+  loseLife();
+ }
+ const finalPts=pts>0?award(pts):0;
+ registerHit(correct);
+ finishRound(correct?'Correct ('+trialsAdded+' trials)':'Wrong ('+trialsAdded+' trials)',finalPts,round.target);
+ feedback(correct?'Good call':'Not this time',correct?(CONCEPT[opt]+' You called it at '+trialsAdded+' trial(s).'):('The target component here was '+round.target+'.'),correct?'good':'bad');
+}
+
+function renderArtifact(stage,r){
+ $('qheading').innerHTML='Real or Artifact? <span class="typebadge t-artifact">Real or Artifact?</span>';
+ $('context').textContent=r.context;
+ const {wrap,svg}=makeGraphShell();
+ drawAxes(svg);
+ svg.appendChild(pathFor(t=>artifactWave(r,t),'#156778'));
+ stage.appendChild(wrap);
+ const mcq=document.createElement('div');mcq.className='mcq';mcq.id='artmcq';
+ r.options.forEach(opt=>{const b=document.createElement('button');b.className='optbtn';b.textContent=opt;b.addEventListener('click',()=>answerArtifact(opt,b));mcq.appendChild(b);});
+ stage.appendChild(mcq);
+ feedback('What is this?','Judge it by shape and timing, not just size.');
+}
+function answerArtifact(opt,btn){
+ if(round._answered)return;round._answered=true;
+ const correct=opt===round.correct;
+ document.querySelectorAll('#artmcq .optbtn').forEach(b=>{b.disabled=true;if(b.textContent===round.correct)b.classList.add('correct');else if(b===btn&&!correct)b.classList.add('wrong');});
+ let pts=0;
+ if(correct)pts=12;else loseLife();
+ const finalPts=pts>0?award(pts):0;
+ registerHit(correct);
+ finishRound(correct?'Correct':'Wrong',finalPts,round.correct);
+ feedback(correct?'Correct':'Not quite',round.explain,correct?'good':'bad');
+}
+
+/* ---------- epoch case (scored) ---------- */
+const trialDom={xmin:-100,xmax:900,left:36,right:300,top:10,bottom:140};
+const avgDom={xmin:-100,xmax:500,left:36,right:300,top:10,bottom:140};
+function ey(v){const f=(v+2)/8;return trialDom.bottom-f*(trialDom.bottom-trialDom.top);}
+function rawComponent(t,targetOffset){return gauss(t,['x',targetOffset+300,1.7,55]);}
+function rawWave(t,trialIdx,targetOffset,phase){return rawComponent(t,targetOffset)+0.22*Math.sin(t*0.07+trialIdx*1.3+phase)+0.12*Math.sin(t*0.13+trialIdx*2.1+phase);}
+function drawMini(svg,fn,xLabel,markers,dm){
+ function lx(t){return dm.left+(t-dm.xmin)/(dm.xmax-dm.xmin)*(dm.right-dm.left);}
+ svg.replaceChildren();
+ svg.appendChild(svgEl('line',{x1:dm.left,x2:dm.right,y1:ey(0),y2:ey(0),stroke:'#cfd9d8','stroke-width':1}));
+ markers.forEach(m=>{svg.appendChild(svgEl('line',{x1:lx(m.t),x2:lx(m.t),y1:dm.top,y2:dm.bottom,stroke:m.color,'stroke-width':1.4,'stroke-dasharray':m.dash||'none'}));svg.appendChild(svgEl('text',{x:lx(m.t),y:dm.top-2,'text-anchor':'middle',fill:m.color,'font-size':10},m.label));});
+ let path='';for(let t=dm.xmin;t<=dm.xmax;t+=4)path+=(t===dm.xmin?'M':'L')+lx(t).toFixed(1)+' '+ey(fn(t)).toFixed(1)+' ';
+ svg.appendChild(svgEl('path',{d:path,fill:'none',stroke:'#156778','stroke-width':2.4}));
+ svg.appendChild(svgEl('text',{x:(dm.left+dm.right)/2,y:dm.bottom+16,'text-anchor':'middle',fill:'#51676b','font-size':10},xLabel));
+}
+function renderEpoch(stage,r){
+ $('qheading').innerHTML='Fix the Epoching <span class="typebadge t-epoch">Epoching</span>';
+ $('context').textContent='Trial 1\u2019s target appears '+r.target1+' ms after fixation. Trial 2\u2019s target appears '+r.target2+' ms after fixation. Drag each trial\u2019s window to start right at its own target, then decide once the grand average on the right looks clean.';
+ const box=document.createElement('div');box.className='epoch';box.style.border='none';box.style.padding='0';
+ box.innerHTML='<div class="epochgrid">'+
+  '<div class="epochpanel"><h4>Trial 1</h4><svg id="ep1" viewBox="0 0 320 180"></svg><div class="epochslidebar"><input type="range" id="epslider1" min="0" max="500" step="5" value="0"><span id="eplabel1" class="epval">Window start: 0 ms</span></div></div>'+
+  '<div class="epochpanel"><h4>Trial 2</h4><svg id="ep2" viewBox="0 0 320 180"></svg><div class="epochslidebar"><input type="range" id="epslider2" min="0" max="500" step="5" value="0"><span id="eplabel2" class="epval">Window start: 0 ms</span></div></div>'+
+  '<div class="epochpanel"><h4>Grand average</h4><svg id="epavg" viewBox="0 0 320 180"></svg></div></div>';
+ stage.appendChild(box);
+ const mcq=document.createElement('div');mcq.className='mcq';mcq.id='epmcq';
+ const lockBtn=document.createElement('button');lockBtn.className='optbtn';lockBtn.id='eplock';lockBtn.textContent='Lock in this alignment';lockBtn.style.fontWeight='700';
+ lockBtn.addEventListener('click',()=>answerEpoch(lockBtn));
+ mcq.appendChild(lockBtn);
+ stage.appendChild(mcq);
+
+ function render(){
+  const s1=parseInt($('epslider1').value,10),s2=parseInt($('epslider2').value,10);
+  round._s1=s1;round._s2=s2;
+  $('eplabel1').textContent='Window start: '+s1+' ms';
+  $('eplabel2').textContent='Window start: '+s2+' ms';
+  drawMini($('ep1'),t=>rawWave(t,1,r.target1,r.phase),'Time from fixation (ms)',
+   [{t:0,color:'#7d9699',label:'Fixation',dash:'4 3'},{t:r.target1,color:'#b06836',label:'Target'},{t:s1,color:'#156778',label:'\u25bc start',dash:'2 2'}],trialDom);
+  drawMini($('ep2'),t=>rawWave(t,2,r.target2,r.phase),'Time from fixation (ms)',
+   [{t:0,color:'#7d9699',label:'Fixation',dash:'4 3'},{t:r.target2,color:'#b06836',label:'Target'},{t:s2,color:'#156778',label:'\u25bc start',dash:'2 2'}],trialDom);
+  drawMini($('epavg'),x=>(rawWave(s1+x,1,r.target1,r.phase)+rawWave(s2+x,2,r.target2,r.phase))/2,'Time from each window\u2019s start (ms)',
+   [{t:0,color:'#7d9699',label:'Start',dash:'4 3'}],avgDom);
+ }
+ $('epslider1').addEventListener('input',render);$('epslider2').addEventListener('input',render);render();
+ feedback('Align both windows','Drag the sliders, watch the average on the right, then commit to a call.');
+}
+function answerEpoch(btn){
+ if(round._answered)return;round._answered=true;
+ const err1=Math.abs(round._s1-round.target1),err2=Math.abs(round._s2-round.target2);
+ const correct=err1<=15&&err2<=15;
+ $('epslider1').disabled=true;$('epslider2').disabled=true;
+ btn.disabled=true;btn.classList.add(correct?'correct':'wrong');
+ let pts=0;if(correct)pts=14;else loseLife();
+ const finalPts=pts>0?award(pts):0;
+ registerHit(correct);
+ finishRound(correct?'Correct':'Wrong',finalPts,'Epoching');
+ feedback(correct?'Correct':'Not quite',correct?'Once each window starts at that trial\u2019s own target, the component lands at the same relative latency in both epochs, so averaging them produces one clean peak instead of a smear.':'Not aligned closely enough \u2014 each blue dashed start line needs to sit right on top of its own orange target marker (within about 15ms), not at a shared fixed time.',correct?'good':'bad');
+}
+
+/* ---------- shared flow ---------- */
+function feedback(title,body,type){$('feedbacktitle').textContent=title;$('feedbacktext').innerHTML=body;$('feedback').className='feedback'+(type?' '+type:'');}
+function loseLife(){lives=Math.max(0,lives-1);$('lives').textContent='\u2665'.repeat(lives)+'\u2661'.repeat(3-lives);streak=0;updateStreakUI();}
+function registerHit(fullyCorrect){if(fullyCorrect){streak++;bestStreak=Math.max(bestStreak,streak);}else{streak=0;}updateStreakUI();}
+function updateStreakUI(){$('streakline').textContent='x'+multiplier();}
+function finishRound(outcomeText,pts,caseLabel){
+ results.push({type:round.kind2,caseLabel,outcome:outcomeText,points:pts});
+ $('next').disabled=false;
+ if(lives<=0){$('next').textContent='See shift report';}
+ else if(timeUp){$('next').textContent='See shift report';}
+ else if(qi>=queue.length){$('next').textContent='See shift report';}
+ else {$('next').textContent='Next case';}
+}
+
+function startRound(){
+ round=nextRoundData();
+ $('roundlabel').textContent='Case '+(results.length+1)+' of '+queue.length;
+ $('next').disabled=true;$('next').textContent='Next case';
+ renderStage();
+}
+
+function tick(){
+ if(!running)return;
+ remaining--;
+ if(remaining<=0){remaining=0;timeUp=true;running=false;clearInterval(timer);}
+ $('clock').textContent=String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(remaining%60).padStart(2,'0');
+ $('clock').parentElement.classList.toggle('urgent',remaining<=30&&remaining>0);
+ if(timeUp){
+  document.querySelectorAll('.optbtn').forEach(b=>b.disabled=true);
+  const sl=$('trialslider');if(sl)sl.disabled=true;
+  if($('next').disabled){ // round never answered
+   finishRound('Time\u2019s up',0,'\u2014');
+   feedback('Time\u2019s up','The shift is over. See your report.','try');
+  } else {
+   $('next').textContent='See shift report';
+  }
+ }
+}
+
+function begin(){
+ clearInterval(timer);
+ queue=buildQueue();qi=0;results=[];lives=3;score=0;streak=0;bestStreak=0;remaining=300;timeUp=false;running=true;
+ $('lives').textContent='\u2665\u2665\u2665';$('scorelive').textContent='0';$('streakline').textContent='x1';
+ $('clock').textContent='05:00';$('clock').parentElement.classList.remove('urgent');
+ $('intro').hidden=true;$('summary').hidden=true;$('activity').hidden=false;
+ startRound();
+ timer=setInterval(tick,1000);
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function finish(){
+ running=false;clearInterval(timer);
+ $('activity').hidden=true;$('summary').hidden=false;
+ const closed=results.length;
+ const correctCount=results.filter(r=>r.outcome.startsWith('Correct')).length;
+ const acc=closed?Math.round(correctCount/closed*100):0;
+ $('score').textContent=score+' pts';
+ $('statclosed').textContent=closed;
+ $('statacc').textContent=acc+'%';
+ $('statbest').textContent='x'+(bestStreak>=4?2:bestStreak>=2?1.5:1)+' ('+bestStreak+' in a row)';
+ let badge,text;
+ if(lives<=0){badge='\ud83d\udea8 Shift ended early';text='Three strikes ended the shift before all 9 cases were closed. Check the table for the calls that cost you.';}
+ else if(acc>=80){badge='\ud83c\udfc6 Shift Supervisor';text='Sharp, consistent calls across all three case types.';}
+ else if(acc>=60){badge='\ud83d\udd0e Senior Analyst';text='Solid shift. Look at the table below for the specific cases to revisit with your partner.';}
+ else if(acc>=40){badge='\ud83d\udcdd Junior Analyst';text='A reasonable start. The averaging and artefact cases are worth re-discussing.';}
+ else{badge='\ud83d\udca1 Trainee';text='This is meant to be tricky under time pressure. Use the table to see which case type tripped you up most.';}
+ $('badgeline').textContent=badge;$('summaryheading').textContent='Shift report';
+ $('resultbody').replaceChildren();
+ const typeLabel={contrast:'Spot the Difference',average:'Keep Averaging',artifact:'Real or Artifact?',epoch:'Fix the Epoching'};
+ results.forEach((r,i)=>{
+  const tr=document.createElement('tr');
+  [String(i+1),typeLabel[r.type],r.caseLabel,r.outcome,String(r.points)].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.appendChild(td);});
+  $('resultbody').appendChild(tr);
+ });
+ $('scoretext')&&($('scoretext').remove());
+ $('badgeline').insertAdjacentElement('afterend',Object.assign(document.createElement('p'),{id:'scoretext',innerHTML:text}));
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+
+$('start').addEventListener('click',begin);
+$('again').addEventListener('click',begin);
+$('giveup').addEventListener('click',()=>{if(window.confirm('End the shift now and see your report?'))finish();});
+$('next').addEventListener('click',()=>{
+ if($('next').disabled)return;
+ if(lives<=0||timeUp||qi>=queue.length){finish();return;}
+ startRound();
+});
+</script>
+</body>
+</html>
